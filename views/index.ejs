@@ -1,8 +1,22 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Google OAuth 2.0</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>Note-taking system</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script> 
+   
+    
+  
+   
   </head>
   <body>
     <% if(user){ %>
@@ -16,7 +30,9 @@
       <h1>Please Login</h1>
 			<p>
         <a href="/">Home</a> | 
-        <a href="/auth/google">Login with Google</a>
+        <a href="/auth/google" class="btn btn-block btn-social btn-google"><button type="button" class="btn btn-light">
+          <img src="/images/google_icon.png" width="50"> Sign in with <img src="/images/google_text.png" width="60"></button>
+        </a>
       </p>
     <% } %>
   </body>
