@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google OAuth 2.0</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+<% for(var i in user.photos){ %>
+    <p> <img src="<%= user.photos[i].value %>" alt="Photo of <%= user.displayName %>" > </p>
+<% } %>
+    <p>ID: <%= user.id %></p>
+    <p>Name: <%= user.displayName %></p>
+<% for(var i in user.emails){ %>
+    <p>Email : <%= user.emails[i].value %></p>
+<% } %>
+  </body>
+</html>
