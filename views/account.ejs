@@ -3,6 +3,7 @@
 <head>
     <title>Google OAuth 2.0</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+
 </head>
 <body>
 <% for(var i in user.photos){ %>
@@ -13,5 +14,8 @@
 <% for(var i in user.emails){ %>
     <p>Email : <%= user.emails[i].value %></p>
 <% } %>
+    <p>Course : <%= course[0] %></p>
+
+
   </body>
 </html>
