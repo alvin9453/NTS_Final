@@ -3,6 +3,20 @@
 <head>
     <title>Google OAuth 2.0</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+    <script src="/javascripts/firebase-init.js"></script>
+    <script>
+        initFirebase();    
+        var userRef = firebase.database().ref("users/");
+        userRef.orderByChild('email').equalTo("<%= user.emails[0].value %>").on('child_added',function(data){
+        var ulElement = document.getElementById('course');
+        for(var i = 0; i < data.val().course.length; i++){
+            var liElement = document.createElement('li');
+            liElement.innerHTML = data.val().course[i];
+            ulElement.appendChild(liElement);
+        }
+        });
+    </script>
 
 </head>
 <body>
@@ -14,8 +28,12 @@
 <% for(var i in user.emails){ %>
     <p>Email : <%= user.emails[i].value %></p>
 <% } %>
-    <p>Course : <%= course[0] %></p>
+    <p>Course : 
+        <ul id="course">
 
+        </ul>
+    </p>
 
-  </body>
+    <a href="/logout">Logout</a>   
+</body>
 </html>

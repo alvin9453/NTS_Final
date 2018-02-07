@@ -41,18 +41,10 @@ module.exports = function(passport){
   router.get('/account', ensureAuthenticated, function(req, res) {
     console.log(req.user);
     var userRef = firebase.database().ref("users/");
-    console.log(req.user.emails[0].value);
-    userRef.orderByChild('email').equalTo(req.user.emails[0].value).on('child_added',function(data){
-      res.render('account', {
-        user: req.user,
-        course: data.val().course
-      });
-    });
-
 
     res.render('account', {
-      user: req.user
-    });
+        user: req.user
+      });   
   });
 
   router.get('/logout', function(req, res) {
