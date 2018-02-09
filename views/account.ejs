@@ -13,13 +13,33 @@
         initFirebase();    
         var userRef = firebase.database().ref("users/");
         userRef.orderByChild('email').equalTo("<%= user.emails[0].value %>").on('child_added',function(data){
-        var ulElement = document.getElementById('course');
-        for(var i = 0; i < data.val().course.length; i++){
-            var liElement = document.createElement('li');
-            liElement.innerHTML = data.val().course[i];
-            ulElement.appendChild(liElement);
-        }
+            var ulElement = document.getElementById('course');
+            for(var i = 0; i < data.val().course.length; i++){
+                var liElement = document.createElement('li');
+                var btn = document.createElement('button');
+                btn.setAttribute('onclick',"courseInfo(this.textContent);");
+                btn.innerHTML = data.val().course[i];
+                liElement.appendChild(btn);
+                ulElement.appendChild(liElement);
+            }
         });
+
+        function courseInfo(courseName){
+            var courseRef = firebase.database().ref("courses/");
+            var showList = document.getElementById('details');
+            showList.innerHTML = "";
+            courseRef.orderByChild('name').equalTo(courseName).on('child_added',function(data){
+                for(var i = 0; i < data.val().slides.length; i++){                 
+                    var liElement = document.createElement('li');
+                    var btn = document.createElement('button');
+                    btn.innerHTML = data.val().slides[i].title;
+                    liElement.appendChild(btn);
+                    showList.appendChild(liElement);
+                }
+                
+
+            });
+        }
     </script>
 
 </head>
@@ -46,10 +66,22 @@
             </div>
         </div>
     </nav>
-    <p>Course : 
-        <ul id="course">
+    <div class="container">
+       <div class="row">
+           <div class="col-lg-6 col-md-6">
+                <p>Course : 
+                    <ul id="course">
+                    </ul>
+                </p>
+           </div>
+           <div class="col-lg-6 col-md-6">
+                <ul id="details">
+                    </ul>
+           </div>     
+           
+               
+        </div>
+    </div>
 
-        </ul>
-    </p>
 </body>
 </html>
