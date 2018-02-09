@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Note-taking system</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+    <script src="/javascripts/firebase-init.js"></script>
+    <script>
+        initFirebase();    
+        var userRef = firebase.database().ref("users/");
+        userRef.orderByChild('email').equalTo("<%= user.emails[0].value %>").on('child_added',function(data){
+            var courseBlock = document.getElementById('course');
+            for(var i = 0; i < data.val().course.length; i++){
+                var btn = document.createElement('button');
+                btn.setAttribute('onclick',"courseInfo(this.textContent);");
+                btn.setAttribute('class',"list-group-item");
+                btn.innerHTML = data.val().course[i];
+                courseBlock.appendChild(btn);
+            }
+        });
+
+        function courseInfo(courseName){
+            var courseRef = firebase.database().ref("courses/");
+            var showList = document.getElementById('details');
+            showList.innerHTML = "";
+            var courseTitle = document.getElementById('courseTitle');
+            courseTitle.innerHTML = courseName;
+            courseRef.orderByChild('name').equalTo(courseName).on('child_added',function(data){
+                for(var i = 0; i < data.val().slides.length; i++){                 
+                    var btn = document.createElement('button');
+                    btn.setAttribute('class',"list-group-item");
+                    btn.innerHTML = data.val().slides[i].title;
+                    showList.appendChild(btn);
+                    
+                }
+                
+
+            });
+        }
+    </script>
+
+</head>
+<body>
+    <nav class="navbar navbar-inverse"> <!-- Nav bar on the top of screen  -->
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="home">Note-taking System</a>
+              </div>
+              <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav">
+                  <li class="active" ><a href="home">Home</a></li>
+                  <li><a href="https://docs.google.com/forms/d/1mq0lfN2hfEQrEJaFz7OddAt2ImwL1lwqOL08W7g8eBE/viewform?edit_requested=true" target="#">Feedback</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                  <p class="navbar-text"><img src="<%= user.photos[0].value %>" alt="Photo of <%= user.displayName %>" width="20" > <%= user.displayName %></p>
+                  <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+       <div class="row">
+           <div class="col-lg-6 col-md-6 col-sm-6">
+                <h3>您參與的課程列表 :  </h3>
+                    <div id="course" class="list-group">
+                    </div>
+           </div>
+           <div class="col-lg-6 col-md-6 col-sm-6">
+                <h3 id="courseTitle"></h3>
+                <div id="details">
+                </div>
+           </div>     
+           
+               
+        </div>
+    </div>
+
+</body>
+</html>

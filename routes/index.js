@@ -35,14 +35,14 @@ module.exports = function(passport){
     }),
     function(req, res) {
       // Authenticated successfully
-      res.redirect('/account');
+      res.redirect('/home');
     });
 
-  router.get('/account', ensureAuthenticated, function(req, res) {
+  router.get('/home', ensureAuthenticated, function(req, res) {
     console.log(req.user);
     var userRef = firebase.database().ref("users/");
 
-    res.render('account', {
+    res.render('home', {
         user: req.user
       });   
   });
