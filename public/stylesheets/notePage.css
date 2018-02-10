@@ -1,0 +1,33 @@
+html { height: 100%; }
+body { margin: 0; height: 100%; }
+
+/* firepad style */
+
+#firepad-container {
+  position: fixed;
+  width: auto;
+  height: 100%;
+  right: 0px;
+  left : 50%;
+  bottom: 0px;
+  top : 50px;
+  background-color: rgba(0, 0, 0, 0.788);
+}
+
+.CodeMirror {
+  background-color: white;
+  border-style: outset;
+}
+
+/* slide style */
+
+#slide {
+  position : fixed;
+  top: 50px;
+  bottom: 1px;
+  left: 0px;
+  right: 50%;
+  margin : 0px; 
+  width : auto;
+  height : auto;
+}

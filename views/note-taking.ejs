@@ -1,11 +1,79 @@
 <!DOCTYPE <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title>Page Title</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Note-taking system</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+        <!-- Firepad and Firebase js -->
+        <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/codemirror.js"></script>     
+        <script src="/javascripts/firebase-init.js"></script>
+        <!-- Firepad css -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/codemirror.css" />
+        <link rel="stylesheet" href="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.css" />
+        <script src="https://cdn.firebase.com/libs/firepad/1.4.0/firepad.min.js"></script>
+        <!--<script src="/javascripts/firepad.js"></script> -->
+
+        <!-- This page css -->
+        <link rel="stylesheet" href="/stylesheets/notePage.css" />
+
+
+        <script>
+            function init(){
+                initFirebase();
+                var firepadRef = firebase.database().ref().child('<%= title %>');
+
+                var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
+                var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
+                    { richTextToolbar: true, richTextShortcuts: true , userId:"<%= title %>" }
+                );
+                firepad.on('ready', function() {
+                    if(firepad.isHistoryEmpty()) {
+                        firepad.setHtml('<span style="font-size: 24px;"><%= title %> </span>');
+                    }
+                });
+            }
+
+        </script>
 </head>
-<body>
+<body onload="init();">
+        <nav class="navbar navbar-inverse"> <!-- Nav bar on the top of screen  -->
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="home">Note-taking System</a>
+                  </div>
+                  <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav">
+                      <li class="active" ><a href="home">Home</a></li>
+                      <li><a href="https://docs.google.com/forms/d/1mq0lfN2hfEQrEJaFz7OddAt2ImwL1lwqOL08W7g8eBE/viewform?edit_requested=true" target="#">Feedback</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                      <p class="navbar-text"><img src="<%= user.photos[0].value %>" alt="Photo of <%= user.displayName %>" width="20" > <%= user.displayName %></p>
+                      <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6 col-md-6">
+                <div class="embed-responsive embed-responsive" id="slide">
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6">
+                <div id="firepad-container">
+                </div>
+            </div>
+    </div>
     <script>
         console.log("<%= user.displayName %>");
         console.log("<%= title %>");
