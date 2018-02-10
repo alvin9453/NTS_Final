@@ -31,14 +31,25 @@
             courseTitle.innerHTML = courseName;
             courseRef.orderByChild('name').equalTo(courseName).on('child_added',function(data){
                 for(var i = 0; i < data.val().slides.length; i++){                 
-                    var btn = document.createElement('button');
+                    var form = document.createElement('form');
+                    form.setAttribute('method','POST');
+                    form.setAttribute('action','/note-taking');
+
+                    var hiddenInputTitle = document.createElement('input');
+                    hiddenInputTitle.setAttribute('type','hidden');
+                    hiddenInputTitle.setAttribute('name','title');
+                    hiddenInputTitle.setAttribute('value',data.val().slides[i].title);
+                    form.appendChild(hiddenInputTitle);
+
+                    var btn = document.createElement('input');
+                    btn.setAttribute('type','submit');
                     btn.setAttribute('class',"list-group-item");
-                    btn.innerHTML = data.val().slides[i].title;
-                    showList.appendChild(btn);
+                    btn.setAttribute('value',data.val().slides[i].title);
+                    form.appendChild(btn);
+
+                    showList.appendChild(form);
                     
                 }
-                
-
             });
         }
     </script>

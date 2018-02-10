@@ -39,9 +39,6 @@ module.exports = function(passport){
     });
 
   router.get('/home', ensureAuthenticated, function(req, res) {
-    console.log(req.user);
-    var userRef = firebase.database().ref("users/");
-
     res.render('home', {
         user: req.user
       });   
@@ -50,6 +47,14 @@ module.exports = function(passport){
   router.get('/logout', function(req, res) {
     req.logout();
     res.redirect('/');
+  });
+
+  router.post('/note-taking', ensureAuthenticated, function(req, res) {
+
+    res.render('note-taking', {
+        user: req.user,
+        title : req.body.title,
+      });   
   });
 
   return router;
