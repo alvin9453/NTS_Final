@@ -19,9 +19,10 @@
         <link rel="stylesheet" href="/stylesheets/firepad.css" />
         
         
-
         <!-- This page css -->
         <link rel="stylesheet" href="/stylesheets/notePage.css" />
+
+        <script src="/javascripts/hyperlinkOverlay.js"></script>
 
 
         <script>
@@ -30,6 +31,7 @@
                 var firepadRef = firebase.database().ref().child('<%= title %>');
 
                 var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
+                hyperlinkOverlay(codeMirror);
                 var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
                     { richTextToolbar: true, richTextShortcuts: true , userId:"<%= title %>" }
                 );
