@@ -1,3 +1,4 @@
+// Taken from https://plnkr.co/edit/BcGmPZPoLV7usbRB2XZg?p=info , Author : kofifus
 function hoverWidgetOnOverlay(cm, overlayClass, widget) {
     cm.addWidget({line:0, ch:0}, widget, true);
     widget.style.position = 'fixed';
