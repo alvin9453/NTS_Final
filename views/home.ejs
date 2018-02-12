@@ -34,6 +34,7 @@
                     var form = document.createElement('form');
                     form.setAttribute('method','POST');
                     form.setAttribute('action','/note-taking');
+                    
 
                     var hiddenInputTitle = document.createElement('input');
                     hiddenInputTitle.setAttribute('type','hidden');
@@ -43,7 +44,7 @@
 
                     var btn = document.createElement('input');
                     btn.setAttribute('type','submit');
-                    btn.setAttribute('class',"list-group-item");
+                    btn.setAttribute('class',"list-group-item btn btn-default");
                     btn.setAttribute('value',data.val().slides[i].title);
                     form.appendChild(btn);
 
@@ -87,7 +88,7 @@
            </div>
            <div class="col-lg-6 col-md-6 col-sm-6">
                 <h3 id="courseTitle"></h3>
-                <div id="details">
+                <div id="details" class="list-group">
                 </div>
            </div>     
            
