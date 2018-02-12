@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+        <title>Note-taking system</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+        <!-- Firebase js -->
+        <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>    
+        <!-- Firepad related js -->  
+        <script src="/javascripts/codemirror.js"></script>     
+        <script src="/javascripts/firepad.js"></script> 
+        <script src="/javascripts/firebase-init.js"></script>
+        <!-- Firepad css -->
+        <link rel="stylesheet" href="/stylesheets/codemirror.css" />
+        <link rel="stylesheet" href="/stylesheets/firepad.css" />
+        
+        
+        <!-- This page css -->
+        <link rel="stylesheet" href="/stylesheets/noteWatchPage.css" />
+
+        <script src="/javascripts/hyperlinkOverlay.js"></script>
+        
+
+        <script>
+            function init(){
+                initFirebase();
+                var studentSelect = document.getElementById("studentSelect");
+
+                var userEmail = studentSelect.options[0].text;
+                console.log(userEmail);
+                var userEID = userEmail.split('@')[0];
+                var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
+                
+                var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
+                hyperlinkOverlay(codeMirror);
+                var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
+                    { richTextToolbar: true, richTextShortcuts: true , userId:"<%= user.displayName %>" }
+                );
+                firepad.on('ready', function() {
+                    if(firepad.isHistoryEmpty()) {
+                        firepad.setHtml('<span style="font-size: 24px;"><%= title %> </span>');
+                    }
+                });
+                console.log("<%= character %>");
+            }
+            function selectOneStudent(){
+                var student = document.getElementById("studentSelect").value;
+                var userEmail = student;
+                var userEID = userEmail.split('@')[0];
+                var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
+                
+                var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
+                hyperlinkOverlay(codeMirror);
+                var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
+                    { richTextToolbar: true, richTextShortcuts: true , userId:"<%= user.displayName %>" }
+                );
+                
+                firepad.on('ready', function() {
+                    if(firepad.isHistoryEmpty()) {
+                        firepad.setHtml('<span style="font-size: 24px;"><%= title %> </span>');
+                    }
+                });
+            }
+            
+
+        </script>
+</head>
+<body onload="init();">
+        <nav class="navbar navbar-inverse"> <!-- Nav bar on the top of screen  -->
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="home">Note-taking System</a>
+                  </div>
+                  <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav">
+                      <li><a href="home">Home</a></li>
+                      <li><a href="https://docs.google.com/forms/d/1mq0lfN2hfEQrEJaFz7OddAt2ImwL1lwqOL08W7g8eBE/viewform?edit_requested=true" target="#">Feedback</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                      <p class="navbar-text"><img src="<%= user.photos[0].value %>" alt="Photo of <%= user.displayName %>" width="20" > <%= user.displayName %></p>
+                      <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-8 col-md-8">
+                <div id="firepad-container">
+                </div>        
+            </div>
+            <div class="col-sm-4 col-md-4">
+                <div class="form-group">
+                    <select class="form-control" id="studentSelect" size="10" onchange="selectOneStudent();">
+                        <option value="s102321003@mail1.ncnu.edu.tw" selected>test1</option>
+                        <option value="s106321512@mail1.ncnu.edu.tw">test2</option>
+                    </select>
+                </div> 
+            </div>
+    </div>
+    <script>
+        console.log("<%= user.displayName %>");
+        console.log("<%= title %>");
+        </script>
+    
+</body>
+</html>

@@ -66,7 +66,7 @@ module.exports = function(passport){
     console.log(req.user.emails[0].value);
     charaRef.orderByChild('email').equalTo(req.user.emails[0].value).on('child_added',function(data){
       if(data.val().character == "teacher"){
-          res.render('note-taking', {
+          res.render('note-watching', {
             user: req.user,
             title : req.body.title,
             character : "teacher"

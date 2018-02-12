@@ -1,0 +1,23 @@
+html { height: 100%; }
+body { margin: 0; height: 100%; }
+
+/* firepad style */
+
+#firepad-container {
+  position: fixed;
+  width: auto;
+  height: 100%;
+  right: 33%;
+  left : 0%;
+  bottom: 0px;
+  top : 50px;
+  background-color: rgba(0, 0, 0, 0.788);
+}
+
+.CodeMirror {
+  background-color: white;
+  border-style: outset;
+}
+
+
+.CodeMirror .cm-url { color: blue; }    
