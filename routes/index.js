@@ -49,7 +49,7 @@ module.exports = function(passport){
     res.redirect('/');
   });
 
-  router.get('/note-taking', function(req, res) {
+  router.get('/note', function(req, res) {
     res.redirect('/home');
   }); 
 
@@ -60,6 +60,27 @@ module.exports = function(passport){
         title : req.body.title,
       });   
   });
+
+  router.post('/note', ensureAuthenticated, function(req, res) {
+    var charaRef = firebase.database().ref("users/");
+    console.log(req.user.emails[0].value);
+    charaRef.orderByChild('email').equalTo(req.user.emails[0].value).on('child_added',function(data){
+      if(data.val().character == "teacher"){
+          res.render('note-taking', {
+            user: req.user,
+            title : req.body.title,
+            character : "teacher"
+        });
+      }else if(data.val().character == "student"){
+        res.render('note-taking', {
+          user: req.user,
+          title : req.body.title,
+          character : "student"
+        });
+      }
+    });
+  });
+
 
   return router;
 }
