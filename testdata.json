@@ -7,15 +7,26 @@
             "course":{
                 "0":"計算機概論",
                 "1":"程式設計"
-            }
+            },
+            "character": "student"
         },
         "1":{
             "name":"test",
             "email":"s102321003@mail1.ncnu.edu.tw",
             "course":{
-                "0":"計算機概論1",
-                "1":"程式設計1"
-            }
+                "0":"計算機概論",
+                "1":"程式設計"
+            },
+            "character": "student"
+        },
+        "2":{
+            "name":"test2",
+            "email":"jiaweilin0923@gmail.com",
+            "course":{
+                "0":"計算機概論",
+                "1":"程式設計"
+            },
+            "character": "teacher"
         }
     },
     "courses":
