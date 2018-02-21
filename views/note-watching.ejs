@@ -28,10 +28,26 @@
         <script>
             $(document).ready(function(){  
                 initFirebase();
-                $('#studentSelect').change(function(){
+                var userRef = firebase.database().ref("users/");
+                userRef.once('value').then(function(data){
+                    console.log(data.val().length);
+                    for(var i = 0; i < data.val().length; i++){
+                        if(data.val()[i].character == "student"){
+                            var name = data.val()[i].name;
+                            var email = data.val()[i].email;
+                            var newOption = document.createElement('option');
+                            newOption.innerHTML = name;
+                            newOption.setAttribute('value',email);
+                            $('#studentSelect').append( newOption );
+                        }
+                    }
+                });
+
+                $('#studentSelect').click(function(){
                     console.log("Select : ",$('#studentSelect').find(':selected').val());
                     var name = $('#studentSelect').find(':selected').text();
                     var email = $('#studentSelect').find(':selected').val();
+                    $('#student').text(name);
                     var userEID = email.split('@')[0];
                     var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
                     var firepadContainer = document.getElementById('firepad-container');
@@ -48,10 +64,7 @@
                         }
                     });
                 });
-
             }); 
-            
-
         </script>
 </head>
 <body>
@@ -85,9 +98,8 @@
             </div>
             <div class="col-sm-4 col-md-4">
                 <div class="form-group">
+                    <h2>你選擇的是 : <div id="student"></div></h2>
                     <select class="form-control" id="studentSelect" size="10">
-                        <option value="s102321003@mail1.ncnu.edu.tw" selected>test1</option>
-                        <option value="s106321512@mail1.ncnu.edu.tw">test2</option>
                     </select>
                 </div> 
             </div>
