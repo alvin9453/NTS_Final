@@ -32,13 +32,12 @@
                 // Add student from data into select list
                 var userRef = firebase.database().ref("users/");
                 userRef.once('value').then(function(data){
-                    console.log(data.val().length);
                     for(var i = 0; i < data.val().length; i++){
                         if(data.val()[i].character == "student"){
                             var name = data.val()[i].name;
                             var email = data.val()[i].email;
                             var newOption = document.createElement('option');
-                            newOption.innerHTML = name;
+                            newOption.innerHTML = name + ' < ' + email + ' > ' ;
                             newOption.setAttribute('value',email);
                             $('#studentSelect').append( newOption );
                         }
@@ -118,10 +117,10 @@
                 </div>        
             </div>
             <div class="col-sm-4 col-md-4">
-                <div class="form-group">
+                <div class="form-group" id="studentBlock">
                     <button id = "randomStudent" type="button" class="btn btn-success">隨機挑選學生</button>
                     <h2>你選擇的是 : <div id="studentName"></div></h2>
-                    <select class="form-control" id="studentSelect" size="10">
+                    <select class="form-control" id="studentSelect" size="40" height="100%">
                     </select>
                 </div> 
             </div>
