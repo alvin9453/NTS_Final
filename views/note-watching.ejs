@@ -48,7 +48,27 @@
                     console.log("Select : ",$('#studentSelect').find(':selected').val());
                     var name = $('#studentSelect').find(':selected').text();
                     var email = $('#studentSelect').find(':selected').val();
-                    $('#student').text(name);
+                    $('#studentName').text(name);
+                    var userEID = email.split('@')[0];
+                    var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
+                    var firepadContainer = document.getElementById('firepad-container');
+                    firepadContainer.innerHTML = "";
+                    var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
+                    hyperlinkOverlay(codeMirror);
+                    var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
+                        { richTextToolbar: false, richTextShortcuts: true , userId:"<%= user.displayName %>" }
+                    );
+                    firepad.on('ready', function() {
+                        //console.log(firepad.getHtml());
+                    });
+                });
+
+                $('#randomStudent').click(function(){
+                    var options = $('#studentSelect').find('option');
+                    var randomIndex = Math.floor((Math.random() * options.length));
+                    var name = options.eq(randomIndex).text();
+                    var email = options.eq(randomIndex).val();
+                    $('#studentName').text(name);
                     var userEID = email.split('@')[0];
                     var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
                     var firepadContainer = document.getElementById('firepad-container');
@@ -60,11 +80,9 @@
                     );
                     firepad.on('ready', function() {
                         console.log(firepad.getHtml());
-                        if(firepad.isHistoryEmpty()) {
-                            firepad.setHtml('<span style="font-size: 24px;"><%= title %> </span>');
-                        }
                     });
                 });
+                
             }); 
         </script>
 </head>
@@ -99,7 +117,8 @@
             </div>
             <div class="col-sm-4 col-md-4">
                 <div class="form-group">
-                    <h2>你選擇的是 : <div id="student"></div></h2>
+                    <button id = "randomStudent" type="button" class="btn btn-success">隨機挑選學生</button>
+                    <h2>你選擇的是 : <div id="studentName"></div></h2>
                     <select class="form-control" id="studentSelect" size="10">
                     </select>
                 </div> 
