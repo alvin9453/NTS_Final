@@ -29,6 +29,7 @@
         <script>
             $(document).ready(function(){  
                 initFirebase();
+                // Add student from data into select list
                 var userRef = firebase.database().ref("users/");
                 userRef.once('value').then(function(data){
                     console.log(data.val().length);
@@ -43,7 +44,7 @@
                         }
                     }
                 });
-
+                // Select list click
                 $('#studentSelect').change(function(){
                     console.log("Select : ",$('#studentSelect').find(':selected').val());
                     var name = $('#studentSelect').find(':selected').text();
@@ -63,6 +64,7 @@
                     });
                 });
 
+                // Random choose button
                 $('#randomStudent').click(function(){
                     var options = $('#studentSelect').find('option');
                     var randomIndex = Math.floor((Math.random() * options.length));
