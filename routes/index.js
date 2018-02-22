@@ -35,6 +35,17 @@ module.exports = function(passport){
     }),
     function(req, res) {
       // Authenticated successfully
+      var userRef = firebase.database().ref("users/");
+      var newUserKey = firebase.database().ref("users/").push().key;
+      var postData = {
+        name : req.user.displayName,
+        character : 'student',
+        email : req.user.emails[0].value
+      };
+      var updates = {};
+      updates[newUserKey] = postData;
+      userRef.update(updates);
+
       res.redirect('/home');
     });
 
@@ -65,13 +76,14 @@ module.exports = function(passport){
     var charaRef = firebase.database().ref("users/");
     console.log(req.user.emails[0].value);
     charaRef.orderByChild('email').equalTo(req.user.emails[0].value).on('child_added',function(data){
+      console.log("Data : ", data);
       if(data.val().character == "teacher"){
           res.render('note-watching', {
             user: req.user,
             title : req.body.title,
             character : "teacher"
         });
-      }else if(data.val().character == "student"){
+      }else{
         res.render('note-taking', {
           user: req.user,
           title : req.body.title,

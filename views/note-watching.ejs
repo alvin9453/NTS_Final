@@ -32,7 +32,7 @@
                 // Add student from data into select list
                 var userRef = firebase.database().ref("users/");
                 userRef.once('value').then(function(data){
-                    for(var i = 0; i < data.val().length; i++){
+                    for(var i in data.val()){
                         if(data.val()[i].character == "student"){
                             var name = data.val()[i].name;
                             var email = data.val()[i].email;
