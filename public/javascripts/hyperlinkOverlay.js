@@ -88,3 +88,37 @@ function hyperlinkOverlay(cm) {
     };
     hoverWidgetOnOverlay(cm, 'url', widget);
 }
+
+function qaOverlay(cm) {
+    if (!cm) return;
+
+    const rx_word = "\""; // Define what separates a word
+
+
+    function isQa(s){
+        isQa.prefixes=['\/Q:','\/A:'];
+        isQa.rx_qa= /(^\/Q:.*)|(^\/A:.*)/i;
+        if (!isQa.rx_qa.test(s)) return false;
+        for (let i=0; i<isQa.prefixes.length; i++) if (s.startsWith(isQa.prefixes[i])) return true;
+    }
+
+    cm.addOverlay({
+        token: function(stream) {
+            let ch = stream.peek();
+            let word = "";
+
+            if (rx_word.includes(ch) || ch==='\uE000' || ch==='\uE001') {
+                stream.next();
+                return null;
+            }
+
+            while ((ch = stream.peek()) && !rx_word.includes(ch)) {
+                word += ch;
+                stream.next();
+            }
+
+            if (isQa(word)) return "qa"; // CSS class: cm-qa
+        }},	
+        { opaque : true }  // opaque will remove any spelling overlay etc
+    );
+}

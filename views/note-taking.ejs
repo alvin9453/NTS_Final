@@ -34,6 +34,7 @@
 
                 var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
                 hyperlinkOverlay(codeMirror);
+                qaOverlay(codeMirror);
                 var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
                     { richTextToolbar: true, richTextShortcuts: true , userId:"<%= user.displayName %>" }
                 );
@@ -41,6 +42,14 @@
                     if(firepad.isHistoryEmpty()) {
                         firepad.setHtml('<span style="font-size: 24px;"><%= title %> </span>');
                     }
+                });
+            }
+            function callIframe(url, callback) {
+                $('#slide').append('<iframe id="ppt"></iframe>');
+                $('#ppt').attr('src', url);
+
+                $('#ppt').load("",function() {
+                    callback(this);
                 });
             }
 
@@ -73,6 +82,23 @@
         <div class="row">
             <div class="col-sm-6 col-md-6">
                 <div class="embed-responsive embed-responsive" id="slide">
+                        <script>
+                            callIframe("https://www.slideshare.net/slideshow/embed_code/key/wXnQeT3o1ckt1b",function(){
+                                
+                                console.log('Ready');
+                                var iframe = $('#ppt');
+                                $('#ppt').contents().find('#btnNext').click(function(){
+                                    console.log('Next');
+                                });
+                            });
+                            $(function(){
+                                var iframe = $('#ppt');
+                                $('#ppt').contents().find('#btnNext').click(function(){
+                                    console.log('Next');
+                                });
+                            });
+                            
+                        </script>
                 </div>
             </div>
             <div class="col-sm-6 col-md-6">
