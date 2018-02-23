@@ -55,6 +55,7 @@
                     firepadContainer.innerHTML = "";
                     var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
                     hyperlinkOverlay(codeMirror);
+                    qaOverlay(codeMirror);
                     var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
                         { richTextToolbar: false, richTextShortcuts: true , userId:"<%= user.displayName %>" }
                     );
@@ -76,6 +77,7 @@
                     firepadContainer.innerHTML = "";
                     var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
                     hyperlinkOverlay(codeMirror);
+                    qaOverlay(codeMirror);
                     var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
                         { richTextToolbar: false, richTextShortcuts: true , userId:"<%= user.displayName %>" }
                     );
