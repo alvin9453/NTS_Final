@@ -96,8 +96,8 @@ function qaOverlay(cm) {
 
 
     function isQa(s){
-        isQa.prefixes=['\/Q:','\/A:'];
-        isQa.rx_qa= /(^\/Q:.*)|(^\/A:.*)/i;
+        isQa.prefixes=['\/Q ','\/A '];
+        isQa.rx_qa= /(^\/Q .*)|(^\/A .*)/i;
         if (!isQa.rx_qa.test(s)) return false;
         for (let i=0; i<isQa.prefixes.length; i++) if (s.startsWith(isQa.prefixes[i])) return true;
     }
