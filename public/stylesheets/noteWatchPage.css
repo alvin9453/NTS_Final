@@ -28,3 +28,4 @@ body { margin: 0; height: 100%; }
 
 
 .CodeMirror .cm-url { color: blue; }    
+.CodeMirror .cm-qa { color: orange; }    
