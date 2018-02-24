@@ -32,21 +32,10 @@ module.exports = function(passport){
   router.get('/auth/google/callback',
     passport.authenticate('google', {
       failureRedirect: '/'
-    }),
+    }), 
     function(req, res) {
       // Authenticated successfully
-      var userRef = firebase.database().ref("users/");
-      var newUserKey = firebase.database().ref("users/").push().key;
-      var postData = {
-        name : req.user.displayName,
-        character : 'student',
-        email : req.user.emails[0].value
-      };
-      var updates = {};
-      updates[newUserKey] = postData;
-      userRef.update(updates);
-
-      res.redirect('/home');
+      isUserExists(req , res);
     });
 
   router.get('/home', ensureAuthenticated, function(req, res) {
@@ -105,4 +94,34 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/');
 }
 
+function isUserExists(req,res) {
+  var userEmail = req.user.emails[0].value;
+  var usersRef = firebase.database().ref("users/");
+  usersRef.orderByChild('email').equalTo(userEmail).once('value', function(snapshot) {
+    console.log("snapshot : ",snapshot.val());
+    var exists = (snapshot.val() !== null);
+    console.log(exists);
+    userExistsCallback( req.user.displayName , userEmail, exists , res);
+  });
+}
 
+function userExistsCallback(userName , userEmail, exists , res) {
+  if (exists) {
+    console.log("Exist!");
+    res.redirect('/home');
+  } else {
+    var userRef = firebase.database().ref("users/");
+    var newUserKey = firebase.database().ref("users/").push().key;
+    var postData = {
+      name : userName,
+      character : 'student',
+      email : userEmail
+    };
+    var updates = {};
+    updates[newUserKey] = postData;
+    userRef.update(updates);
+    
+    console.log("Not Exist!");
+    res.redirect('/home');
+  }
+}
