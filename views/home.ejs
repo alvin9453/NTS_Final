@@ -61,6 +61,7 @@
                 slideArray = Object.values(slidesObject);
                 for(var i = 0; i < slideArray.length; i++ ){
                     var pptTitle = slideArray[i].title;
+                    var pptUrl = slideArray[i].url;
                     var form = document.createElement('form');
                     form.setAttribute('method','POST');
                     form.setAttribute('action','/note');
@@ -70,6 +71,12 @@
                     hiddenInputTitle.setAttribute('value',pptTitle);
                     form.appendChild(hiddenInputTitle);
                     
+                    var hiddenInputUrl = document.createElement('input');
+                    hiddenInputUrl.setAttribute('type','hidden');
+                    hiddenInputUrl.setAttribute('name','pptUrl');
+                    hiddenInputUrl.setAttribute('value',pptUrl);
+                    form.appendChild(hiddenInputUrl);
+
                     var btn = document.createElement('input');
                     btn.setAttribute('type','submit');
                     btn.setAttribute('class',"list-group-item btn btn-default");

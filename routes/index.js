@@ -84,6 +84,7 @@ module.exports = function(passport){
         res.render('note-taking', {
           user: req.user,
           title : req.body.title,
+          pptUrl : req.body.pptUrl,
           character : "student"
         });
       }
