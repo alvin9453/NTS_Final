@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Note-taking system</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   
+    <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+    <script src="/javascripts/firebase-init.js"></script>
+    <script>  
+        $(function(){
+            initFirebase();
+            var courseRef = firebase.database().ref("courses/");
+            courseRef.once('value').then(function(data){
+                console.log(data.val());
+                for(var courseName in data.val()){
+                    var newOption = document.createElement('option');
+                    newOption.innerHTML = courseName;
+                    newOption.setAttribute('value',courseName);
+                    $('#courseSelect').append( newOption );
+                }
+            })
+        });
+        function validate(form) {
+            if ( confirm('確定要新增此課程的投影片嗎?') ){
+                alert('新增成功');
+                return true;
+            }else{
+                return false;
+            }
+        }
+    </script>
+</head>
+<body>
+</body>
+    <nav class="navbar navbar-inverse"> <!-- Nav bar on the top of screen  -->
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="home">Note-taking System</a>
+              </div>
+              <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav" id="navList">
+                  <li class="active" ><a href="home">Home</a></li>
+                  <li><a href="https://docs.google.com/forms/d/1mq0lfN2hfEQrEJaFz7OddAt2ImwL1lwqOL08W7g8eBE/viewform?edit_requested=true" target="#">Feedback</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                  <p class="navbar-text" id='character'></p>
+                  <p class="navbar-text"><img src="<%= user.photos[0].value %>" alt="Photo of <%= user.displayName %>" width="20" > <%= user.displayName %></p>
+                  <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="row">
+            <div class="form-group">
+                <form id="infoForm" method="POST" action="/addSlide" onsubmit="return validate(this);">
+                    <div class="col-sm-6 col-md-6">          
+                        <select class="form-control" id="courseSelect" name="courseName" size="10" height="50%" required>
+                        </select>
+                    </div>
+                    <div class="col-sm-6 col-md-6">
+                        <div class="input-group">
+                            <label>投影片標題 :</label>
+                            <input class="form-control" type="text" name="pptTitle" required/>
+                        </div>
+                        <div class="input-group">
+                            <label>投影片內嵌碼 (Slide Embedded code) :</label>
+                            <textarea class="form-control" name="pptUrl" rows="5" required></textarea>
+                        </div>
+                        <br>
+                        <input class="btn btn-primary" type="submit" value="送出" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+</html>

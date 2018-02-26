@@ -1,65 +1,37 @@
 {
-    "users":
-    {
-        "0":{
-            "name":"林嘉緯",
-            "email":"s106321512@mail1.ncnu.edu.tw",
-            "course":{
-                "0":"計算機概論",
-                "1":"程式設計"
-            },
-            "character": "student"
+    "courses" : {
+      "程式設計" : {
+        "slides" : {
+          "-L6FuONP6XYaKze9F6KI" : {
+            "title" : "Class",
+            "url" : "<iframe src='//www.slideshare.net/slideshow/embed_code/key/wXnQeT3o1ckt1b' width='595' height='485' frameborder='0' marginwidth='0' marginheight='0' scrolling='no' style='border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;' allowfullscreen> </iframe> <div style='margin-bottom:5px'> <strong> <a href='//www.slideshare.net/secret/wXnQeT3o1ckt1b' title='20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket' target='_blank'>20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket</a> </strong> from <strong><a href='https://www.slideshare.net/ssusere04d37' target='_blank'>嘉緯 林</a></strong> </div>"
+          },
+          "-L6FuXquqEIEtXAWNdrS" : {
+            "title" : "C++ Hello World",
+            "url" : "<iframe src='//www.slideshare.net/slideshow/embed_code/key/wXnQeT3o1ckt1b' width='595' height='485' frameborder='0' marginwidth='0' marginheight='0' scrolling='no' style='border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;' allowfullscreen> </iframe> <div style='margin-bottom:5px'> <strong> <a href='//www.slideshare.net/secret/wXnQeT3o1ckt1b' title='20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket' target='_blank'>20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket</a> </strong> from <strong><a href='https://www.slideshare.net/ssusere04d37' target='_blank'>嘉緯 林</a></strong> </div>"
+          },
+          "-L6FxNdYK2sFIeGYjAjC" : {
+            "title" : "C++ Print",
+            "url" : "<iframe src='//www.slideshare.net/slideshow/embed_code/key/wXnQeT3o1ckt1b' width='595' height='485' frameborder='0' marginwidth='0' marginheight='0' scrolling='no' style='border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;' allowfullscreen> </iframe> <div style='margin-bottom:5px'> <strong> <a href='//www.slideshare.net/secret/wXnQeT3o1ckt1b' title='20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket' target='_blank'>20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket</a> </strong> from <strong><a href='https://www.slideshare.net/ssusere04d37' target='_blank'>嘉緯 林</a></strong> </div>"
+          }
         },
-        "1":{
-            "name":"test",
-            "email":"s102321003@mail1.ncnu.edu.tw",
-            "course":{
-                "0":"計算機概論",
-                "1":"程式設計"
-            },
-            "character": "student"
+        "teacher" : "吳坤熹",
+        "time" : "4abc"
+      },
+      "計算機概論" : {
+        "slides" : {
+          "-L6Fu_u3E1Sf_DsYcTqc" : {
+            "title" : "Introduction to Python",
+            "url" : "<iframe src='//www.slideshare.net/slideshow/embed_code/key/wXnQeT3o1ckt1b' width='595' height='485' frameborder='0' marginwidth='0' marginheight='0' scrolling='no' style='border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;' allowfullscreen> </iframe> <div style='margin-bottom:5px'> <strong> <a href='//www.slideshare.net/secret/wXnQeT3o1ckt1b' title='20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket' target='_blank'>20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket</a> </strong> from <strong><a href='https://www.slideshare.net/ssusere04d37' target='_blank'>嘉緯 林</a></strong> </div>"
+          },
+          "-L6FuchQ9Hy_Bidyn0nY" : {
+            "title" : "Python Hello World",
+            "url" : "<iframe src='//www.slideshare.net/slideshow/embed_code/key/wXnQeT3o1ckt1b' width='595' height='485' frameborder='0' marginwidth='0' marginheight='0' scrolling='no' style='border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;' allowfullscreen> </iframe> <div style='margin-bottom:5px'> <strong> <a href='//www.slideshare.net/secret/wXnQeT3o1ckt1b' title='20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket' target='_blank'>20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket</a> </strong> from <strong><a href='https://www.slideshare.net/ssusere04d37' target='_blank'>嘉緯 林</a></strong> </div>"
+          }
         },
-        "2":{
-            "name":"test2",
-            "email":"jiaweilin0923@gmail.com",
-            "course":{
-                "0":"計算機概論",
-                "1":"程式設計"
-            },
-            "character": "teacher"
-        }
-    },
-    "courses":
-    {
-        "0":{
-            "name":"計算機概論",
-            "teacher":"吳坤熹",
-            "time":"4abc",
-            "slides":{
-                "0" : {
-                    "title" : "Introduction of Python",
-                    "url" : "<iframe src='https://onedrive.live.com/embed?cid=69DD0BAF078EDC3D&resid=69DD0BAF078EDC3D%21742&authkey=AE1sElLraKDKXkk&em=2' width='402' height='327' frameborder='0' scrolling='no'><\/iframe>"
-                },
-                "1" : {
-                    "title" : "Python Hello World",
-                    "url" : "<iframe src='https://onedrive.live.com/embed?cid=69DD0BAF078EDC3D&resid=69DD0BAF078EDC3D%21742&authkey=AE1sElLraKDKXkk&em=2' width='402' height='327' frameborder='0' scrolling='no'><\/iframe>"
-                }
-            }
-        },
-        "1":{
-            "name":"程式設計",
-            "teacher":"吳坤熹",
-            "time":"4abc",
-            "slides":{
-                "0" : {
-                    "title" : "Introduction of C++",
-                    "url" : "<iframe src='https://onedrive.live.com/embed?cid=69DD0BAF078EDC3D&resid=69DD0BAF078EDC3D%21742&authkey=AE1sElLraKDKXkk&em=2' width='402' height='327' frameborder='0' scrolling='no'><\/iframe>"
-                },
-                "1" : {
-                    "title" : "C++ Hello World",
-                    "url" : "<iframe src='https://onedrive.live.com/embed?cid=69DD0BAF078EDC3D&resid=69DD0BAF078EDC3D%21742&authkey=AE1sElLraKDKXkk&em=2' width='402' height='327' frameborder='0' scrolling='no'><\/iframe>"
-                }
-            }
-        }   
+        "teacher" : "吳坤熹",
+        "time" : "4abc"
+      }
     }
-}
+  }
+  

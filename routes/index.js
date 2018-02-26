@@ -49,9 +49,17 @@ module.exports = function(passport){
     res.redirect('/');
   });
 
+  
+
   router.get('/note', function(req, res) {
     res.redirect('/home');
   }); 
+
+  router.get('/addSlide', function(req, res) {
+    res.render('addSlide',
+     { user: req.user }
+    );
+  });
 
   router.post('/note-taking', ensureAuthenticated, function(req, res) {
 
@@ -81,7 +89,23 @@ module.exports = function(passport){
       }
     });
   });
+  router.post('/addSlide',  function(req, res) {
+    var courseName = req.body.courseName;
+    var pptTitle = req.body.pptTitle;
+    var pptUrl = req.body.pptUrl;
+    pptUrl = pptUrl.replace(/\"/g,"'");
+    var courseRef = firebase.database().ref('courses/' + courseName +  '/slides/');
+    var newCourseKey = firebase.database().ref('courses/' + courseName + '/slides/').push().key;
+    var postData = {
+      title : pptTitle,
+      url : pptUrl
+    };
+    var updates = {};
+    updates[newCourseKey] = postData;
+    courseRef.update(updates);
 
+    res.redirect('addSlide');
+  });
 
   return router;
 }
