@@ -7,10 +7,24 @@
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   
+    <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
     <script src="/javascripts/firebase-init.js"></script>
     <script>
         initFirebase();    
+        var userRef = firebase.database().ref("users/");
+        userRef.orderByChild('email').equalTo("<%= user.emails[0].value %>").once('child_added',function(data){
+            var character = data.val().character;
+            if( character == 'teacher'){
+                $('#character').text('老師');
+                var liElement = $('<li></li>').html('<a href="addSlide" target="#">新增課程投影片</a>');
+                $('#navList').append(liElement);
+            }else if(character == 'student'){
+                $('#character').text('學生');
+            }
+        });
+
+
         // old version : Students have to join the course
         /*var userRef = firebase.database().ref("users/");
         userRef.orderByChild('email').equalTo("<%= user.emails[0].value %>").on('child_added',function(data){
@@ -25,42 +39,44 @@
         });*/
         // demo version : Studnets can look all course in system
         var courseRef = firebase.database().ref("courses/");
-        courseRef.orderByChild('name').on('child_added',function(data){
-            var courseBlock = document.getElementById('course');
-            var btn = document.createElement('button');
-            btn.setAttribute('onclick',"courseInfo(this.textContent);");
-            btn.setAttribute('class',"list-group-item");
-            btn.innerHTML = data.val().name;
-            courseBlock.appendChild(btn);
+        courseRef.once('value').then(function(data){
+            for(var courseName in data.val()){
+                var courseBlock = document.getElementById('course');
+                var btn = document.createElement('button');
+                btn.setAttribute('onclick',"courseInfo(this.textContent);");
+                btn.setAttribute('class',"list-group-item");
+                btn.innerHTML = courseName;
+                courseBlock.appendChild(btn);
+            }
         });
 
         function courseInfo(courseName){
-            var courseRef = firebase.database().ref("courses/");
+            var courseRef = firebase.database().ref("courses/" + courseName + '/');
             var showList = document.getElementById('details');
             showList.innerHTML = "";
             var courseTitle = document.getElementById('courseTitle');
             courseTitle.innerHTML = courseName;
-            courseRef.orderByChild('name').equalTo(courseName).on('child_added',function(data){
-                for(var i = 0; i < data.val().slides.length; i++){                 
+            courseRef.once('value').then(function(data){
+                var slidesObject = Object.values(data.val())[0];
+                slideArray = Object.values(slidesObject);
+                for(var i = 0; i < slideArray.length; i++ ){
+                    var pptTitle = slideArray[i].title;
                     var form = document.createElement('form');
                     form.setAttribute('method','POST');
                     form.setAttribute('action','/note');
-                    
-
                     var hiddenInputTitle = document.createElement('input');
                     hiddenInputTitle.setAttribute('type','hidden');
                     hiddenInputTitle.setAttribute('name','title');
-                    hiddenInputTitle.setAttribute('value',data.val().slides[i].title);
+                    hiddenInputTitle.setAttribute('value',pptTitle);
                     form.appendChild(hiddenInputTitle);
-
+                    
                     var btn = document.createElement('input');
                     btn.setAttribute('type','submit');
                     btn.setAttribute('class',"list-group-item btn btn-default");
-                    btn.setAttribute('value',data.val().slides[i].title);
+                    btn.setAttribute('value',pptTitle);
                     form.appendChild(btn);
 
                     showList.appendChild(form);
-                    
                 }
             });
         }
@@ -79,11 +95,12 @@
                 <a class="navbar-brand" href="home">Note-taking System</a>
               </div>
               <div class="collapse navbar-collapse" id="myNavbar">
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav" id="navList">
                   <li class="active" ><a href="home">Home</a></li>
                   <li><a href="https://docs.google.com/forms/d/1mq0lfN2hfEQrEJaFz7OddAt2ImwL1lwqOL08W7g8eBE/viewform?edit_requested=true" target="#">Feedback</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
+                  <p class="navbar-text" id='character'></p>
                   <p class="navbar-text"><img src="<%= user.photos[0].value %>" alt="Photo of <%= user.displayName %>" width="20" > <%= user.displayName %></p>
                   <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
                 </ul>
