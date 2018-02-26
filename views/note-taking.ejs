@@ -27,7 +27,7 @@
 
         <script>
             function init(){
-                /*initFirebase();
+                initFirebase();
                 var userEmail = "<%= user.emails[0].value %>";
                 var userEID = userEmail.split('@')[0];
                 var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
@@ -42,7 +42,7 @@
                     if(firepad.isHistoryEmpty()) {
                         firepad.setHtml('<span style="font-size: 24px;"><%= title %> </span>');
                     }
-                });*/
+                });
             }
             function callIframe(url, callback) {
                 $('#slide').append('<iframe id="ppt"></iframe>');
