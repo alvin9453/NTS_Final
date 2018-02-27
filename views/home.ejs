@@ -10,6 +10,18 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   
     <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
     <script src="/javascripts/firebase-init.js"></script>
+
+    <style>
+        input { width:100%; }
+        h3 {text-align : center;}
+        .btn:focus {
+            background-color: #FFFACD;
+        }
+        .btn:hover {
+            background-color: #F0FFFF;
+        }
+    </style>
+
     <script>
         initFirebase();    
         var userRef = firebase.database().ref("users/");
@@ -42,9 +54,11 @@
         courseRef.once('value').then(function(data){
             for(var courseName in data.val()){
                 var courseBlock = document.getElementById('course');
-                var btn = document.createElement('button');
+                var btn = document.createElement('input');
+                btn.setAttribute('type','button');
                 btn.setAttribute('onclick',"courseInfo(this.textContent);");
-                btn.setAttribute('class',"list-group-item");
+                btn.setAttribute('class',"list-group-item btn btn-default");
+                btn.value = courseName;
                 btn.innerHTML = courseName;
                 courseBlock.appendChild(btn);
             }
@@ -55,7 +69,7 @@
             var showList = document.getElementById('details');
             showList.innerHTML = "";
             var courseTitle = document.getElementById('courseTitle');
-            courseTitle.innerHTML = courseName;
+            courseTitle.innerHTML = '<b>'+ courseName + '</b> 課程投影片';
             courseRef.once('value').then(function(data){
                 var slidesObject = Object.values(data.val())[0];
                 slideArray = Object.values(slidesObject);
@@ -79,7 +93,7 @@
 
                     var btn = document.createElement('input');
                     btn.setAttribute('type','submit');
-                    btn.setAttribute('class',"list-group-item btn btn-default");
+                    btn.setAttribute('class',"list-group-item btn btn-default ");
                     btn.setAttribute('value',pptTitle);
                     form.appendChild(btn);
 
@@ -117,7 +131,7 @@
     <div class="container">
        <div class="row">
            <div class="col-lg-6 col-md-6 col-sm-6">
-                <h3>您參與的課程列表 :  </h3>
+                <h3>課程列表</h3>
                     <div id="course" class="list-group">
                     </div>
            </div>
