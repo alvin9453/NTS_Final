@@ -4,18 +4,53 @@
   <title>教學筆記系統</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="/stylesheets/style.css">
+  <link rel="stylesheet" href="/stylesheets/login.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>  
-      
-</head>
+
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" rel="stylesheet">
+  </head>
 <body>
 
 <div class="container">
+    <div class="container text-center">
+      <h1 class="text-center login-title">教學筆記系統</h1>
+      <small class="text-muted">請選擇以下一種方式登入</small>
+        <br><br>
+      <form class="form-signin" data-ember-action="2">
+        <p>
+            <a class="btn btn-primary social-login-btn social-google" href="/auth/google"><i class="fa fa-google-plus"></i></a>
+          <a class="btn btn-primary social-login-btn social-facebook" href="#" data-toggle="modal" data-target="#myModal"><i class="fa fa-facebook"></i></a>
+          <a class="btn btn-primary social-login-btn social-twitter" href="#" data-toggle="modal" data-target="#myModal"><i class="fa fa-twitter"></i></a>
+          <a class="btn btn-primary social-login-btn social-linkedin" href="#" data-toggle="modal" data-target="#myModal"><i class="fa fa-linkedin"></i></a>
+          
+        </p>
+      </form>
+    </div>
+    <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">系統訊息</h4>
+          </div>
+          <div class="modal-body">
+            <p>敬請期待! 請先使用Google登入</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!--
   <div class="row">
     <div class="col">
     </div> 
     <div class="col">
       <h1 class="text-center login-title">教學筆記系統</h1>
+      <p><a class="btn btn-primary social-login-btn social-google" href="/auth/google"><i class="fa fa-google-plus"></i></a></p>
       <br>
       <img class="img-rounded center-block" alt="NCNU CSIE PEARL" width="350" src='/images/ncnu-logo.jpg' />
       <br>
@@ -28,6 +63,7 @@
     <div class="col">
     </div>
   </div>
+-->
 </div>
 <% include layouts/footer %>
 
