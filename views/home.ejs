@@ -23,7 +23,7 @@
         input { width:100%; }
         h3 {text-align : center;}
         .btn:focus {
-            background-color: #FFFACD;
+            background-color: #FFCC22;
         }
         .btn:hover {
             background-color: #F0FFFF;
@@ -77,7 +77,7 @@
             var showList = document.getElementById('details');
             showList.innerHTML = "";
             var courseTitle = document.getElementById('courseTitle');
-            courseTitle.innerHTML = '<b>'+ courseName + '</b> 課程投影片';
+            courseTitle.innerHTML = '<b><font color="#FFAA33">'+ courseName + '</font></b> 課程投影片';
             courseRef.once('value').then(function(data){
                 var slidesObject = Object.values(data.val())[0];
                 slideArray = Object.values(slidesObject);
