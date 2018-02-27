@@ -36,20 +36,7 @@
                 $('#character').text('學生');
             }
         });
-
-
         // old version : Students have to join the course
-        /*var userRef = firebase.database().ref("users/");
-        userRef.orderByChild('email').equalTo("<%= user.emails[0].value %>").on('child_added',function(data){
-            var courseBlock = document.getElementById('course');
-            for(var i = 0; i < data.val().course.length; i++){
-                var btn = document.createElement('button');
-                btn.setAttribute('onclick',"courseInfo(this.textContent);");
-                btn.setAttribute('class',"list-group-item");
-                btn.innerHTML = data.val().course[i];
-                courseBlock.appendChild(btn);
-            }
-        });*/
         // demo version : Studnets can look all course in system
         var courseRef = firebase.database().ref("courses/");
         courseRef.once('value').then(function(data){
