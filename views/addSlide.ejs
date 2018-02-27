@@ -27,7 +27,6 @@
         });
         function validate(form) {
             if ( confirm('確定要新增此課程的投影片嗎?') ){
-                alert('新增成功');
                 return true;
             }else{
                 return false;
@@ -63,19 +62,23 @@
     
     <div class="container">
         <div class="row">
+            <h1 align="center">新增課程投影片</h1>
+            <hr>
             <div class="form-group">
+                <label>1. 選擇課程</label>
                 <form id="infoForm" method="POST" action="/addSlide" onsubmit="return validate(this);">
-                    <div class="col-sm-6 col-md-6">          
+                    <div class="col-sm-6 col-md-6">
                         <select class="form-control" id="courseSelect" name="courseName" size="10" height="50%" required>
                         </select>
                     </div>
                     <div class="col-sm-6 col-md-6">
                         <div class="input-group">
-                            <label>投影片標題 :</label>
+                            <label>2. 輸入投影片標題</label>
                             <input class="form-control" type="text" name="pptTitle" required/>
                         </div>
+                        <br>
                         <div class="input-group">
-                            <label>投影片內嵌碼 (Slide Embedded code) :</label>
+                            <label>3. 貼上投影片內嵌碼 (Slide Embedded code)</label>
                             <textarea class="form-control" name="pptUrl" rows="5" required></textarea>
                         </div>
                         <br>

@@ -105,7 +105,7 @@ module.exports = function(passport){
     updates[newCourseKey] = postData;
     courseRef.update(updates);
 
-    res.redirect('addSlide');
+    res.render('./addSlideRedirect');
   });
 
   return router;
