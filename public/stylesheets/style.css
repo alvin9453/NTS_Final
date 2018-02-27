@@ -1,9 +1,10 @@
-@import url(https://fonts.googleapis.com/earlyaccess/notosanstc.css);
+@import url('https://fonts.googleapis.com/earlyaccess/notosanstc.css');
+
 body{
     font-family: 'Noto Sans TC', sans-serif;
     line-height: 1;
     font-size: 16px;
-    font-weight: 100;
+    font-weight: 200;
 }
 input { width:100%; }
 h3 {text-align : center;}
