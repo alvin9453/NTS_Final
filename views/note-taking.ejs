@@ -54,15 +54,22 @@
                 var liElement = document.createElement("li");
                 liElement.appendChild(btn);
                 $('#navList').append(liElement);
+
+                var livebtn = document.createElement("button");
+                livebtn.setAttribute('onclick',"livebtn()");
+                livebtn.setAttribute('id',"livebtn");
+                livebtn.setAttribute('class',"btn navbar-btn");
+                livebtn.innerHTML = "Live";
+                var liElement = document.createElement("li");
+                liElement.appendChild(livebtn);
+                $('#navList').append(liElement);
                 
             }
-            function callIframe(url, callback) {
+            function callIframe(url) {
+                $('#slide').html("");
                 $('#slide').append('<iframe id="ppt" allowFullScreen></iframe>');
                 $('#ppt').attr('src', url);
 
-                $('#ppt').load("",function() {
-                    callback(this);
-                });
             }
             function slidebtn(){
                 var btn = document.getElementById("slidebtn");
@@ -76,6 +83,18 @@
                     btn.innerHTML = "隱藏投影片";
                     document.getElementById('slide').style.right = "50%";
                     document.getElementById('firepad-container').style.left = "50%";
+                }
+            }
+            var pptUrl = "<%= pptUrl %>";
+            function livebtn(){
+                var btn = document.getElementById("livebtn");
+                if( btn.innerHTML == "No Live" ){
+                    btn.innerHTML = "Live";
+                    callIframe(pptUrl);
+                }
+                else if(btn.innerHTML == "Live"){
+                    btn.innerHTML = "No Live";
+                    callIframe("<%= pttLiveUrl %>");
                 }
             }
         </script>
@@ -93,19 +112,8 @@
                             var match = patt.exec(pptUrl);
                             pptUrl = match[0].replace(/&#39/,"");
                             
-                            callIframe(pptUrl,function(){
-                                console.log('Ready');
-                                var iframe = $('#ppt');
-                                $('#ppt').contents().find('#btnNext').click(function(){
-                                    console.log('Next');
-                                });
-                            });
-                            $(function(){
-                                var iframe = $('#ppt');
-                                $('#ppt').contents().find('#btnNext').click(function(){
-                                    console.log('Next');
-                                });
-                            });
+                            callIframe(pptUrl);
+                            
                             
                         </script>
                 </div>

@@ -64,6 +64,7 @@
                 for(var i = 0; i < slideArray.length; i++ ){
                     var pptTitle = slideArray[i].title;
                     var pptUrl = slideArray[i].url;
+                    var pptLiveUrl = slideArray[i].live;
                     var form = document.createElement('form');
                     form.setAttribute('method','POST');
                     form.setAttribute('action','/note');
@@ -78,6 +79,12 @@
                     hiddenInputUrl.setAttribute('name','pptUrl');
                     hiddenInputUrl.setAttribute('value',pptUrl);
                     form.appendChild(hiddenInputUrl);
+
+                    var hiddenInputLiveUrl = document.createElement('input');
+                    hiddenInputLiveUrl.setAttribute('type','hidden');
+                    hiddenInputLiveUrl.setAttribute('name','pptLiveUrl');
+                    hiddenInputLiveUrl.setAttribute('value',pptLiveUrl);
+                    form.appendChild(hiddenInputLiveUrl);
 
                     var btn = document.createElement('input');
                     btn.setAttribute('type','submit');
