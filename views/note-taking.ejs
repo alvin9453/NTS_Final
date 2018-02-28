@@ -57,7 +57,7 @@
                 
             }
             function callIframe(url, callback) {
-                $('#slide').append('<iframe id="ppt"></iframe>');
+                $('#slide').append('<iframe id="ppt" allowFullScreen></iframe>');
                 $('#ppt').attr('src', url);
 
                 $('#ppt').load("",function() {
