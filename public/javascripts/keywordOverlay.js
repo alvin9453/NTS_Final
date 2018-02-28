@@ -92,7 +92,7 @@ function hyperlinkOverlay(cm) {
 function qaOverlay(cm) {
     if (!cm) return;
 
-    const rx_word = "\""; // Define what separates a word
+    const rx_word = ""; // Define what separates a word
 
 
     function isQa(s){
