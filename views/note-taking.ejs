@@ -1,13 +1,14 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-        <title>Note-taking system</title>
+        <title>教學筆記系統</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
     
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   
+        <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
         <!-- Firebase js -->
         <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>    
         <!-- Firepad related js -->  
@@ -44,6 +45,16 @@
                         firepad.setHtml('<span style="font-size: 24px;"><%= title %> </span>');
                     }
                 });
+
+                var btn = document.createElement("button");
+                btn.setAttribute('onclick',"slidebtn()");
+                btn.setAttribute('id',"slidebtn");
+                btn.setAttribute('class',"btn navbar-btn");
+                btn.innerHTML = "隱藏投影片";
+                var liElement = document.createElement("li");
+                liElement.appendChild(btn);
+                $('#navList').append(liElement);
+                
             }
             function callIframe(url, callback) {
                 $('#slide').append('<iframe id="ppt"></iframe>');
@@ -53,7 +64,20 @@
                     callback(this);
                 });
             }
-
+            function slidebtn(){
+                var btn = document.getElementById("slidebtn");
+                console.log(btn.innerHTML);
+                if( btn.innerHTML == "隱藏投影片" ){
+                    btn.innerHTML = "顯示投影片";
+                    document.getElementById('slide').style.left = "0px";
+                    document.getElementById('firepad-container').style.left = "0%";
+                }
+                else if ( btn.innerHTML == "顯示投影片" ){
+                    btn.innerHTML = "隱藏投影片";
+                    document.getElementById('slide').style.right = "50%";
+                    document.getElementById('firepad-container').style.left = "50%";
+                }
+            }
         </script>
 </head>
 <body onload="init();">
