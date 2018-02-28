@@ -49,7 +49,9 @@ module.exports = function(passport){
     res.redirect('/');
   });
 
-  
+  router.get('/tutorials', function(req, res) {
+    res.render('tutorials');
+  });
 
   router.get('/note', function(req, res) {
     res.redirect('/home');
