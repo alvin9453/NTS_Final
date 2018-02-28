@@ -44,6 +44,10 @@
                         }
                     }
                 });
+                // Add slide link
+                var liElement = $('<li></li>').html('<a href="' + parsePPTURL("<%= pptUrl %>") +'" target="#"><span class="glyphicon glyphicon-file"></span> 投影片</a>');
+                $('#navList').append(liElement);
+
                 // Select list click
                 $('#studentSelect').change(function(){
                     console.log("Select : ",$('#studentSelect').find(':selected').val());
@@ -88,6 +92,12 @@
                 });
                 
             }); 
+            function parsePPTURL(pptUrl){
+                var patt = /\/\/www\..*?&#39/;
+                var match = patt.exec(pptUrl);
+                pptUrl = match[0].replace(/&#39/,"");
+                return pptUrl;
+            }
         </script>
 </head>
 <body>

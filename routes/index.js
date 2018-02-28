@@ -80,6 +80,7 @@ module.exports = function(passport){
           res.render('note-watching', {
             user: req.user,
             title : req.body.title,
+            pptUrl : req.body.pptUrl,
             character : "teacher"
         });
       }else{
