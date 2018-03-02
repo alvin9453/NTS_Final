@@ -55,18 +55,7 @@
                     var email = $('#studentSelect').find(':selected').val();
                     $('#studentName').text(name);
                     var userEID = email.split('@')[0];
-                    var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
-                    var firepadContainer = document.getElementById('firepad-container');
-                    firepadContainer.innerHTML = "";
-                    var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
-                    hyperlinkOverlay(codeMirror);
-                    qaOverlay(codeMirror);
-                    var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
-                        { richTextToolbar: false, richTextShortcuts: true , userId:"<%= user.displayName %>" }
-                    );
-                    firepad.on('ready', function() {
-                        //console.log(firepad.getHtml());
-                    });
+                    choosePad(userEID);
                 });
 
                 // Random choose button
@@ -77,21 +66,25 @@
                     var email = options.eq(randomIndex).val();
                     $('#studentName').text(name);
                     var userEID = email.split('@')[0];
-                    var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
-                    var firepadContainer = document.getElementById('firepad-container');
-                    firepadContainer.innerHTML = "";
-                    var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
-                    hyperlinkOverlay(codeMirror);
-                    qaOverlay(codeMirror);
-                    var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
-                        { richTextToolbar: false, richTextShortcuts: true , userId:"<%= user.displayName %>" }
-                    );
-                    firepad.on('ready', function() {
-                        //console.log(firepad.getHtml());
-                    });
+                    choosePad(userEID);
                 });
                 
             }); 
+            // change pad depend on user
+            function choosePad(userEID){
+                var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
+                var firepadContainer = document.getElementById('firepad-container');
+                firepadContainer.innerHTML = "";
+                var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
+                hyperlinkOverlay(codeMirror);
+                qaOverlay(codeMirror);
+                var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
+                    { richTextToolbar: false, richTextShortcuts: true , userId:"<%= user.displayName %>" }
+                );
+                firepad.on('ready', function() {
+                    //console.log(firepad.getHtml());
+                });
+            }
             function parsePPTURL(pptUrl){
                 var patt = /\/\/www\..*?&#39/;
                 var match = patt.exec(pptUrl);
@@ -109,6 +102,7 @@
                 </div>        
             </div>
             <div class="col-sm-4 col-md-4">
+                <h3><%= title %></h3>
                 <div class="form-group" id="studentBlock">
                     <button id = "randomStudent" type="button" class="btn btn-success">隨機挑選學生</button>
                     <h3>你選擇的是 : <b><div id="studentName">尚未選擇</div> </b></h3>
