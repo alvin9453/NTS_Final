@@ -25,7 +25,7 @@
         <link rel="stylesheet" href="/stylesheets/style.css">
 
         <script src="/javascripts/keywordOverlay.js"></script>
-        
+        <script src="/javascripts/bootbox.min.js"></script>
 
         <script>
             $(document).ready(function(){  
@@ -45,8 +45,10 @@
                     }
                 });
                 // Add slide link
-                var liElement = $('<li></li>').html('<a href="' + parsePPTURL("<%= pptUrl %>") +'" target="#"><span class="glyphicon glyphicon-file"></span> 投影片</a>');
-                $('#navList').append(liElement);
+                var slideLiElement = $('<li></li>').html('<a href="' + parsePPTURL("<%= pptUrl %>") +'" target="#"><span class="glyphicon glyphicon-file"></span> 投影片</a>');
+                var liveLiElement = $('<li></li>').html('<a href="#" onclick="liveCodePrompt()"><span class="glyphicon glyphicon-globe"></span> 線上展示</a>');
+                $('#navList').append(slideLiElement);
+                $('#navList').append(liveLiElement);
 
                 // Select list click
                 $('#studentSelect').change(function(){
@@ -91,6 +93,28 @@
                 pptUrl = match[0].replace(/&#39/,"");
                 return pptUrl;
             }
+            function liveCodePrompt(){
+                var promiseResult = new Promise(function(resolve,reject){
+                    // get the live code according to the chapter title 
+                    var courseRef = firebase.database().ref("courses/" + "<%= courseName %>");
+                    courseRef.on("value",function(data){
+                        resolve(data.val().live);
+                    });     
+                });
+                promiseResult.then(value => {
+                    bootbox.prompt({ 
+                        size: "large",
+                        value : value,
+                        title: "請輸入Powerpoint 線上展示連結", 
+                        callback: function(result){ /* result = String containing user input if OK clicked or null if Cancel clicked */    
+                            if(result != null && result != undefined){
+                                firebase.database().ref("courses/" + "<%= courseName %>").child('live').set(result);
+                            }
+                        }
+                    });
+                });
+                
+            }
         </script>
 </head>
 <body>
@@ -105,6 +129,7 @@
                 <h3><%= title %></h3>
                 <div class="form-group" id="studentBlock">
                     <button id = "randomStudent" type="button" class="btn btn-success">隨機挑選學生</button>
+                    
                     <h3>你選擇的是 : <b><div id="studentName">尚未選擇</div> </b></h3>
                     <select class="form-control" id="studentSelect" size="40" height="100%">
                     </select>

@@ -1,33 +1,11 @@
 {
   "courses" : {
     "程式設計" : {
+      "live" : "https://sg2-broadcast.officeapps.live.com/m/Broadcast.aspx?Fi=69dd0baf078edc3d_8a256f66-ac3e-4698-9552-e5ca6f0f0a29.pptx",
       "slides" : {
-        "-L6FuONP6XYaKze9F6KI" : {
-          "title" : "Class",
-          "url" : "<iframe src='//www.slideshare.net/slideshow/embed_code/key/wXnQeT3o1ckt1b' width='595' height='485' frameborder='0' marginwidth='0' marginheight='0' scrolling='no' style='border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;' allowfullscreen> </iframe> <div style='margin-bottom:5px'> <strong> <a href='//www.slideshare.net/secret/wXnQeT3o1ckt1b' title='20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket' target='_blank'>20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket</a> </strong> from <strong><a href='https://www.slideshare.net/ssusere04d37' target='_blank'>嘉緯 林</a></strong> </div>",
-          "live" : "https://sg2-broadcast.officeapps.live.com/m/Broadcast.aspx?Fi=69dd0baf078edc3d_8a256f66-ac3e-4698-9552-e5ca6f0f0a29.pptx"
-        },
-        "-L6FuXquqEIEtXAWNdrS" : {
-          "title" : "C++ Hello World",
-          "url" : "<iframe src='//www.slideshare.net/slideshow/embed_code/key/wXnQeT3o1ckt1b' width='595' height='485' frameborder='0' marginwidth='0' marginheight='0' scrolling='no' style='border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;' allowfullscreen> </iframe> <div style='margin-bottom:5px'> <strong> <a href='//www.slideshare.net/secret/wXnQeT3o1ckt1b' title='20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket' target='_blank'>20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket</a> </strong> from <strong><a href='https://www.slideshare.net/ssusere04d37' target='_blank'>嘉緯 林</a></strong> </div>"
-        },
-        "-L6FxNdYK2sFIeGYjAjC" : {
-          "title" : "C++ Print",
-          "url" : "<iframe src='//www.slideshare.net/slideshow/embed_code/key/wXnQeT3o1ckt1b' width='595' height='485' frameborder='0' marginwidth='0' marginheight='0' scrolling='no' style='border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;' allowfullscreen> </iframe> <div style='margin-bottom:5px'> <strong> <a href='//www.slideshare.net/secret/wXnQeT3o1ckt1b' title='20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket' target='_blank'>20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket</a> </strong> from <strong><a href='https://www.slideshare.net/ssusere04d37' target='_blank'>嘉緯 林</a></strong> </div>"
-        }
-      },
-      "teacher" : "吳坤熹",
-      "time" : "4abc"
-    },
-    "計算機概論" : {
-      "slides" : {
-        "-L6Fu_u3E1Sf_DsYcTqc" : {
-          "title" : "Introduction to Python",
-          "url" : "<iframe src='//www.slideshare.net/slideshow/embed_code/key/wXnQeT3o1ckt1b' width='595' height='485' frameborder='0' marginwidth='0' marginheight='0' scrolling='no' style='border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;' allowfullscreen> </iframe> <div style='margin-bottom:5px'> <strong> <a href='//www.slideshare.net/secret/wXnQeT3o1ckt1b' title='20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket' target='_blank'>20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket</a> </strong> from <strong><a href='https://www.slideshare.net/ssusere04d37' target='_blank'>嘉緯 林</a></strong> </div>"
-        },
-        "-L6FuchQ9Hy_Bidyn0nY" : {
-          "title" : "Python Hello World",
-          "url" : "<iframe src='//www.slideshare.net/slideshow/embed_code/key/wXnQeT3o1ckt1b' width='595' height='485' frameborder='0' marginwidth='0' marginheight='0' scrolling='no' style='border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;' allowfullscreen> </iframe> <div style='margin-bottom:5px'> <strong> <a href='//www.slideshare.net/secret/wXnQeT3o1ckt1b' title='20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket' target='_blank'>20170119 jia-wei-research of-web_real-time_communication_based_on_web_socket</a> </strong> from <strong><a href='https://www.slideshare.net/ssusere04d37' target='_blank'>嘉緯 林</a></strong> </div>"
+        "-L6S37BOcwaFAH2fITfR" : {
+          "title" : "Chapter 2- Data, Variables, and Calculations",
+          "url" : "<iframe src='//www.slideshare.net/slideshow/embed_code/key/g0DIEBEjO08z0A' width='595' height='485' frameborder='0' marginwidth='0' marginheight='0' scrolling='no' style='border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;' allowfullscreen> </iframe> <div style='margin-bottom:5px'> <strong> <a href='//www.slideshare.net/secret/g0DIEBEjO08z0A' title='Chapter 2 - Data, Variables, and Calculations' target='_blank'>Chapter 2 - Data, Variables, and Calculations</a> </strong> from <strong><a href='https://www.slideshare.net/ssusere04d37' target='_blank'>嘉緯 林</a></strong> </div>"
         }
       },
       "teacher" : "吳坤熹",
@@ -35,7 +13,7 @@
     }
   },
   "note-s102321003" : {
-    "C++ Hello World" : {
+    "Chapter 2- Data, Variables, and Calculations" : {
       "history" : {
         "A0" : {
           "a" : "林嘉緯",
@@ -43,35 +21,66 @@
             "l" : true
           }, "", {
             "fs" : "24px"
-          }, "C++ Hello World" ],
-          "t" : 1519631153115
+          }, "Chapter 2- Data, Variables, and Calculations" ],
+          "t" : 1519832447823
+        },
+        "A1" : {
+          "a" : "Jia-Wei Lin",
+          "o" : [ 45, {
+            "fs" : "24px"
+          }, "\n" ],
+          "t" : 1519969353771
+        },
+        "A2" : {
+          "a" : "Jia-Wei Lin",
+          "o" : [ 46, {
+            "l" : true
+          }, "" ],
+          "t" : 1519969353972
+        },
+        "A3" : {
+          "a" : "Jia-Wei Lin",
+          "o" : [ 47, "1" ],
+          "t" : 1519969354243
+        },
+        "A4" : {
+          "a" : "Jia-Wei Lin",
+          "o" : [ 48, "23" ],
+          "t" : 1519969354426
         }
       }
-    },
-    "Introduction to Python" : {
+    }
+  },
+  "note-s106321512" : {
+    "Chapter 2- Data, Variables, and Calculations" : {
       "history" : {
         "A0" : {
-          "a" : "林嘉緯",
+          "a" : "��蝺� ��",
           "o" : [ {
             "l" : true
           }, "", {
             "fs" : "24px"
-          }, "Introduction to Python" ],
-          "t" : 1519631858610
+          }, "Chapter 2- Data, Variables, and Calculations" ],
+          "t" : 1519865957250
         }
       }
     }
   },
   "users" : {
-    "-L6FyP7Q-HTRt1DLAxls" : {
-      "character" : "student",
-      "email" : "s102321003@mail1.ncnu.edu.tw",
-      "name" : "林嘉緯"
-    },
     "-L6G49laB1n90kF8mMWu" : {
       "character" : "teacher",
       "email" : "jiaweilin0923@gmail.com",
       "name" : "Jia-Wei Lin"
+    },
+    "-L6S2yUns4DcbOw4llyz" : {
+      "character" : "student",
+      "email" : "s102321003@mail1.ncnu.edu.tw",
+      "name" : "林嘉緯"
+    },
+    "-L6U3RDrkXLn6SWrq7yh" : {
+      "character" : "student",
+      "email" : "s106321512@mail1.ncnu.edu.tw",
+      "name" : "��蝺� ��"
     }
   }
 }

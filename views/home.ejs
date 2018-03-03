@@ -59,7 +59,7 @@
             var courseTitle = document.getElementById('courseTitle');
             courseTitle.innerHTML = '<b><font color="#FFAA33">'+ courseName + '</font></b> 課程投影片';
             courseRef.once('value').then(function(data){
-                var slidesObject = Object.values(data.val())[0];
+                var slidesObject = Object.values(data.val())[1];
                 slideArray = Object.values(slidesObject);
                 for(var i = 0; i < slideArray.length; i++ ){
                     var pptTitle = slideArray[i].title;
@@ -85,6 +85,12 @@
                     hiddenInputLiveUrl.setAttribute('name','pptLiveUrl');
                     hiddenInputLiveUrl.setAttribute('value',pptLiveUrl);
                     form.appendChild(hiddenInputLiveUrl);
+
+                    var hiddenCourseName = document.createElement('input');
+                    hiddenCourseName.setAttribute('type','hidden');
+                    hiddenCourseName.setAttribute('name','courseName');
+                    hiddenCourseName.setAttribute('value',courseName);
+                    form.appendChild(hiddenCourseName);
 
                     var btn = document.createElement('input');
                     btn.setAttribute('type','submit');

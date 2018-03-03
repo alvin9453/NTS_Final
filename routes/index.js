@@ -81,6 +81,7 @@ module.exports = function(passport){
             user: req.user,
             title : req.body.title,
             pptUrl : req.body.pptUrl,
+            courseName : req.body.courseName,
             character : "teacher"
         });
       }else{
