@@ -89,7 +89,7 @@ module.exports = function(passport){
           user: req.user,
           title : req.body.title,
           pptUrl : req.body.pptUrl,
-          pttLiveUrl : req.body.pptLiveUrl,
+          courseName : req.body.courseName,
           character : "student"
         });
       }

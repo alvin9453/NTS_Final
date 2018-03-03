@@ -55,15 +55,25 @@
                 liElement.appendChild(btn);
                 $('#navList').append(liElement);
 
-                var livebtn = document.createElement("button");
-                livebtn.setAttribute('onclick',"livebtn()");
-                livebtn.setAttribute('id',"livebtn");
-                livebtn.setAttribute('class',"btn navbar-btn");
-                livebtn.innerHTML = "Live";
-                var liElement = document.createElement("li");
-                liElement.appendChild(livebtn);
-                $('#navList').append(liElement);
-                
+                var courseRef = firebase.database().ref("courses/" + "<%= courseName %>");
+                    courseRef.on("value",function(data){
+                        if(data.val().live != ""){
+                            console.log(data.val().live);
+                            var livebtn = document.createElement("button");
+                            livebtn.setAttribute('onclick',"livebtn()");
+                            livebtn.setAttribute('id',"livebtn");
+                            livebtn.setAttribute('class',"btn navbar-btn");
+                            livebtn.innerHTML = "No Live";
+                            var liElement = document.createElement("li");
+                            liElement.appendChild(livebtn);
+                            $('#navList').append(liElement);
+                            callIframe(data.val().live);
+                      }else{
+                            var pptUrl = parsePPTURL("<%= pptUrl %>");
+                            $("#livebtn").remove();
+                            callIframe(pptUrl);
+                        }
+                    });                
             }
             function callIframe(url) {
                 $('#slide').html("");
@@ -85,7 +95,7 @@
                     document.getElementById('firepad-container').style.left = "50%";
                 }
             }
-            var pptUrl = "<%= pptUrl %>";
+            var pptUrl = parsePPTURL("<%= pptUrl %>");
             function livebtn(){
                 var btn = document.getElementById("livebtn");
                 if( btn.innerHTML == "No Live" ){
@@ -94,8 +104,23 @@
                 }
                 else if(btn.innerHTML == "Live"){
                     btn.innerHTML = "No Live";
-                    callIframe("<%= pttLiveUrl %>");
+                    var promiseLive = new Promise(function(resolve , reject){
+                        var courseRef = firebase.database().ref("courses/" + "<%= courseName %>");
+                        courseRef.on("value",function(data){
+                            resolve(data.val().live);
+                        });     
+                    });
+                    promiseLive.then(value => {
+                        callIframe(value);
+                    });
+                    
                 }
+            }
+            function parsePPTURL(pptUrl){
+                var patt = /\/\/www\..*?&#39/;
+                var match = patt.exec(pptUrl);
+                pptUrl = match[0].replace(/&#39/,"");
+                return pptUrl;
             }
         </script>
 </head>
@@ -105,17 +130,6 @@
         <div class="row">
             <div class="col-sm-6 col-md-6">
                 <div class="embed-responsive embed-responsive" id="slide">
-                        <script>
-                            var pptUrl = "<%= pptUrl %>";
-                            /* Parsing data*/
-                            var patt = /\/\/www\..*?&#39/;
-                            var match = patt.exec(pptUrl);
-                            pptUrl = match[0].replace(/&#39/,"");
-                            
-                            callIframe(pptUrl);
-                            
-                            
-                        </script>
                 </div>
             </div>
             <div class="col-sm-6 col-md-6">
