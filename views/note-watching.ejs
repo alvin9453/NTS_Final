@@ -103,12 +103,24 @@
                 });
                 promiseResult.then(value => {
                     bootbox.prompt({ 
+                        buttons : {
+                            confirm : {
+                                label : "儲存並開始線上展示",
+                                className : 'btn-primary'
+                            },
+                            cancel : {
+                                label : "結束線上展示並清除",
+                                className : 'btn-danger'
+                            }
+                        },
                         size: "large",
                         value : value,
                         title: "請輸入Powerpoint 線上展示連結", 
                         callback: function(result){ /* result = String containing user input if OK clicked or null if Cancel clicked */    
                             if(result != null && result != undefined){
                                 firebase.database().ref("courses/" + "<%= courseName %>").child('live').set(result);
+                            }else{
+                                firebase.database().ref("courses/" + "<%= courseName %>").child('live').set("");
                             }
                         }
                     });
