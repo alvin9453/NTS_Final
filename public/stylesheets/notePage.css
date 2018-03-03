@@ -32,10 +32,6 @@ body { margin: 0; height: 100%; }
   height : auto;
 }
 
-#slidebtn {
-  background-color: red;
-  color:white;
-}
 
 .CodeMirror .cm-url { color: blue; }    
 .CodeMirror .cm-qa { color: orange; }    
