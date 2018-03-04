@@ -56,24 +56,23 @@
                 $('#navList').append(liElement);
 
                 var courseRef = firebase.database().ref("courses/" + "<%= courseName %>");
-                    courseRef.on("value",function(data){
+                courseRef.on("value",function(data){
                         if(data.val().live != ""){
                             console.log(data.val().live);
                             var livebtn = document.createElement("button");
                             livebtn.setAttribute('onclick',"livebtn()");
                             livebtn.setAttribute('id',"livebtn");
                             livebtn.setAttribute('class',"btn btn-danger navbar-btn");
-                            livebtn.innerHTML = "No Live";
+                            livebtn.innerHTML = "跟隨線上直播";
                             var liElement = document.createElement("li");
                             liElement.appendChild(livebtn);
                             $('#navList').append(liElement);
-                            callIframe(data.val().live);
-                      }else{
+                        }else{
                             var pptUrl = parsePPTURL("<%= pptUrl %>");
                             $("#livebtn").remove();
                             callIframe(pptUrl);
                         }
-                    });                
+                });              
             }
             function callIframe(url) {
                 $('#slide').html("");
@@ -98,12 +97,12 @@
             var pptUrl = parsePPTURL("<%= pptUrl %>");
             function livebtn(){
                 var btn = document.getElementById("livebtn");
-                if( btn.innerHTML == "No Live" ){
-                    btn.innerHTML = "Live";
+                if( btn.innerHTML == "暫停線上直播" ){
+                    btn.innerHTML = "跟隨線上直播";
                     callIframe(pptUrl);
                 }
-                else if(btn.innerHTML == "Live"){
-                    btn.innerHTML = "No Live";
+                else if(btn.innerHTML == "跟隨線上直播"){
+                    btn.innerHTML = "暫停線上直播";
                     var promiseLive = new Promise(function(resolve , reject){
                         var courseRef = firebase.database().ref("courses/" + "<%= courseName %>");
                         courseRef.on("value",function(data){
