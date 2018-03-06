@@ -6,21 +6,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/stylesheets/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>   
+@import url('https://fonts.googleapis.com/earlyaccess/notosanstc.css');
+
+body{
+    font-family: 'Noto Sans TC', sans-serif;
+    line-height: 1;
+    font-size: 16px;
+    font-weight: 200;
+    background-color: #2e2f30;
+    color : #f5f5f5da;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    
+}
+
+.navbar {
+    background-color: #263238;
+}
+
+
+.sidenav {
+    height: 100%;
+    width: 160px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+.sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #818181;
+    display: block;
+}
+
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+.main {
+    margin-left: 160px; /* Same as the width of the sidenav */
+    padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+}
+    
+    </style>
 </head>
 <body>
-        <div class="container">
-                <h1 class="text-center">使用教學</h1>
+        <div class="container main">
+                <div class="sidenav">
+                        <a href="#login">登入</a>
+                        <a href="#student">學生 - 存取筆記</a>
+                        <a href="#teacher-addSlide">老師 - 新增課程投影片</a>
+                </div>
+                <h1 id="login" class="text-center">登入教學</h1>
+                <h3>1. 一開始會看到系統的登入畫面，如下圖，點選最左邊的G+按鈕(使用Google登入)</h3>
+                <img src="/images/login-1.PNG" width="30%">
+                <h3>2. Google 認證的頁面，請輸入<font color="#FF44AA">學校信箱(s106321XXX@mail1.ncnu.edu.tw)</font></h3>
+                <img src="/images/login-2.PNG" width="30%">
+                <h3>3. 接下來會被重導至學校信箱登入畫面，請使用學校信箱帳號密碼做登入</h3>
+                <img src="/images/login-3.PNG">
+                <h3>4. 畫面會被導到主畫面，就成功登入囉!</h3>
+                <img src="/images/login-4.PNG" width="50%">
+                <br>
+                <br>
+                <hr>
+                <br>
+                <br>
+
+
+                <h1 id="student" class="text-center">學生 - 存取筆記</h1>
                 <h3>1. 登入系統之後，會看到如下圖般的主畫面，畫面左邊會列出使用者參與的課程列表，如下圖所示</h3>
                 <img src="/images/tutorial-1.PNG">
                 <br><br>
                 <h3>2. 點選其中一個課程後，會列出該課程底下所有的課程投影片筆記，如下圖所示</h3>
                 <img src="/images/tutorial-2.PNG">
+                <br>
+                <br>
                 <p>上圖中，使用選擇了「計算機概論」這堂課之後，右邊列出了這堂課目前有的兩份投影片筆記</p>
                 <br><br>
-                <h3>3. 從畫面右邊選擇投影片筆記，便會進入到投影片筆記的部分，如下圖所示</h3>
-                <img src="/images/tutorial-3.PNG" width="50%">
+                <h3>3. 從畫面右邊選擇投影片筆記，便會進入到投影片筆記的部分，如下圖所示。要注意的是，上方工具列中有兩個按鈕 : <font color="#FF44AA">隱藏投影片</font> 以及<font color="#FF44AA">跟隨線上展示</font>按鈕。而<font color="#FF44AA">跟隨線上展示</font>按鈕只有在老師使用線上展示功能時會出現!</h3>
+                <img src="/images/tutorial-3.PNG" width="60%">
                 <br><br>
                 <p>上圖中，畫面左半邊是投影片的內容，而右半邊是紀錄筆記的輸入視窗，就可以開始搭配投影片紀錄筆記囉!</p>
                 <h3>4. 畫面右上方的部分(如下圖)，能夠讓筆記的內容根據使用者喜好做修改，例如文字的大小、字型、排列、置中置左、插入圖片等等</h3>
@@ -29,9 +111,22 @@
                 <h3>5.<font color="red">!!重要!!</font> 上課時，老師會詢問學生問題，同時要求同學把問題記下來並回答。此時，你可以在筆記中使用 <kbd>/Q[space]問題</kbd> 來記錄問題，或是使用<kbd>/A[space]答案</kbd>來紀錄答案(如下圖)，系統會以此分辨輸入的內容是問題、答案還是筆記</h3>
                 <img src="/images/tutorial-5-QA.PNG">
                 <h3>6. 記錄完筆記之後，只要離開網站就可以了，系統便會自動記錄使用者的筆記內容，下次登入時即可繼續操作與複習</h3>
+                <br>
+                <br>
+                <hr>
+                <br>
+                <br>
+                <h1 id="teacher-addSlide">老師 - 新增課程投影片</h1>
+                <h3>1. 在主頁面的工具列上方，選擇<font color="#FF44AA">新增課程投影片</font>按鈕</h3>
+                <img src="/images/addSlide-1.PNG">
+                <h3>2. 於畫面的左邊，選擇一門課程，並在右邊的欄位輸入課程投影片標題以及<font color="#FF7744 ">SlideShare Embed Code</font><a href="https://www.slideshare.net/" target="slideshare"><span class="glyphicon glyphicon-question-sign"></span></a></h3>
+                <img src="/images/addSlide-2.PNG" width="50%">
+                <h3>3. 新增成功! 畫面會跳轉回來此頁面</h3>         
+
+
             </div>
             <hr>
-            <div class="container bg-grey">
+            <div class="container bg-grey main">
                 <div class="row">
                     <div class="col-sm-2">
                      </div>
