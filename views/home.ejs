@@ -59,41 +59,45 @@
             var courseTitle = document.getElementById('courseTitle');
             courseTitle.innerHTML = '<b><font color="#FFAA33">'+ courseName + '</font></b> 課程投影片';
             courseRef.once('value').then(function(data){
-                var slidesObject = Object.values(data.val())[1];
-                slideArray = Object.values(slidesObject);
-                for(var i = 0; i < slideArray.length; i++ ){
-                    var pptTitle = slideArray[i].title;
-                    var pptUrl = slideArray[i].url;
-                    
-                    var form = document.createElement('form');
-                    form.setAttribute('method','POST');
-                    form.setAttribute('action','/note');
-                    var hiddenInputTitle = document.createElement('input');
-                    hiddenInputTitle.setAttribute('type','hidden');
-                    hiddenInputTitle.setAttribute('name','title');
-                    hiddenInputTitle.setAttribute('value',pptTitle);
-                    form.appendChild(hiddenInputTitle);
-                    
-                    var hiddenInputUrl = document.createElement('input');
-                    hiddenInputUrl.setAttribute('type','hidden');
-                    hiddenInputUrl.setAttribute('name','pptUrl');
-                    hiddenInputUrl.setAttribute('value',pptUrl);
-                    form.appendChild(hiddenInputUrl);
+                var index = Object.keys(data.val()).indexOf("slides");
+                if(index != -1){
+                    var slidesObject = Object.values(data.val())[index];
+                    slideArray = Object.values(slidesObject);
+                    for(var i = 0; i < slideArray.length; i++ ){
+                        var pptTitle = slideArray[i].title;
+                        var pptUrl = slideArray[i].url;
 
-                    var hiddenCourseName = document.createElement('input');
-                    hiddenCourseName.setAttribute('type','hidden');
-                    hiddenCourseName.setAttribute('name','courseName');
-                    hiddenCourseName.setAttribute('value',courseName);
-                    form.appendChild(hiddenCourseName);
+                        var form = document.createElement('form');
+                        form.setAttribute('method','POST');
+                        form.setAttribute('action','/note');
+                        var hiddenInputTitle = document.createElement('input');
+                        hiddenInputTitle.setAttribute('type','hidden');
+                        hiddenInputTitle.setAttribute('name','title');
+                        hiddenInputTitle.setAttribute('value',pptTitle);
+                        form.appendChild(hiddenInputTitle);
+                        
+                        var hiddenInputUrl = document.createElement('input');
+                        hiddenInputUrl.setAttribute('type','hidden');
+                        hiddenInputUrl.setAttribute('name','pptUrl');
+                        hiddenInputUrl.setAttribute('value',pptUrl);
+                        form.appendChild(hiddenInputUrl);
 
-                    var btn = document.createElement('input');
-                    btn.setAttribute('type','submit');
-                    btn.setAttribute('class',"list-group-item btn btn-default ");
-                    btn.setAttribute('value',pptTitle);
-                    form.appendChild(btn);
+                        var hiddenCourseName = document.createElement('input');
+                        hiddenCourseName.setAttribute('type','hidden');
+                        hiddenCourseName.setAttribute('name','courseName');
+                        hiddenCourseName.setAttribute('value',courseName);
+                        form.appendChild(hiddenCourseName);
 
-                    showList.appendChild(form);
+                        var btn = document.createElement('input');
+                        btn.setAttribute('type','submit');
+                        btn.setAttribute('class',"list-group-item btn btn-default ");
+                        btn.setAttribute('value',pptTitle);
+                        form.appendChild(btn);
+
+                        showList.appendChild(form);
+                    }
                 }
+                
             });
         }
     </script>
