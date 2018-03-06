@@ -54,9 +54,12 @@
                 var liElement = document.createElement("li");
                 liElement.appendChild(btn);
                 $('#navList').append(liElement);
+                      
+                var pptUrl = parsePPTURL("<%= pptUrl %>");
+                callIframe(pptUrl);  
 
                 var courseRef = firebase.database().ref("courses/" + "<%= courseName %>");
-                courseRef.on("value",function(data){
+                courseRef.once("value",function(data){
                         if(data.val().live != ""){
                             console.log(data.val().live);
                             var livebtn = document.createElement("button");
@@ -68,11 +71,11 @@
                             liElement.appendChild(livebtn);
                             $('#navList').append(liElement);
                         }else{
-                            var pptUrl = parsePPTURL("<%= pptUrl %>");
                             $("#livebtn").remove();
                             callIframe(pptUrl);
                         }
-                });              
+                });      
+                
             }
             function callIframe(url) {
                 $('#slide').html("");
