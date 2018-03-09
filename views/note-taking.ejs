@@ -61,7 +61,7 @@
                 var courseRef = firebase.database().ref("courses/" + "<%= courseName %>");
                 courseRef.on("value",function(data){
                         if(data.val().live != ""){
-                            alert('目前老師正在上課哦，按下上方紅色按鈕一起上課吧!')
+                            alert('目前老師正在上課哦，按下上方紅色按鈕一起上課吧!');
                             var livebtn = document.createElement("button");
                             livebtn.setAttribute('onclick',"livebtn()");
                             livebtn.setAttribute('id',"livebtn");
