@@ -6,7 +6,7 @@ body { margin: 0; height: 100%; }
 #firepad-container {
   position: fixed;
   width: auto;
-  height: 100%;
+  height: auto;
   right: 0px;
   left : 50%;
   bottom: 0px;
@@ -23,13 +23,14 @@ body { margin: 0; height: 100%; }
 
 #slide {
   position : fixed;
+  width : auto;
+  height : auto;
   top: 50px;
-  bottom: 1px;
+  bottom: 0px;
   left: 0px;
   right: 50%;
   margin : 0px; 
-  width : auto;
-  height : auto;
+  
 }
 
 
