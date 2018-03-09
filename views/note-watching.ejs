@@ -32,7 +32,8 @@
                 initFirebase();
                 // Add student from data into select list
                 var userRef = firebase.database().ref("users/");
-                userRef.once('value').then(function(data){
+                userRef.on('value',function(data){
+                    $('#studentSelect').html("");
                     for(var i in data.val()){
                         if(data.val()[i].character == "student"){
                             var name = data.val()[i].name;
@@ -52,7 +53,6 @@
 
                 // Select list click
                 $('#studentSelect').change(function(){
-                    console.log("Select : ",$('#studentSelect').find(':selected').val());
                     var name = $('#studentSelect').find(':selected').text();
                     var email = $('#studentSelect').find(':selected').val();
                     $('#studentName').text(name);
