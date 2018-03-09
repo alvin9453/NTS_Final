@@ -6,7 +6,7 @@ body { margin: 0; height: 100%; }
 #firepad-container {
   position: fixed;
   width: auto;
-  height: 100%;
+  height: auto;
   right: 33%;
   left : 0%;
   bottom: 0px;
@@ -15,11 +15,11 @@ body { margin: 0; height: 100%; }
 }
 
 #studentBlock {
-  position: fixed;
   width: auto;
   left : 67%;
   right: 0%;
 }
+
 
 .CodeMirror {
   background-color: white;
