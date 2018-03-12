@@ -26,6 +26,7 @@ body { margin: 0; height: 100%; }
   background-color: #4e4e4e;
   font-size : 20px;
   font-weight: 400;
+  resize: none;
 }
 
 #studentBlock {
