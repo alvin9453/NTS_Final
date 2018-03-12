@@ -58,9 +58,10 @@
                 var pptUrl = parsePPTURL("<%= pptUrl %>");
                 callIframe(pptUrl);  
 
-                var courseRef = firebase.database().ref("courses/" + "<%= courseName %>");
-                courseRef.once("value").then(function(data){
-                        if(data.val().live != ""){
+                var courseRef = firebase.database().ref("/courses").child("<%= courseName %>");
+                courseRef.on("value",function(data){
+                        // live = "Empty" => 老師按下清除live url，但還沒消掉按鈕 ; live = "" => 消除按鈕，再call slide frame；  此動作是避免在沒有live的時候，slide frame會被call 兩次的問題
+                        if(data.val().live != "" && data.val().live != "Empty"){
                             alert('目前老師正在上課哦，按下上方紅色按鈕一起上課吧!');
                             var livebtn = document.createElement("button");
                             livebtn.setAttribute('onclick',"livebtn()");
@@ -70,14 +71,16 @@
                             var liElement = document.createElement("li");
                             liElement.appendChild(livebtn);
                             $('#navList').append(liElement);
-                        }else{
+                        }else if(data.val().live == "Empty"){
                             $("#livebtn").remove();
-                            //callIframe(pptUrl);
+                            firebase.database().ref("courses/" + "<%= courseName %>").child('live').set("");
+                            callIframe(pptUrl);
                         }
                 });      
                 
             }
             function callIframe(url) {
+                console.log("Call");
                 $('#slide').html("");
                 $('#slide').append('<iframe id="ppt" allowFullScreen></iframe>');
                 $('#ppt').attr('src', url);

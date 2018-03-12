@@ -120,7 +120,7 @@
                             if(result != null && result != undefined){
                                 firebase.database().ref("courses/" + "<%= courseName %>").child('live').set(result);
                             }else{
-                                firebase.database().ref("courses/" + "<%= courseName %>").child('live').set("");
+                                firebase.database().ref("courses/" + "<%= courseName %>").child('live').set("Empty");
                             }
                         }
                     });
