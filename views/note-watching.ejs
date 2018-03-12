@@ -83,13 +83,20 @@
                 var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
                     { richTextToolbar: false, richTextShortcuts: true , userId:"<%= user.displayName %>" }
                 );
+                $('#showQA').html("");
                 firepad.on('ready', function() {
                     var contentArray = firepad.getText().split("\n");
                     console.log(contentArray);
                     var qaPatt = new RegExp("(^\/Q .*)|(^\/A .*)","i");
-                    for( var i = 0; i < contentArray.length; ++i){
-                        if( qaPatt.test(contentArray[i])){
-                            console.log(contentArray[i]);
+                    var qPatt = new RegExp("(^\/Q .*)","i");
+                    var aPatt = new RegExp("(^\/A .*)","i");
+                    for( var i = 0; i < contentArray.length; i++){
+                        if( qaPatt.test(contentArray[i]) ){
+                            if (qPatt.test(contentArray[i])){
+                                $('#showQA').append('\n' + contentArray[i] + '\n');
+                            }else{
+                                $('#showQA').append(contentArray[i] + '\n');
+                            } 
                         }
                     }
                 });
@@ -142,7 +149,8 @@
         <div class="row">
             <div class="col-sm-8 col-md-8">
                 <div id="firepad-container">
-                </div>        
+                </div>    
+                <textarea class="form-control" id="showQA" readonly></textarea>
             </div>
             <div class="col-sm-4 col-md-4">
                 <h3><%= title %></h3>
@@ -151,7 +159,7 @@
                     <h3>你選擇的是 : <b><div id="studentName">尚未選擇</div> </b></h3>
                     <select class="form-control" id="studentSelect" size="25">
                     </select>
-                </div> 
+                </div>
             </div>
     </div>
 </body>

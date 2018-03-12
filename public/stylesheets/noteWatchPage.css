@@ -9,9 +9,23 @@ body { margin: 0; height: 100%; }
   height: auto;
   right: 33%;
   left : 0%;
-  bottom: 0px;
+  bottom: 30%;
   top : 50px;
   background-color: rgba(0, 0, 0, 0.788);
+}
+
+#showQA {
+  position: fixed;
+  width: 67%;
+  height: 30%;
+  right: 33%;
+  left : 0%;
+  bottom: 10%;
+  top : 70%;
+  color : #00FF00;
+  background-color: #4e4e4e;
+  font-size : 20px;
+  font-weight: 400;
 }
 
 #studentBlock {
