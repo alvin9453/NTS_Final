@@ -84,7 +84,14 @@
                     { richTextToolbar: false, richTextShortcuts: true , userId:"<%= user.displayName %>" }
                 );
                 firepad.on('ready', function() {
-                    //console.log(firepad.getHtml());
+                    var contentArray = firepad.getText().split("\n");
+                    console.log(contentArray);
+                    var qaPatt = new RegExp("(^\/Q .*)|(^\/A .*)","i");
+                    for( var i = 0; i < contentArray.length; ++i){
+                        if( qaPatt.test(contentArray[i])){
+                            console.log(contentArray[i]);
+                        }
+                    }
                 });
             }
             function parsePPTURL(pptUrl){
