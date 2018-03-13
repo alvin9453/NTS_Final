@@ -90,7 +90,6 @@
 
 
             function callIframe(url) {
-                console.log("Call");
                 $('#slide').html("");
                 $('#slide').append('<iframe id="ppt" allowFullScreen></iframe>');
                 $('#ppt').attr('src', url);
@@ -98,7 +97,6 @@
             }
             function slidebtn(){
                 var btn = document.getElementById("slidebtn");
-                console.log(btn.innerHTML);
                 if( btn.innerHTML == "隱藏投影片" ){
                     btn.innerHTML = "顯示投影片";
                     document.getElementById('slide').style.left = "0px";

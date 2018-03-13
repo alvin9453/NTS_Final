@@ -92,10 +92,8 @@
                     var qPatt = new RegExp("(^\/Q .*)","i");
                     var aPatt = new RegExp("(^\/A .*)","i");
                     var askingPatt = new RegExp("(^\/[?] .*)","i");
-                    console.log(contentArray);
                     for( var i = 0; i < contentArray.length; i++){
                         if( askingPatt.test(contentArray[i]) ){
-                            console.log(contentArray[i]);
                             $('#showAsking').append(contentArray[i] + '\n\n');
                         }
                         else if( qaPatt.test(contentArray[i]) ){
