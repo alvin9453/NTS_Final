@@ -80,20 +80,30 @@
                 var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
                 hyperlinkOverlay(codeMirror);
                 qaOverlay(codeMirror);
+                askingOverlay(codeMirror);
                 var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
                     { richTextToolbar: false, richTextShortcuts: true , userId:"<%= user.displayName %>" }
                 );
                 $('#showQA').html("");
+                $('#showAsking').html("");
                 firepad.on('ready', function() {
                     var contentArray = firepad.getText().split("\n");
-                    console.log(contentArray);
                     var qaPatt = new RegExp("(^\/Q .*)|(^\/A .*)","i");
                     var qPatt = new RegExp("(^\/Q .*)","i");
                     var aPatt = new RegExp("(^\/A .*)","i");
+                    var askingPatt = new RegExp("(^\/[?] .*)","i");
+                    console.log(contentArray);
                     for( var i = 0; i < contentArray.length; i++){
-                        if( qaPatt.test(contentArray[i]) ){
+                        if( askingPatt.test(contentArray[i]) ){
+                            console.log(contentArray[i]);
+                            $('#showAsking').append(contentArray[i] + '\n\n');
+                        }
+                        else if( qaPatt.test(contentArray[i]) ){
                             if (qPatt.test(contentArray[i])){
-                                $('#showQA').append('\n' + contentArray[i] + '\n');
+                                if ( document.getElementById("showQA").innerHTML != "" ){
+                                    $('#showQA').append('\n');
+                                }
+                                $('#showQA').append(contentArray[i] + '\n');
                             }else{
                                 $('#showQA').append(contentArray[i] + '\n');
                             } 
@@ -151,6 +161,7 @@
                 <div id="firepad-container">
                 </div>    
                 <textarea class="form-control" id="showQA" readonly></textarea>
+                <textarea class="form-control" id="showAsking" readonly></textarea>
             </div>
             <div class="col-sm-4 col-md-4">
                 <h3><%= title %></h3>

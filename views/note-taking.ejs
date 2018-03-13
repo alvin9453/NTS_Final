@@ -37,6 +37,7 @@
                 var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
                 hyperlinkOverlay(codeMirror);
                 qaOverlay(codeMirror);
+                askingOverlay(codeMirror);
                 var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
                     { richTextToolbar: true, richTextShortcuts: true , userId:"<%= user.displayName %>" }
                 );

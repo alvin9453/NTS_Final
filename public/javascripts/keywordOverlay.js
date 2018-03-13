@@ -122,3 +122,37 @@ function qaOverlay(cm) {
         { opaque : true }  // opaque will remove any spelling overlay etc
     );
 }
+
+function askingOverlay(cm) {
+    if (!cm) return;
+
+    const rx_word = ""; // Define what separates a word
+
+
+    function isAsking(s){
+        isAsking.prefixes=['\/\? '];
+        isAsking.rx_asking= /(^\/\? .*)/i;
+        if (!isAsking.rx_asking.test(s)) return false;
+        for (let i=0; i<isAsking.prefixes.length; i++) if (s.startsWith(isAsking.prefixes[i])) return true;
+    }
+
+    cm.addOverlay({
+        token: function(stream) {
+            let ch = stream.peek();
+            let word = "";
+
+            if (rx_word.includes(ch) || ch==='\uE000' || ch==='\uE001') {
+                stream.next();
+                return null;
+            }
+
+            while ((ch = stream.peek()) && !rx_word.includes(ch)) {
+                word += ch;
+                stream.next();
+            }
+
+            if (isAsking(word)) return "asking"; // CSS class: cm-asking
+        }},	
+        { opaque : true }  // opaque will remove any spelling overlay etc
+    );
+}
