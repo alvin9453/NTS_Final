@@ -16,10 +16,24 @@ body { margin: 0; height: 100%; }
 
 #showQA {
   position: fixed;
-  width: 67%;
+  width: 40%;
+  height: 30%;
+  left : 0%;
+  bottom: 10%;
+  top : 70%;
+  color : #00FF00;
+  background-color: #4e4e4e;
+  font-size : 20px;
+  font-weight: 400;
+  resize: none;
+}
+
+#showAsk {
+  position: fixed;
+  width: 27%;
   height: 30%;
   right: 33%;
-  left : 0%;
+  left : 40%;
   bottom: 10%;
   top : 70%;
   color : #00FF00;
@@ -43,4 +57,4 @@ body { margin: 0; height: 100%; }
 
 
 .CodeMirror .cm-url { color: blue; }    
-.CodeMirror .cm-qa { color: orange; }    
+.CodeMirror .cm-qa { color: orange; font-weight: bold; font-size: 18px; font-family:"Comic Sans MS", cursive, sans-serif;}    

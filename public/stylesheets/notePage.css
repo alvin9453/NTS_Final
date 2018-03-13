@@ -35,4 +35,4 @@ body { margin: 0; height: 100%; }
 
 
 .CodeMirror .cm-url { color: blue; }    
-.CodeMirror .cm-qa { color: orange; }    
+.CodeMirror .cm-qa { color: orange; font-weight: bold; font-size: 18px; font-family:"Comic Sans MS", cursive, sans-serif;}    
