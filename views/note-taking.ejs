@@ -51,7 +51,7 @@
                 btn.setAttribute('onclick',"slidebtn()");
                 btn.setAttribute('id',"slidebtn");
                 btn.setAttribute('class',"btn navbar-btn btn-info");
-                btn.innerHTML = "隱藏投影片";
+                btn.innerHTML = "隱藏筆記";
                 var liElement = document.createElement("li");
                 liElement.appendChild(btn);
                 $('#navList').append(liElement);
@@ -97,13 +97,13 @@
             }
             function slidebtn(){
                 var btn = document.getElementById("slidebtn");
-                if( btn.innerHTML == "隱藏投影片" ){
-                    btn.innerHTML = "顯示投影片";
-                    document.getElementById('slide').style.left = "0px";
-                    document.getElementById('firepad-container').style.left = "0%";
+                if( btn.innerHTML == "隱藏筆記" ){
+                    btn.innerHTML = "顯示筆記";
+                    document.getElementById('slide').style.right = "0%";
+                    document.getElementById('firepad-container').style.left = "100%";
                 }
-                else if ( btn.innerHTML == "顯示投影片" ){
-                    btn.innerHTML = "隱藏投影片";
+                else if ( btn.innerHTML == "顯示筆記" ){
+                    btn.innerHTML = "隱藏筆記";
                     document.getElementById('slide').style.right = "50%";
                     document.getElementById('firepad-container').style.left = "50%";
                 }
