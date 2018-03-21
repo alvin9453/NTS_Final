@@ -82,7 +82,6 @@
                                 $('#navList').append(liElement);
                             }else if(value.live == "Empty"){
                                 $("#livebtn").remove();
-                                firebase.database().ref("courses/" + "<%= courseName %>").child('live').set("");
                                 callIframe(pptUrl);
                             }
                         });                
