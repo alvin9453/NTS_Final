@@ -28,8 +28,8 @@
         <script src="/javascripts/bootbox.min.js"></script>
 
         <script>
+            initFirebase();
             $(document).ready(function(){  
-                initFirebase();
                 // Add student from data into select list
                 var userRef = firebase.database().ref("users/");
                 userRef.on('value',function(data){
