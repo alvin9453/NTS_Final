@@ -47,7 +47,7 @@
                 });
                 // Add slide link
                 var slideLiElement = $('<li></li>').html('<a href="' + parsePPTURL("<%= pptUrl %>") +'" target="#"><span class="glyphicon glyphicon-file"></span> 投影片</a>');
-                var liveLiElement = $('<li></li>').html('<a href="#" onclick="liveCodePrompt()"><span class="glyphicon glyphicon-globe"></span> 線上展示</a>');
+                var liveLiElement = $('<li></li>').html('<a href="#" onclick="liveCodePrompt()"><span class="glyphicon glyphicon-globe"></span> 投影片廣播</a>');
                 $('#navList').append(slideLiElement);
                 $('#navList').append(liveLiElement);
 
@@ -124,28 +124,45 @@
                     });     
                 });
                 promiseResult.then(value => {
-                    bootbox.prompt({ 
-                        buttons : {
-                            confirm : {
-                                label : "儲存 (學生會得到線上展示連結)",
-                                className : 'btn-primary'
-                            },
-                            cancel : {
-                                label : "取消線上展示並清除",
-                                className : 'btn-danger'
-                            }
-                        },
-                        size: "large",
-                        value : value,
-                        title: "請輸入Powerpoint 線上展示連結", 
-                        callback: function(result){ /* result = String containing user input if OK clicked or null if Cancel clicked */    
-                            if(result != null && result != undefined){
-                                firebase.database().ref("courses/" + "<%= courseName %>").child('live').set(result);
-                            }else{
-                                firebase.database().ref("courses/" + "<%= courseName %>").child('live').set("Empty");
-                            }
+                        var showValue = "";
+                        if(value == "Empty"){
+                            showValue = "";
+                        }else{
+                            showValue = value;
                         }
-                    });
+                        var dialog = bootbox.dialog({
+                            title: '投影片廣播功能 ( 使用Powerpoint 線上展示 )',
+                            size : 'large',
+                            message: "<h4>請在下方輸入框貼上 Powerpoint 線上展示連結</h4><p>1. 取得線上展示連結的方式請參考 <b><a href='/tutorials' target='#tutorials'>使用教學 </a></b>的 <b>老師-投影片廣播</b></p><p>2. 輸入線上展示連結後，記得按下 <button type='btn' class ='btn btn-primary'>儲存</button>，老師就可以開始使用Powerpoint線上簡報囉!</p> <p>2. 簡報結束後，按下 <button type='btn' class ='btn btn-warning'>清除</button> 按鈕清除輸入視窗裡面的內容，再按下<button type='btn' class ='btn btn-primary'>儲存</button> 離開視窗</p><p>3. 若不想作任何更動，請按 <button type='btn' class ='btn btn-danger'>取消</button></p><p><input id='liveCode' type='text' class='form-control' value='" +  showValue + "'></p>",
+                            buttons: {
+                                cancel: {
+                                    label: "取消",
+                                    className: 'btn-danger',
+                                },
+                                noclose: {
+                                    label: "清除",
+                                    className: 'btn-warning',
+                                    callback: function(){
+                                        document.getElementById('liveCode').value = "";
+                                        return false;
+                                    }
+                                },
+                                ok: {
+                                    label: "儲存",
+                                    className: 'btn-primary',
+                                    callback: function(){
+                                            var liveCode = document.getElementById('liveCode').value;
+                                            if(liveCode != ""){
+                                                console.log(liveCode);
+                                                firebase.database().ref("courses/" + "<%= courseName %>").child('live').set(liveCode);
+                                            }else{
+                                                console.log('Empty');
+                                                firebase.database().ref("courses/" + "<%= courseName %>").child('live').set("Empty");
+                                            }
+                                        }
+                                    }
+                                }
+                        });
                 });
                 
             }
