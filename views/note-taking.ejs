@@ -25,6 +25,7 @@
         <link rel="stylesheet" href="/stylesheets/style.css">
 
         <script src="/javascripts/keywordOverlay.js"></script>
+        <script src="/javascripts/bootbox.min.js"></script>
         
 
         <script>
@@ -46,6 +47,9 @@
                         firepad.setHtml('<span style="font-size: 24px;"><%= title %> </span>');
                     }
                 });
+
+                var watchLink = $('<li></li>').html('<a href="#" onclick="watchNote()"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;觀看同學筆記</a>');
+                $('#navList').append(watchLink);
 
                 var btn = document.createElement("button");
                 btn.setAttribute('onclick',"slidebtn()");
@@ -134,6 +138,45 @@
                 var match = patt.exec(pptUrl);
                 pptUrl = match[0].replace(/&#39/,"");
                 return pptUrl;
+            }
+            function watchNote(){
+                var dialog = bootbox.dialog({
+                    title: '請輸入同學的Email帳號',
+                    message: "<p>例如 : <font color='red'>abc@gmail.com</font> 或 <font color='red'>abc@ncnu.edu.tw</font> 只要輸入 <big><font color='red'>abc</font></big> 即可</p><input id='userEID' type='text' class='form-control'>",
+                    buttons: {
+                        cancel: {
+                            label: "取消",
+                            className: 'btn-danger',
+                        },
+                        ok: {
+                            label: "觀看",
+                            className: 'btn-info',
+                            callback: function(){
+                                var userEID = document.getElementById('userEID').value;
+                                if(userEID != "" && userEID != undefined){
+                                        var firepadRef = firebase.database().ref('/'+'note-'+ userEID).child('<%= title %>');
+                                        var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });// Actually, you will not modify the content of firepad-container... But it has to do this to use firepad.getHtml()
+                                        var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
+                                            { richTextToolbar: false, richTextShortcuts: true , userId:"<%= user.displayName %>" }
+                                        );
+                                        firepad.on('ready', function() {
+                                            if(firepad.getHtml() == ""){
+                                                bootbox.alert('查無此人筆記，請重新輸入');            
+                                            }
+                                            else{
+                                                bootbox.alert(firepad.getHtml());
+                                            }
+                                        });
+                                }
+                                else{
+                                    bootbox.alert('請輸入Email帳號');
+                                }
+                            }
+                        }
+                    }
+                });
+
+
             }
         </script>
 </head>
