@@ -28,8 +28,8 @@
         
 
         <script>
-            function init(){
-                initFirebase();
+            initFirebase();
+            function init(){ 
                 var userEmail = "<%= user.emails[0].value %>";
                 var userEID = userEmail.split('@')[0];
                 var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
