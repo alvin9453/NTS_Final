@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "preinstall": "npm i -g pm2 && pm2 install pm2-logrotate",
-    "start": "pm2 start --attach -i 0 ./bin/www && pm2 logs all"
+    "preinstall": "npm i -g pm2 && pm2 install pm2-logrotate"
   },
   "dependencies": {
     "body-parser": "~1.18.2",
