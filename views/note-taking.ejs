@@ -31,23 +31,6 @@
         <script>
             initFirebase();
             function init(){ 
-                var userEmail = "<%= user.emails[0].value %>";
-                var userEID = userEmail.split('@')[0];
-                var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
-
-                var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
-                hyperlinkOverlay(codeMirror);
-                qaOverlay(codeMirror);
-                askingOverlay(codeMirror);
-                var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
-                    { richTextToolbar: true, richTextShortcuts: true , userId:"<%= user.displayName %>" }
-                );
-                firepad.on('ready', function() {
-                    if(firepad.isHistoryEmpty()) {
-                        firepad.setHtml('<span style="font-size: 24px;"><%= title %> </span>');
-                    }
-                });
-
                 var watchLink = $('<li></li>').html('<a href="#" onclick="watchNote()"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;觀看同學筆記</a>');
                 $('#navList').append(watchLink);
 
@@ -86,6 +69,23 @@
                             }
                         });                
    
+                });
+                
+                var userEmail = "<%= user.emails[0].value %>";
+                var userEID = userEmail.split('@')[0];
+                var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
+
+                var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
+                hyperlinkOverlay(codeMirror);
+                qaOverlay(codeMirror);
+                askingOverlay(codeMirror);
+                var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
+                    { richTextToolbar: true, richTextShortcuts: true , userId:"<%= user.displayName %>" }
+                );
+                firepad.on('ready', function() {
+                    if(firepad.isHistoryEmpty()) {
+                        firepad.setHtml('<span style="font-size: 24px;"><%= title %> </span>');
+                    }
                 });
 
             }
