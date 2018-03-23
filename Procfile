@@ -1,1 +1,1 @@
-web: node ./bin/www
+web: pm2 start ./bin/www
