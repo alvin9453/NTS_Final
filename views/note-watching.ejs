@@ -124,16 +124,10 @@
                     });     
                 });
                 promiseResult.then(value => {
-                        var showValue = "";
-                        if(value == "Empty"){
-                            showValue = "";
-                        }else{
-                            showValue = value;
-                        }
                         var dialog = bootbox.dialog({
                             title: '投影片廣播功能 ( 使用Powerpoint 線上展示 )',
                             size : 'large',
-                            message: "<h4>請在下方輸入框貼上 Powerpoint 線上展示連結</h4><p>1. 取得線上展示連結的方式請參考 <b><a href='/tutorials' target='#tutorials'>使用教學 </a></b>的 <b>老師-投影片廣播</b></p><p>2. 輸入線上展示連結後，記得按下 <button type='btn' class ='btn btn-primary'>儲存</button>，老師就可以開始使用Powerpoint線上簡報囉!</p> <p>2. 簡報結束後，按下 <button type='btn' class ='btn btn-warning'>清除</button> 按鈕清除輸入視窗裡面的內容，再按下<button type='btn' class ='btn btn-primary'>儲存</button> 離開視窗</p><p>3. 若不想作任何更動，請按 <button type='btn' class ='btn btn-danger'>取消</button></p><p><input id='liveCode' type='text' class='form-control' value='" +  showValue + "'></p>",
+                            message: "<h4>請在下方輸入框貼上 Powerpoint 線上展示連結</h4><p>1. 取得線上展示連結的方式請參考 <b><a href='/tutorials' target='#tutorials'>使用教學 </a></b>的 <b>老師-投影片廣播</b></p><p>2. 輸入線上展示連結後，記得按下 <button type='btn' class ='btn btn-primary'>儲存</button>，老師就可以開始使用Powerpoint線上簡報囉!</p> <p>2. 簡報結束後，按下 <button type='btn' class ='btn btn-warning'>清除</button> 按鈕清除輸入視窗裡面的內容，再按下<button type='btn' class ='btn btn-primary'>儲存</button> 離開視窗</p><p>3. 若不想作任何更動，請按 <button type='btn' class ='btn btn-danger'>取消</button></p><p><input id='liveCode' type='text' class='form-control' value='" +  value + "'></p>",
                             buttons: {
                                 cancel: {
                                     label: "取消",
@@ -153,11 +147,9 @@
                                     callback: function(){
                                             var liveCode = document.getElementById('liveCode').value;
                                             if(liveCode != ""){
-                                                console.log(liveCode);
                                                 firebase.database().ref("courses/" + "<%= courseName %>").child('live').set(liveCode);
                                             }else{
-                                                console.log('Empty');
-                                                firebase.database().ref("courses/" + "<%= courseName %>").child('live').set("Empty");
+                                                firebase.database().ref("courses/" + "<%= courseName %>").child('live').set("");
                                             }
                                         }
                                     }

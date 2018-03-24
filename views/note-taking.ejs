@@ -50,6 +50,9 @@
 
                 var watchLink = $('<li></li>').html('<a href="#" onclick="watchNote()"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;觀看同學筆記</a>');
                 $('#navList').append(watchLink);
+                var liveLink = $('<li></li>').html('<a href="#" onclick="livebtn()"><span class="glyphicon glyphicon-globe"></span> 查看投影片廣播</a>');
+                $('#navList').append(liveLink);
+                
 
                 var btn = document.createElement("button");
                 btn.setAttribute('onclick',"slidebtn()");
@@ -62,35 +65,7 @@
                       
                 var pptUrl = parsePPTURL("<%= pptUrl %>");
                 callIframe(pptUrl);  
-
-                var courseRef = firebase.database().ref("/courses").child("<%= courseName %>");
-                courseRef.on("value",function(data){
-                        // live = "Empty" => 老師按下清除live url，但還沒消掉按鈕 ; live = "" => 消除按鈕，再call slide frame；  此動作是避免在沒有live的時候，slide frame會被call 兩次的問題
-                        var btnPromise = new Promise(function(resolve, reject){
-                            resolve(data.val());
-                        });
-                        btnPromise.then(value => {
-                            if(value.live != "" && value.live != "Empty"){
-                                alert('目前老師正在上課哦，按下上方紅色按鈕一起上課吧!');
-                                var livebtn = document.createElement("button");
-                                livebtn.setAttribute('onclick',"livebtn()");
-                                livebtn.setAttribute('id',"livebtn");
-                                livebtn.setAttribute('class',"btn btn-danger navbar-btn");
-                                livebtn.innerHTML = "跟隨線上展示";
-                                var liElement = document.createElement("li");
-                                liElement.appendChild(livebtn);
-                                $('#navList').append(liElement);
-                            }else if(value.live == "Empty"){
-                                $("#livebtn").remove();
-                                callIframe(pptUrl);
-                            }
-                        });                
-   
-                });
-
-            }
-            
-
+          }
 
             function callIframe(url) {
                 $('#slide').html("");
@@ -112,25 +87,57 @@
                 }
             }
             var pptUrl = parsePPTURL("<%= pptUrl %>");
-            function livebtn(){
-                var btn = document.getElementById("livebtn");
-                if( btn.innerHTML == "暫停線上展示" ){
-                    btn.innerHTML = "跟隨線上展示";
-                    callIframe(pptUrl);
-                }
-                else if(btn.innerHTML == "跟隨線上展示"){
-                    btn.innerHTML = "暫停線上展示";
-                    var promiseLive = new Promise(function(resolve , reject){
-                        var courseRef = firebase.database().ref("courses/" + "<%= courseName %>");
-                        courseRef.once("value").then(function(data){
-                            resolve(data.val().live);
-                        });     
-                    });
-                    promiseLive.then(value => {
-                        callIframe(value);
-                    });
-                    
-                }
+            function livebtn(){            
+                $.ajax({
+                        data : {courseName : "<%= courseName %>"},
+                        url: "/getLiveUrl",
+                        type : 'get',
+                        cache : false,
+                        timeout: 1000,
+                        success: function(liveUrl){
+                            if(liveUrl != ""){
+                                bootbox.confirm({
+                                    message: "<h3>目前老師正在上課! <br>是否觀看投影片廣播 ?</h3>",
+                                    buttons:{
+                                        confirm: {
+                                            label : '觀看',
+                                            className: 'btn-success'
+                                        },
+                                        cancel : {
+                                            label : '取消',
+                                            className: 'btn-danger'
+                                        }
+                                    },
+                                    callback: function(result){
+                                        if(result){
+                                            callIframe(liveUrl);
+                                            if(document.getElementById('liveSwitchBtn')){ // 避免出現很多個button
+                                                document.getElementById('liveSwitchBtn').remove();
+                                            }
+                                            var livebtn = document.createElement("button");
+                                            livebtn.setAttribute('onclick',"liveSwitchBtn(this.value)");
+                                            livebtn.setAttribute('value',liveUrl);
+                                            livebtn.setAttribute('id',"liveSwitchBtn");
+                                            livebtn.setAttribute('class',"btn btn-danger navbar-btn");
+                                            livebtn.innerHTML = "切回離線投影片";
+                                            var liElement = document.createElement("li");
+                                            liElement.appendChild(livebtn);
+                                            $('#navList').append(liElement);
+                                        }
+                                    }
+                                });     
+                            }else{
+                                bootbox.alert('<h3>目前老師還沒有廣播投影片喔!</h3>');
+                                if(document.getElementById('liveSwitchBtn')){ // 避免出現很多個button
+                                    document.getElementById('liveSwitchBtn').remove();
+                                    callIframe(pptUrl);
+                                }
+                            }
+                        },
+                        error : function(){
+                            bootbox.alert('<h3>Sorry，伺服器忙碌中，請再試一次</h3>');
+                        }
+                }); 
             }
             function parsePPTURL(pptUrl){
                 var patt = /\/\/www\..*?&#39/;
@@ -177,6 +184,17 @@
                 });
 
 
+            }
+            function liveSwitchBtn(liveUrl){
+                var switchBtn = document.getElementById("liveSwitchBtn");
+                if( switchBtn.innerHTML == "切回離線投影片" ){
+                    switchBtn.innerHTML = "跟隨廣播投影片";
+                    callIframe(pptUrl);
+                }
+                else if( switchBtn.innerHTML == "跟隨廣播投影片" ){
+                    switchBtn.innerHTML = "切回離線投影片";
+                    callIframe(liveUrl);
+                }
             }
         </script>
 </head>
