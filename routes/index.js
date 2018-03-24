@@ -85,9 +85,7 @@ module.exports = function(passport){
 
   router.post('/note', ensureAuthenticated, function(req, res) {
     var charaRef = firebase.database().ref("users/");
-    console.log(req.user.emails[0].value);
     charaRef.orderByChild('email').equalTo(req.user.emails[0].value).on('child_added',function(data){
-      console.log("Data : ", data);
       if(data.val().character == "teacher"){
           res.render('note-watching', {
             user: req.user,
