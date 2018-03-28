@@ -82,7 +82,7 @@
                 qaOverlay(codeMirror);
                 askingOverlay(codeMirror);
                 var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
-                    { richTextToolbar: false, richTextShortcuts: true , userId:"<%= user.displayName %>" }
+                    { richTextToolbar: true, richTextShortcuts: true , userId:"<%= user.displayName %>" }
                 );
                 $('#showQA').html("");
                 $('#showAsking').html("");
