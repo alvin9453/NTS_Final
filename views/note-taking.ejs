@@ -140,10 +140,11 @@
                 }); 
             }
             function parsePPTURL(pptUrl){
-                var patt = /\/\/www\..*?&#39/;
+                var patt = /https:.*?(quot;|#39)/;
                 var match = patt.exec(pptUrl);
-                pptUrl = match[0].replace(/&#39/,"");
-                return pptUrl;
+                var url = match[0].substr(0,match[0].length - 4);
+                url = url.replace(/&amp;/g,"&");
+                return url;
             }
             function watchNote(){
                 var dialog = bootbox.dialog({
