@@ -27,9 +27,9 @@
         <script src="/javascripts/keywordOverlay.js"></script>
         <script src="/javascripts/bootbox.min.js"></script>
 
-        <script>
-            initFirebase();
-            $(document).ready(function(){  
+        <script>            
+            function init(){  
+                initFirebase();
                 // Add student from data into select list
                 var userRef = firebase.database().ref("users/");
                 userRef.on('value',function(data){
@@ -71,7 +71,7 @@
                     choosePad(userEID);
                 });
                 
-            }); 
+            }; 
             // change pad depend on user
             function choosePad(userEID){
                 var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
@@ -161,7 +161,7 @@
             }
         </script>
 </head>
-<body>
+<body onload="init();">
     <% include layouts/header %>
     <div class="container-fluid">
         <div class="row">
