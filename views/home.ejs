@@ -24,34 +24,35 @@
     </style>
 
     <script>
-        initFirebase();    
-        var userRef = firebase.database().ref("users/");
-        userRef.orderByChild('email').equalTo("<%= user.emails[0].value %>").once('child_added',function(data){
-            var character = data.val().character;
-            if( character == 'teacher'){
-                $('#character').text('老師');
-                var liElement = $('<li></li>').html('<a href="addSlide" target="#">新增課程投影片</a>');
-                $('#navList').append(liElement);
-            }else if(character == 'student'){
-                $('#character').text('學生');
-            }
-        });
-        // old version : Students have to join the course
-        // demo version : Studnets can look all course in system
-        var courseRef = firebase.database().ref("courses/");
-        courseRef.once('value').then(function(data){
-            for(var courseName in data.val()){
-                var courseBlock = document.getElementById('course');
-                var btn = document.createElement('input');
-                btn.setAttribute('type','button');
-                btn.setAttribute('onclick',"courseInfo(this.textContent);");
-                btn.setAttribute('class',"list-group-item btn btn-default");
-                btn.value = courseName;
-                btn.innerHTML = courseName;
-                courseBlock.appendChild(btn);
-            }
-        });
-
+        function init(){
+            initFirebase();    
+            var userRef = firebase.database().ref("users/");
+            userRef.orderByChild('email').equalTo("<%= user.emails[0].value %>").once('child_added',function(data){
+                var character = data.val().character;
+                if( character == 'teacher'){
+                    $('#character').text('老師');
+                    var liElement = $('<li></li>').html('<a href="addSlide" target="#">新增課程投影片</a>');
+                    $('#navList').append(liElement);
+                }else if(character == 'student'){
+                    $('#character').text('學生');
+                }
+            });
+            // old version : Students have to join the course
+            // demo version : Studnets can look all course in system
+            var courseRef = firebase.database().ref("courses/");
+            courseRef.once('value').then(function(data){
+                for(var courseName in data.val()){
+                    var courseBlock = document.getElementById('course');
+                    var btn = document.createElement('input');
+                    btn.setAttribute('type','button');
+                    btn.setAttribute('onclick',"courseInfo(this.textContent);");
+                    btn.setAttribute('class',"list-group-item btn btn-default");
+                    btn.value = courseName;
+                    btn.innerHTML = courseName;
+                    courseBlock.appendChild(btn);
+                }
+            });
+        }
         function courseInfo(courseName){
             var courseRef = firebase.database().ref("courses/" + courseName + '/');
             var showList = document.getElementById('details');
@@ -103,7 +104,7 @@
     </script>
 
 </head>
-<body>
+<body onload="init();">
     <% include layouts/header %>
     <br>
     <br>
