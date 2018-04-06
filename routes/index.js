@@ -35,13 +35,43 @@ module.exports = function(passport){
     }), 
     function(req, res) {
       // Authenticated successfully
-      isUserExists(req , res);
+      var userEmail = req.user.emails[0].value;
+      var userExistsPromise = new Promise(function(resolve,reject){
+        var usersRef = firebase.database().ref("users/");
+        usersRef.orderByChild('email').equalTo(userEmail).once('value', function(snapshot) {
+          var exists = (snapshot.val() !== null);
+          resolve(exists);
+        });
+      });
+      userExistsPromise.then(isExists => {
+        if (isExists) {
+          res.redirect('/home');
+        } else {
+          var addUserPromise = new Promise(function(resolve,reject){
+            var userRef = firebase.database().ref("users/");
+            var newUserKey = firebase.database().ref("users/").push().key;
+            var postData = {
+              name : req.user.displayName,
+              character : 'student',
+              email : userEmail
+            };
+            var updates = {};
+            updates[newUserKey] = postData;
+            userRef.update(updates);
+            resolve("Add Ner User Success");
+          });
+          addUserPromise.then( message => {
+            console.log(message);
+            res.redirect('/home');  
+          });
+        }
+      });
     });
 
   router.get('/home', ensureAuthenticated, function(req, res) {
     res.render('home', {
-        user: req.user
-      });   
+      user: req.user
+    });
   });
 
   router.get('/logout', function(req, res) {
@@ -132,36 +162,4 @@ function ensureAuthenticated(req, res, next) {
     return next();
   }
   res.redirect('/');
-}
-
-function isUserExists(req,res) {
-  var userEmail = req.user.emails[0].value;
-  var usersRef = firebase.database().ref("users/");
-  usersRef.orderByChild('email').equalTo(userEmail).once('value', function(snapshot) {
-    console.log("snapshot : ",snapshot.val());
-    var exists = (snapshot.val() !== null);
-    console.log(exists);
-    userExistsCallback( req.user.displayName , userEmail, exists , res);
-  });
-}
-
-function userExistsCallback(userName , userEmail, exists , res) {
-  if (exists) {
-    console.log("Exist!");
-    res.redirect('/home');
-  } else {
-    var userRef = firebase.database().ref("users/");
-    var newUserKey = firebase.database().ref("users/").push().key;
-    var postData = {
-      name : userName,
-      character : 'student',
-      email : userEmail
-    };
-    var updates = {};
-    updates[newUserKey] = postData;
-    userRef.update(updates);
-    
-    console.log("Not Exist!");
-    res.redirect('/home');
-  }
 }
