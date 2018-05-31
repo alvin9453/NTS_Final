@@ -26,8 +26,12 @@
 
         <script src="/javascripts/keywordOverlay.js"></script>
         <script src="/javascripts/bootbox.min.js"></script>
-        
 
+        <!-- Screen Broadcast -->
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/javascripts/RTCMultiConnection.min.js"></script>
+        <script src="/javascripts/getScreenId.js"></script>
+        
         <script>
             function init(){ 
                 initFirebase();
@@ -204,7 +208,17 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6 col-md-6">
-                <div class="embed-responsive embed-responsive" id="slide">
+                
+                <br><br><br>
+                <video id="video-preview" controls loop></video>
+                <br>
+
+                <input type="text" id="broadcast-id" placeholder="broadcast-id" value="room-xyz">
+                <button id="open-or-join">Open or Join Broadcast</button>
+                <!-- 
+                    <div class="embed-responsive embed-responsive" id="slide">2m9asbb2rzb
+                -->
+                <script src="/javascripts/screen-broadcast.js"></script>
                 </div>
             </div>
             <div class="col-sm-6 col-md-6">

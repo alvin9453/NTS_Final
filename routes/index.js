@@ -87,6 +87,10 @@ module.exports = function(passport){
     res.redirect('/home');
   }); 
 
+  router.get('/screen-broadcast', function(req, res) {
+    res.render('Scalable-Screen-Broadcast');
+  });
+
   router.get('/addSlide', function(req, res) {
     res.render('addSlide',
      { user: req.user }
