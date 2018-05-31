@@ -175,7 +175,8 @@
                                                 bootbox.alert('查無此人筆記，請重新輸入');            
                                             }
                                             else{
-                                                bootbox.alert(shareFirepad.getHtml());
+                                                var alertBox = bootbox.alert(shareFirepad.getHtml());
+                                                alertBox.find('.modal-content').css({'user-select': 'none'});
                                             }
                                             shareFirepad.dispose();
                                         });
