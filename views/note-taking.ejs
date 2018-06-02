@@ -178,6 +178,14 @@
                 
                 
                 <script>
+                    // Edit from Open-Sourced: https://github.com/muaz-khan/RTCMultiConnection
+
+                    // --------------------------------------------------
+                    // Muaz Khan     - www.MuazKhan.com
+                    // MIT License   - www.WebRTC-Experiment.com/licence
+                    // --------------------------------------------------
+
+
                     // recording is disabled because it is resulting for browser-crash
                     // if you enable below line, please also uncomment above "RecordRTC.js"
                     var enableRecordings = false;
@@ -272,11 +280,6 @@
                         });*/
                     });
 
-/*                    window.onbeforeunload = function() {
-                        // Firefox is ugly.
-                        document.getElementById('joinBroadcast').disabled = false;
-                    };
-*/
                     var videoPreview = document.getElementById('video-preview');
 
                     connection.onstream = function(event) {
@@ -491,32 +494,7 @@
                             throw error;
                         });
                     };
-/*
-                    function disableInputButtons() {
-                        document.getElementById('joinBroadcast').disabled = true;
-                    }          
-
-                    var broadcastId = '';
-                    if(broadcastId && broadcastId.length) {
-//                        document.getElementById('joinBroadcast').value = broadcastId;
-                        localStorage.setItem(connection.socketMessageEvent, broadcastId);
-
-                        // auto-join-room
-                        (function reCheckRoomPresence() {
-                            connection.checkPresence(broadcastId, function(isRoomExists) {
-                                if(isRoomExists) {
-                                    console.log("roomEsixt!!!!!!!!!");
-                                    receiveBroadcast();
-                                    return;
-                                }
-
-                                setTimeout(reCheckRoomPresence, 5000);
-                            });
-                        })();
-
-                        disableInputButtons();
-                    }
-*/             
+        
                 </script>
             </div>
             <div class="col-sm-6 col-md-6">
