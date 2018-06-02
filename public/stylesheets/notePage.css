@@ -8,7 +8,7 @@ body { margin: 0; height: 100%; }
   width: auto;
   height: auto;
   right: 0px;
-  left : 50%;
+  left : 67%;
   bottom: 0px;
   top : 50px;
   background-color: rgba(0, 0, 0, 0.788);
@@ -28,9 +28,21 @@ body { margin: 0; height: 100%; }
   top: 50px;
   bottom: 0px;
   left: 0px;
-  right: 50%;
+  right: 33%;
   margin : 0px; 
   
+}
+
+#video-preview {
+  object-fit: fill;
+  position : fixed;
+  width : 67%;
+  height : auto;
+  top: 50px;
+  bottom: 0px;
+  left: 0px;
+  right: 33%;
+  margin : 0px; 
 }
 
 

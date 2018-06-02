@@ -31,7 +31,7 @@
         <script src="/socket.io/socket.io.js"></script>
         <script src="/javascripts/RTCMultiConnection.min.js"></script>
         <script src="/javascripts/getScreenId.js"></script>
-        
+
         <script>
             function init(){ 
                 initFirebase();
@@ -54,7 +54,7 @@
 
                 var watchLink = $('<li></li>').html('<a href="#" onclick="watchNote()"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;觀看同學筆記</a>');
                 $('#navList').append(watchLink);
-                var liveLink = $('<li></li>').html('<a href="#" onclick="livebtn()"><span class="glyphicon glyphicon-globe"></span> 查看投影片廣播</a>');
+                var liveLink = $('<li></li>').html('<a href="#" id="joinBroadcast" onclick="livebtn()"><span class="glyphicon glyphicon-globe"></span> 查看投影片廣播</a>');
                 $('#navList').append(liveLink);
                 
 
@@ -66,83 +66,40 @@
                 var liElement = document.createElement("li");
                 liElement.appendChild(btn);
                 $('#navList').append(liElement);
-                      
-                var pptUrl = parsePPTURL("<%= pptUrl %>");
-                callIframe(pptUrl);  
-          }
+                showPPT();
+            }
 
-            function callIframe(url) {
-                $('#slide').html("");
-                $('#slide').append('<iframe id="ppt" allowFullScreen></iframe>');
-                $('#ppt').attr('src', url);
+            function showPPT() {
+                document.getElementById("video-preview").style.display = "none";
+                document.getElementById("slide").style.display = "";
+                //$('#ppt').attr('src', url);
 
+            }
+            function showVideo(){
+                document.getElementById("slide").style.display = "none";
+                document.getElementById("slide").style.zIndex = "0";
+                document.getElementById("video-preview").style.display = "";
+                document.getElementById("video-preview").style.zIndex = "1";
+                //$('#learningBlock').append('<video id="video-preview" controls loop></video');
             }
             function slidebtn(){
                 var btn = document.getElementById("slidebtn");
                 if( btn.innerHTML == "隱藏筆記" ){
                     btn.innerHTML = "顯示筆記";
                     document.getElementById('slide').style.right = "0%";
+                    document.getElementById('video-preview').style.width = "100%";
                     document.getElementById('firepad-container').style.left = "100%";
                 }
                 else if ( btn.innerHTML == "顯示筆記" ){
                     btn.innerHTML = "隱藏筆記";
-                    document.getElementById('slide').style.right = "50%";
-                    document.getElementById('firepad-container').style.left = "50%";
+                    document.getElementById('slide').style.right = "33%";
+                    document.getElementById('video-preview').style.width = "67%";
+                    document.getElementById('firepad-container').style.left = "67%";
                 }
             }
             var pptUrl = parsePPTURL("<%= pptUrl %>");
-            function livebtn(){            
-                $.ajax({
-                        data : {courseName : "<%= courseName %>"},
-                        url: "/getLiveUrl",
-                        type : 'get',
-                        cache : false,
-                        timeout: 1000,
-                        success: function(liveUrl){
-                            if(liveUrl != ""){
-                                bootbox.confirm({
-                                    message: "<h3>目前老師正在上課! <br>是否觀看投影片廣播 ?</h3>",
-                                    buttons:{
-                                        confirm: {
-                                            label : '觀看',
-                                            className: 'btn-success'
-                                        },
-                                        cancel : {
-                                            label : '取消',
-                                            className: 'btn-danger'
-                                        }
-                                    },
-                                    callback: function(result){
-                                        if(result){
-                                            callIframe(liveUrl);
-                                            if(document.getElementById('liveSwitchBtn')){ // 避免出現很多個button
-                                                document.getElementById('liveSwitchBtn').remove();
-                                            }
-                                            var livebtn = document.createElement("button");
-                                            livebtn.setAttribute('onclick',"liveSwitchBtn(this.value)");
-                                            livebtn.setAttribute('value',liveUrl);
-                                            livebtn.setAttribute('id',"liveSwitchBtn");
-                                            livebtn.setAttribute('class',"btn btn-danger navbar-btn");
-                                            livebtn.innerHTML = "切回離線投影片";
-                                            var liElement = document.createElement("li");
-                                            liElement.appendChild(livebtn);
-                                            $('#navList').append(liElement);
-                                        }
-                                    }
-                                });     
-                            }else{
-                                bootbox.alert('<h3>目前老師還沒有廣播投影片喔!</h3>');
-                                if(document.getElementById('liveSwitchBtn')){ // 避免出現很多個button
-                                    document.getElementById('liveSwitchBtn').remove();
-                                    callIframe(pptUrl);
-                                }
-                            }
-                        },
-                        error : function(){
-                            bootbox.alert('<h3>Sorry，伺服器忙碌中，請再試一次</h3>');
-                        }
-                }); 
-            }
+           
+           
             function parsePPTURL(pptUrl){
                 var patt = /https:.*?(quot;|#39)/;
                 var match = patt.exec(pptUrl);
@@ -190,16 +147,130 @@
                 });
 
 
-            }
-            function liveSwitchBtn(liveUrl){
+            }       
+            /*
+            function livebtn(){     
+                var courseRef = firebase.database().ref("/courses").child("<%= courseName %>");
+                courseRef.on("value",function(data){
+                    var livePromise = new Promise((resolve, reject) => {
+                        resolve(data.val().live);
+                    });
+                    livePromise.then(broadcastId => {
+                        document.getElementById('joinBroadcast').disabled = true;
+                        connection.session = {
+                            screen: true,
+                            oneway: true
+                        };
+
+                        var socket = connection.getSocket();
+                        socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
+                            if(!isBroadcastExists) {
+                                // the first person (i.e. real-broadcaster) MUST set his user-id
+                                connection.userid = broadcastId;
+                            }
+
+                            console.log('check-broadcast-presence', broadcastId, isBroadcastExists);
+
+                            socket.emit('join-broadcast', {
+                                broadcastId: broadcastId,
+                                userid: connection.userid,
+                                typeOfStreams: connection.session
+                            });
+                        });
+
+
+
+                    });
+                });*/
+ /*               $.ajax({
+                        data : {courseName : "<%= courseName %>"},
+                        url: "/getBroadcastId",
+                        type : 'get',
+                        cache : false,
+                        timeout: 1000,
+                        success: function(broadcastId){
+                            console.log(broadcastId);
+                            if(broadcastId != ""){  // A broadcastId in firebase
+                                bootbox.confirm({
+                                    message: "<h3>目前老師正在上課! <br>是否觀看廣播 ?</h3>",
+                                    buttons:{
+                                        confirm: {
+                                            label : '觀看',
+                                            className: 'btn-success'
+                                        },
+                                        cancel : {
+                                            label : '取消',
+                                            className: 'btn-danger'
+                                        }
+                                    },
+                                    callback: function(result){
+                                        if(result){  // if click "觀看"
+                                            connection.session = {
+                                                screen: true,
+                                                oneway: true
+                                            };             
+                                            var socket = connection.getSocket();
+
+                                            socket.emit('join-broadcast', {
+                                                broadcastId: broadcastId,
+                                                userid: connection.userid,
+                                                typeOfStreams: connection.session
+                                            });
+
+                                            localStorage.setItem(connection.socketMessageEvent, broadcastId);
+
+                                            // auto-join-room
+                                            (function reCheckRoomPresence() {
+                                                connection.checkPresence(broadcastId, function(isRoomExists) {
+                                                    if(isRoomExists) {
+                                                    //    document.getElementById('open-or-join').onclick();
+                                                        return;
+                                                    }
+
+                                                    setTimeout(reCheckRoomPresence, 5000);
+                                                });
+                                            })();
+
+                                            if(document.getElementById('liveSwitchBtn')){ // 避免出現很多個button
+                                                document.getElementById('liveSwitchBtn').remove();
+                                            }
+                                            var livebtn = document.createElement("button");
+                                            livebtn.setAttribute('onclick',"liveSwitchBtn(this.value)");
+                                            //livebtn.setAttribute('value',liveUrl);
+                                            livebtn.setAttribute('id',"liveSwitchBtn");
+                                            livebtn.setAttribute('class',"btn btn-danger navbar-btn");
+                                            livebtn.innerHTML = "切回離線投影片";
+                                            var liElement = document.createElement("li");
+                                            liElement.appendChild(livebtn);
+                                            $('#navList').append(liElement);
+                                        }
+                                    }
+                                });     
+                            }else{
+                                bootbox.alert('<h3>目前老師還沒有廣播投影片喔!</h3>');
+                                if(document.getElementById('liveSwitchBtn')){ // 避免出現很多個button
+                                    document.getElementById('liveSwitchBtn').remove();
+                                    showPPT(pptUrl);
+                                }
+                            }
+                        },
+                        error : function(err){
+                            console.log(err);
+                            bootbox.alert('<h3>Sorry，伺服器忙碌中，請再試一次</h3>');
+                        }
+                }); 
+                */
+            //}
+
+            function liveSwitchBtn(){
                 var switchBtn = document.getElementById("liveSwitchBtn");
-                if( switchBtn.innerHTML == "切回離線投影片" ){
-                    switchBtn.innerHTML = "跟隨廣播投影片";
-                    callIframe(pptUrl);
+                if( switchBtn.innerHTML == "顯示離線的投影片" ){
+                    switchBtn.innerHTML = "跟隨線上課程廣播";
+                    showPPT(pptUrl);
                 }
-                else if( switchBtn.innerHTML == "跟隨廣播投影片" ){
-                    switchBtn.innerHTML = "切回離線投影片";
-                    callIframe(liveUrl);
+                else if( switchBtn.innerHTML == "跟隨線上課程廣播" ){
+                    switchBtn.innerHTML = "顯示離線的投影片";
+                    showVideo();
                 }
             }
         </script>
@@ -209,18 +280,348 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6 col-md-6">
-                
-                <br><br><br>
-                <video id="video-preview" controls loop></video>
-                <br>
-
-                <input type="text" id="broadcast-id" placeholder="broadcast-id" value="room-xyz">
-                <button id="open-or-join">Open or Join Broadcast</button>
-                <!-- 
-                    <div class="embed-responsive embed-responsive" id="slide">2m9asbb2rzb
-                -->
-                <script src="/javascripts/screen-broadcast.js"></script>
+                <div class="embed-responsive embed-responsive" id="slide">
+                    <iframe id="ppt" allowFullScreen></iframe>
+                    <script>
+                        $('#ppt').attr('src', pptUrl);
+                    </script>
                 </div>
+
+                <video id="video-preview" controls loop></video>    
+
+                
+                
+                <script>
+                    // recording is disabled because it is resulting for browser-crash
+                    // if you enable below line, please also uncomment above "RecordRTC.js"
+                    var enableRecordings = false;
+
+                    var connection = new RTCMultiConnection(null, {
+                        useDefaultDevices: true // if we don't need to force selection of specific devices
+                    });
+
+                    // its mandatory in v3
+                    connection.enableScalableBroadcast = true;
+
+                    // each relaying-user should serve only 1 users
+                    connection.maxRelayLimitPerUser = 1;
+
+                    // we don't need to keep room-opened
+                    // scalable-broadcast.js will handle stuff itself.
+                    connection.autoCloseEntireSession = true;
+
+                    // by default, socket.io server is assumed to be deployed on your own URL
+                    connection.socketURL = '/';
+
+                    // comment-out below line if you do not have your own socket.io server
+                    // connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
+
+                    connection.socketMessageEvent = 'scalable-screen-broadcast-demo';
+
+                    // user need to connect server, so that others can reach him.
+                    connection.connectSocket(function(socket) {
+                        /*socket.on('logs', function(log) {
+                            //document.querySelector('h1').innerHTML = log.replace(/</g, '----').replace(/>/g, '___').replace(/----/g, '(<span style="color:red;">').replace(/___/g, '</span>)');
+                            //console.log(log);
+                        });
+                        */
+                        // this event is emitted when a broadcast is already created.
+                        socket.on('join-broadcaster', function(hintsToJoinBroadcast) {
+                            console.log('join-broadcaster', hintsToJoinBroadcast);
+
+                            connection.session = hintsToJoinBroadcast.typeOfStreams;
+                            connection.sdpConstraints.mandatory = {
+                                OfferToReceiveVideo: true,
+                                OfferToReceiveAudio: false
+                            };
+                            connection.join(hintsToJoinBroadcast.userid);
+                        });
+
+                        socket.on('rejoin-broadcast', function(broadcastId) {
+                            console.log('rejoin-broadcast', broadcastId);
+
+                            connection.attachStreams = [];
+                            socket.emit('check-broadcast-presence', broadcastId, function(isBroadcastExists) {
+                                if(!isBroadcastExists) {
+                                    // the first person (i.e. real-broadcaster) MUST set his user-id
+                                    connection.userid = broadcastId;
+                                }
+
+                                socket.emit('join-broadcast', {
+                                    broadcastId: broadcastId,
+                                    userid: connection.userid,
+                                    typeOfStreams: connection.session
+                                });
+                            });
+                        });
+
+                        socket.on('broadcast-stopped', function(broadcastId) {
+                            bootbox.alert('廣播已結束!');
+                            if(document.getElementById('liveSwitchBtn')){ 
+                                document.getElementById('liveSwitchBtn').remove();
+                            }
+                            var pptUrl = parsePPTURL("<%= pptUrl %>");
+                            document.getElementById('joinBroadcast').style.pointerEvents = "";
+                            showPPT();
+                            //location.reload();
+                            console.error('broadcast-stopped', broadcastId);
+                        });
+/*
+                        // this event is emitted when a broadcast is absent.
+                        socket.on('start-broadcasting', function(typeOfStreams) {
+                            console.log('start-broadcasting', typeOfStreams);
+
+                            // host i.e. sender should always use this!
+                            connection.sdpConstraints.mandatory = {
+                                OfferToReceiveVideo: false,
+                                OfferToReceiveAudio: false
+                            };
+                            connection.session = typeOfStreams;
+
+                            // "open" method here will capture media-stream
+                            // we can skip this function always; it is totally optional here.
+                            // we can use "connection.getUserMediaHandler" instead
+                            connection.open(connection.userid, function() {
+                                showRoomURL(connection.sessionid);
+                            });
+                        });*/
+                    });
+
+                    window.onbeforeunload = function() {
+                        // Firefox is ugly.
+                        document.getElementById('joinBroadcast').disabled = false;
+                    };
+
+                    var videoPreview = document.getElementById('video-preview');
+
+                    connection.onstream = function(event) {
+                        if(connection.isInitiator && event.type !== 'local') {
+                            return;
+                        }
+
+                        if(event.mediaElement) {
+                            event.mediaElement.pause();
+                            delete event.mediaElement;
+                        }
+
+                        connection.isUpperUserLeft = false;
+                        videoPreview.src = URL.createObjectURL(event.stream);
+                        videoPreview.play();
+
+                        videoPreview.userid = event.userid;
+
+                        if(event.type === 'local') {
+                            videoPreview.muted = true;
+                        }
+
+                        if (connection.isInitiator == false && event.type === 'remote') {
+                            // he is merely relaying the media
+                            connection.dontCaptureUserMedia = true;
+                            connection.attachStreams = [event.stream];
+                            connection.sdpConstraints.mandatory = {
+                                OfferToReceiveAudio: false,
+                                OfferToReceiveVideo: false
+                            };
+
+                            var socket = connection.getSocket();
+                            socket.emit('can-relay-broadcast');
+
+                            if(connection.DetectRTC.browser.name === 'Chrome') {
+                                connection.getAllParticipants().forEach(function(p) {
+                                    if(p + '' != event.userid + '') {
+                                        var peer = connection.peers[p].peer;
+                                        peer.getLocalStreams().forEach(function(localStream) {
+                                            peer.removeStream(localStream);
+                                        });
+                                        peer.addStream(event.stream);
+                                        connection.dontAttachStream = true;
+                                        connection.renegotiate(p);
+                                        connection.dontAttachStream = false;
+                                    }
+                                });
+                            }
+
+                            if(connection.DetectRTC.browser.name === 'Firefox') {
+                                // Firefox is NOT supporting removeStream method
+                                // that's why using alternative hack.
+                                // NOTE: Firefox seems unable to replace-tracks of the remote-media-stream
+                                // need to ask all deeper nodes to rejoin
+                                connection.getAllParticipants().forEach(function(p) {
+                                    if(p + '' != event.userid + '') {
+                                        connection.replaceTrack(event.stream, p);
+                                    }
+                                });
+                            }
+
+                            // Firefox seems UN_ABLE to record remote MediaStream
+                            // WebAudio solution merely records audio
+                            // so recording is skipped for Firefox.
+                            if(connection.DetectRTC.browser.name === 'Chrome') {
+                                repeatedlyRecordStream(event.stream);
+                            }
+                        }
+                    };     
+                    function livebtn(){     
+                        var courseRef = firebase.database().ref("/courses").child("<%= courseName %>");
+                        courseRef.on("value",function(data){
+                            var livePromise = new Promise((resolve, reject) => {
+                                resolve(data.val().live);
+                            });
+                            livePromise.then(broadcastId => {
+                                if(broadcastId != ""){
+                                    bootbox.confirm({
+                                    message: "<h3>目前老師正在上課! <br>是否觀看廣播 ?</h3>",
+                                    buttons:{
+                                        confirm: {
+                                            label : '觀看',
+                                            className: 'btn-success'
+                                        },
+                                        cancel : {
+                                            label : '取消',
+                                            className: 'btn-danger'
+                                        }
+                                    },callback: function(result){
+                                            if(result){  // if click "觀看"
+                                                showVideo();
+                                                document.getElementById('joinBroadcast').style.pointerEvents = "none";
+                                                document.getElementById('joinBroadcast').value = broadcastId;
+                                                connection.session = {
+                                                    screen: true,
+                                                    oneway: true
+                                                };
+
+                                                var socket = connection.getSocket();
+
+                                                socket.emit('join-broadcast', {
+                                                        broadcastId: broadcastId,
+                                                        userid: connection.userid,
+                                                        typeOfStreams: connection.session
+                                                });
+
+                                                if(document.getElementById('liveSwitchBtn')){ // 避免出現很多個button
+                                                    document.getElementById('liveSwitchBtn').remove();
+                                                }
+                                                var livebtn = document.createElement("button");
+                                                livebtn.setAttribute('onclick',"liveSwitchBtn()");
+                                                livebtn.setAttribute('id',"liveSwitchBtn");
+                                                livebtn.setAttribute('class',"btn btn-danger navbar-btn");
+                                                livebtn.innerHTML = "顯示離線的投影片";
+                                                var liElement = document.createElement("li");
+                                                liElement.appendChild(livebtn);
+                                                $('#navList').append(liElement);
+                                            }
+                                        }
+                                    });   
+                                }else{
+                                    bootbox.alert('<h3>目前老師還沒有在上課喔!</h3>');
+                                }
+                            });                            
+                        });
+                    }
+                    connection.onstreamended = function() {};
+
+                    connection.onleave = function(event) {
+                        if(event.userid !== videoPreview.userid) return;
+
+                        var socket = connection.getSocket();
+                        socket.emit('can-not-relay-broadcast');
+
+                        connection.isUpperUserLeft = true;
+
+                        if(allRecordedBlobs.length) {
+                            // playing lats recorded blob
+                            var lastBlob = allRecordedBlobs[allRecordedBlobs.length - 1];
+                            videoPreview.src = URL.createObjectURL(lastBlob);
+                            videoPreview.play();
+                            allRecordedBlobs = [];
+                        }
+                        else if(connection.currentRecorder) {
+                            var recorder = connection.currentRecorder;
+                            connection.currentRecorder = null;
+                            recorder.stopRecording(function() {
+                                if(!connection.isUpperUserLeft) return;
+
+                                videoPreview.src = URL.createObjectURL(recorder.blob);
+                                videoPreview.play();
+                            });
+                        }
+
+                        if(connection.currentRecorder) {
+                            connection.currentRecorder.stopRecording();
+                            connection.currentRecorder = null;
+                        }
+                    };
+
+                    var allRecordedBlobs = [];
+
+                    function repeatedlyRecordStream(stream) {
+                        if(!enableRecordings) {
+                            return;
+                        }
+
+                        connection.currentRecorder = RecordRTC(stream, {
+                            type: 'video'
+                        });
+
+                        connection.currentRecorder.startRecording();
+
+                        setTimeout(function() {
+                            if(connection.isUpperUserLeft || !connection.currentRecorder) {
+                                return;
+                            }
+
+                            connection.currentRecorder.stopRecording(function() {
+                                allRecordedBlobs.push(connection.currentRecorder.blob);
+
+                                if(connection.isUpperUserLeft) {
+                                    return;
+                                }
+
+                                connection.currentRecorder = null;
+                                repeatedlyRecordStream(stream);
+                            });
+                        }, 30 * 1000); // 30-seconds
+                    };
+
+                    // Using getScreenId.js to capture screen from any domain
+                    // You do NOT need to deploy Chrome Extension YOUR-Self!!
+                    connection.getScreenConstraints = function(callback) {
+                        getScreenConstraints(function(error, screen_constraints) {
+                            if (!error) {
+                                screen_constraints = connection.modifyScreenConstraints(screen_constraints);
+                                callback(error, screen_constraints);
+                                return;
+                            }
+                            throw error;
+                        });
+                    };
+
+                    function disableInputButtons() {
+                        document.getElementById('joinBroadcast').disabled = true;
+                    }          
+/*
+                    var broadcastId = '';
+                    if(broadcastId && broadcastId.length) {
+                        document.getElementById('joinBroadcast').value = broadcastId;
+                        localStorage.setItem(connection.socketMessageEvent, broadcastId);
+
+                        // auto-join-room
+                        (function reCheckRoomPresence() {
+                            connection.checkPresence(broadcastId, function(isRoomExists) {
+                                if(isRoomExists) {
+                                    console.log("roomEsixt!!!!!!!!!");
+                                    document.getElementById('joinBroadcast').onclick();
+                                    return;
+                                }
+
+                                setTimeout(reCheckRoomPresence, 5000);
+                            });
+                        })();
+
+                        disableInputButtons();
+                    }
+ */               
+                </script>
             </div>
             <div class="col-sm-6 col-md-6">
                 <div id="firepad-container">

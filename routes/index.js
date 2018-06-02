@@ -97,18 +97,6 @@ module.exports = function(passport){
     );
   });
 
-  router.get('/getLiveUrl',function(req,res){
-    var courseRef = firebase.database().ref("/courses").child(req.query.courseName);
-    courseRef.on("value",function(data){
-      var btnPromise = new Promise(function(resolve, reject){
-        resolve(data.val().live);
-      });
-      btnPromise.then(value => {
-          res.send(value);
-      });
-    });
-  });
-
   router.post('/note-taking', ensureAuthenticated, function(req, res) {
 
     res.render('note-taking', {
