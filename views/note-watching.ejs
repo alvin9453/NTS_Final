@@ -251,8 +251,7 @@
                 // comment-out below line if you do not have your own socket.io server
                 // connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
 
-                //connection.socketMessageEvent = 'scalable-screen-broadcast-demo';
-                connection.socketMessageEvent = 'note-taking_system';
+                connection.socketMessageEvent = 'scalable-screen-broadcast-demo';
 
                 // user need to connect server, so that others can reach him.
                 connection.connectSocket(function(socket) {
@@ -290,14 +289,7 @@
                             });
                         });
                     });
-/*
-                    socket.on('broadcast-stopped', function(broadcastId) {
-                        // alert('Broadcast has been stopped.');
-                        // location.reload();
-                        console.error('broadcast-stopped', broadcastId);
-                        alert('This broadcast has been stopped.');
-                    });
-*/
+
                     // this event is emitted when a broadcast is absent.
                     socket.on('start-broadcasting', function(typeOfStreams) {
                         console.log('start-broadcasting', typeOfStreams);
@@ -317,13 +309,6 @@
                         });
                     });
                 });
-/*
-                window.onbeforeunload = function() {
-                    // Firefox is ugly.
-                    document.getElementById('open-or-join').disabled = false;
-                };
-*/
-                //var videoPreview = document.getElementById('video-preview');
 
                 connection.onstream = function(event) {
                     if(connection.isInitiator && event.type !== 'local') {
@@ -336,15 +321,7 @@
                     }
 
                     connection.isUpperUserLeft = false;
-                    //videoPreview.src = URL.createObjectURL(event.stream);
-                    //videoPreview.play();
 
-                    //videoPreview.userid = event.userid;
-                    /*
-                    if(event.type === 'local') {
-                        videoPreview.muted = true;
-                    }
-                    */
                     if (connection.isInitiator == false && event.type === 'remote') {
                         // he is merely relaying the media
                         connection.dontCaptureUserMedia = true;
@@ -429,39 +406,6 @@
                 }
 
                 connection.onstreamended = function() {};
-/*
-                connection.onleave = function(event) {
-                    if(event.userid !== videoPreview.userid) return;
-
-                    var socket = connection.getSocket();
-                    socket.emit('can-not-relay-broadcast');
-
-                    connection.isUpperUserLeft = true;
-
-                    if(allRecordedBlobs.length) {
-                        // playing lats recorded blob
-                        var lastBlob = allRecordedBlobs[allRecordedBlobs.length - 1];
-                        videoPreview.src = URL.createObjectURL(lastBlob);
-                        videoPreview.play();
-                        allRecordedBlobs = [];
-                    }
-                    else if(connection.currentRecorder) {
-                        var recorder = connection.currentRecorder;
-                        connection.currentRecorder = null;
-                        recorder.stopRecording(function() {
-                            if(!connection.isUpperUserLeft) return;
-
-                            videoPreview.src = URL.createObjectURL(recorder.blob);
-                            videoPreview.play();
-                        });
-                    }
-
-                    if(connection.currentRecorder) {
-                        connection.currentRecorder.stopRecording();
-                        connection.currentRecorder = null;
-                    }
-                };
-*/
                 var allRecordedBlobs = [];
 
                 function repeatedlyRecordStream(stream) {
@@ -505,86 +449,6 @@
                         throw error;
                     });
                 };
-/*
-                function disableInputButtons() {
-                    document.getElementById('open-or-join').disabled = true;
-                    document.getElementById('broadcast-id').disabled = true;
-                }
-
-                // ......................................................
-                // ......................Handling broadcast-id................
-                // ......................................................
-
-                function showRoomURL(broadcastId) {
-                    var roomHashURL = '#' + broadcastId;
-                    var roomQueryStringURL = '?broadcastId=' + broadcastId;
-
-                    var html = '<h2>Unique URL for your room:</h2><br>';
-
-                    html += 'Hash URL: <a href="' + roomHashURL + '" target="_blank">' + roomHashURL + '</a>';
-                    html += '<br>';
-                    html += 'QueryString URL: <a href="' + roomQueryStringURL + '" target="_blank">' + roomQueryStringURL + '</a>';
-
-                    var roomURLsDiv = document.getElementById('room-urls');
-                    roomURLsDiv.innerHTML = html;
-
-                    roomURLsDiv.style.display = 'block';
-                }
-
-                (function() {
-                    var params = {},
-                        r = /([^&=]+)=?([^&]*)/g;
-
-                    function d(s) {
-                        return decodeURIComponent(s.replace(/\+/g, ' '));
-                    }
-                    var match, search = window.location.search;
-                    while (match = r.exec(search.substring(1)))
-                        params[d(match[1])] = d(match[2]);
-                    window.params = params;
-                })();
-
-                var broadcastId = '';
-                if (localStorage.getItem(connection.socketMessageEvent)) {
-                    broadcastId = localStorage.getItem(connection.socketMessageEvent);
-                } else {
-                    broadcastId = connection.token();
-                }
-                document.getElementById('broadcast-id').value = broadcastId;
-                document.getElementById('broadcast-id').onkeyup = function() {
-                    localStorage.setItem(connection.socketMessageEvent, this.value);
-                };
-
-                var hashString = location.hash.replace('#', '');
-                if(hashString.length && hashString.indexOf('comment-') == 0) {
-                hashString = '';
-                }
-
-                var broadcastId = params.broadcastId;
-                if(!broadcastId && hashString.length) {
-                    broadcastId = hashString;
-                }
-
-                if(broadcastId && broadcastId.length) {
-                    //document.getElementById('broadcast-id').value = broadcastId;
-                    localStorage.setItem(connection.socketMessageEvent, broadcastId);
-
-                    // auto-join-room
-                    (function reCheckRoomPresence() {
-                        connection.checkPresence(broadcastId, function(isRoomExists) {
-                            if(isRoomExists) {
-                                document.getElementById('liveBroadcast').onclick();
-                                return;
-                            }
-
-                            setTimeout(reCheckRoomPresence, 5000);
-                        });
-                    })();
-
-                    //disableInputButtons();
-                }
-*/
-
             </script>
     </div>
 </body>
