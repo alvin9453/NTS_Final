@@ -7,11 +7,35 @@
 var app = require('../app');
 var debug = require('debug')('sso:server');
 var http = require('http');
+var https = require('https');
+var fs = require('fs');
+var path = require('path');
+
+function resolveURL(url) {
+  var isWin = !!process.platform.match(/^win/);
+  if (!isWin) return url;
+  return url.replace(/\//g, '\\');
+}
+
+// Please use HTTPs on non-localhost domains.
+var isUseHTTPs = true;
+
+var ssl_key = fs.readFileSync(path.join(__dirname, resolveURL('self-keys/selfsigned.key')));
+var ssl_cert = fs.readFileSync(path.join(__dirname, resolveURL('self-keys/selfsigned.crt')));
+var ssl_cabundle = null;
+
+
+var options = {
+  key: ssl_key,
+  cert: ssl_cert,
+  ca: ssl_cabundle
+};
+
 
 /**
  * Get port from environment and store in Express.
  */
-
+var port = 443;
 var port = normalizePort(process.env.PORT || '8080');
 app.set('port', port);
 
@@ -19,7 +43,15 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+var server;
+
+//var server = http.createServer(app);
+
+if (isUseHTTPs) {
+  server = https.createServer(options,app );
+} else {
+  server = https.createServer(app);
+}
 
 /**
  * Listen on provided port, on all network interfaces.
