@@ -50,7 +50,7 @@ var server;
 if (isUseHTTPs) {
   server = https.createServer(options,app );
 } else {
-  server = https.createServer(app);
+  server = http.createServer(app);
 }
 
 /**
