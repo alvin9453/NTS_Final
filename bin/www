@@ -18,7 +18,7 @@ function resolveURL(url) {
 }
 
 // Please use HTTPs on non-localhost domains.
-var isUseHTTPs = true;
+var isUseHTTPs = false;
 
 var ssl_key = fs.readFileSync(path.join(__dirname, resolveURL('self-keys/selfsigned.key')));
 var ssl_cert = fs.readFileSync(path.join(__dirname, resolveURL('self-keys/selfsigned.crt')));
