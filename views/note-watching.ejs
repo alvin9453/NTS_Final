@@ -32,84 +32,7 @@
         <script src="/javascripts/RTCMultiConnection.min.js"></script>
         <script src="/javascripts/getScreenId.js"></script>
         <script>
-        // Detect capture screen extension
-        function systemNotice(){
-            var isChrome = !!window.chrome && !!window.chrome.webstore;
-            if(isChrome){
-                getChromeExtensionStatus(function(status) {
-                    if (status === 'installed-enabled'){
-                        var dialog = bootbox.dialog({
-                            title : "<h2 align='center'>系統提醒</h2>",
-                            message : "<h3>您已安裝並啟用 Screen Capturing，可以點擊<font color='red'> <span class='glyphicon glyphicon-globe'></span> 線上課程廣播 </font> 來擷取螢幕並廣播給學生囉 ! </h3>",
-                            buttons: {
-                                cancel : {
-                                    label : "我知道了",
-                                    className : "btn-success"
-                                }
-                            }
-                        });
-                        
-                    } 
-                    else if (status === 'installed-disabled'){
-                        var dialog = bootbox.dialog({
-                            title : "<h2 align='center'>系統提醒</h2>",
-                            message : "<h3>您已安裝 Screen Capturing，若要使用<font color='red'> 線上課程廣播 </font>，請到 <a target='chromeExtension' href='chrome://extensions/'>擴充功能</a> 啟用 </h3>",
-                            buttons: {
-                                cancel : {
-                                    label : "我知道了，先不啟用",
-                                    className : "btn-danger"
-                                },
-                                ok : {
-                                    label : "點我立即啟用" ,
-                                    className : "btn-success",
-                                    callback : function(){
-                                        var enableSC = document.createElement('a');
-                                        enableSC.setAttribute('href', 'chrome://extensions/');
-                                        enableSC.setAttribute('target', 'chromeExtension');
-                                        enableSC.click();
-                                    }
-                                }
-                            }
-                        });
-                        document.getElementById('liveBroadcast').style.pointerEvents = "none";
-                    }else if(status === 'not-installed'){
-                        var dialog = bootbox.dialog({
-                            title : "<h2 align='center'>系統提醒</h2>",
-                            message : "<h3>您的 Google Chrome 尚未安裝 Screen Capturing，若要使用<font color='red'> 線上課程廣播 </font>功能來擷取螢幕並廣播，請先安裝 <a target='screenCapturing' href='https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk'>Screen Capturing 套件 </a>，並到 擴充功能(chrome://extensions/) 啟用 </h3> <br> <h4>註 : 請勿使用無痕模式</h4>",
-                            buttons: {
-                                cancel : {
-                                    label : "我知道了，先不安裝",
-                                    className : "btn-danger"
-                                },
-                                ok : {
-                                    label : "點我立即安裝" ,
-                                    className : "btn-success",
-                                    callback : function(){
-                                        var installSC = document.createElement('a');
-                                        installSC.setAttribute('href', 'https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk');
-                                        installSC.setAttribute('target', 'screenCapturing');
-                                        installSC.click();
-                                    }
-                                }
-                            }
-                        });
-                        document.getElementById('liveBroadcast').style.pointerEvents = "none";
-                    }
-                });
-            }else{
-               var dialog = bootbox.dialog({
-                            title : "<h2 align='center'>系統提醒</h2>",
-                            message : "<h3>若要使用<font color='red'> 線上課程廣播 </font>功能來擷取螢幕並廣播，請使用 <font color='red'>Google Chrome</font> 並安裝 <a target='screenCapturing' href='https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk'>Screen Capturing 套件 </a> </h3>",
-                            buttons: {
-                                cancel : {
-                                    label : "我知道了，先不使用廣播功能",
-                                    className : "btn-danger"
-                                }
-                            }       
-                        });
-                document.getElementById('liveBroadcast').style.pointerEvents = "none";
-            }
-        }
+ 
         </script>
 
 
@@ -122,7 +45,7 @@
                 var liveLiElement = $('<li></li>').html('<a href="#" id="liveBroadcast" onclick="liveBroadcast()"><span class="glyphicon glyphicon-globe"></span> 線上課程廣播</a>');
                 $('#navList').append(slideLiElement);
                 $('#navList').append(liveLiElement);
-                systemNotice();// If the browser is not Chrome or not install Screen Capturing , this will disable liveBroadcast link.
+                
                 
                 // Add student from data into select list
                 var userRef = firebase.database().ref("users/");
@@ -377,14 +300,100 @@
                         }
                     }
                 };
+                // Detect capture screen extension and browser
+                // Only Chrome can broadcast screen. (Because Screen Capturing is only in Chrome...)
+                function liveBroadcast(){
+                    var isChrome = !!window.chrome && !!window.chrome.webstore;
+                    if(isChrome){
+                        getChromeExtensionStatus(function(status) {
+                            if (status === 'installed-enabled'){ 
+                                var dialog = bootbox.dialog({
+                                    title : "<h2 align='center'>系統提醒</h2>",
+                                    message : "<h3>您已安裝並啟用 Screen Capturing，可以擷取螢幕並廣播給學生囉 ! </h3>",
+                                    buttons: {
+                                        calcel : {
+                                            label : "稍後再廣播",
+                                            className : "btn-danger"
+                                        },
+                                        ok : {
+                                            label : "開始廣播 ! ",
+                                            className : "btn-success",
+                                            callback : function() {
+                                                startBroadcasting();
+                                            }
+                                        }
+                                    }
+                                });
+                                
+                            } 
+                            else if (status === 'installed-disabled'){
+                                var dialog = bootbox.dialog({
+                                    title : "<h2 align='center'>系統提醒</h2>",
+                                    message : "<h3>您已安裝 Screen Capturing，若要使用<font color='red'> 線上課程廣播 </font>，請到 <a target='chromeExtension' href='chrome://extensions/'>擴充功能</a> 啟用 </h3>",
+                                    buttons: {
+                                        cancel : {
+                                            label : "我知道了，先不啟用",
+                                            className : "btn-danger"
+                                        },
+                                        ok : {
+                                            label : "點我立即啟用" ,
+                                            className : "btn-success",
+                                            callback : function(){
+                                                var enableSC = document.createElement('a');
+                                                enableSC.setAttribute('href', 'chrome://extensions/');
+                                                enableSC.setAttribute('target', 'chromeExtension');
+                                                enableSC.click();
+                                            }
+                                        }
+                                    }
+                                });
+                            }else if(status === 'not-installed'){
+                                var dialog = bootbox.dialog({
+                                    title : "<h2 align='center'>系統提醒</h2>",
+                                    message : "<h3>您的 Google Chrome 尚未安裝 Screen Capturing，若要使用<font color='red'> 線上課程廣播 </font>功能來擷取螢幕並廣播，請先安裝 <a target='screenCapturing' href='https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk'>Screen Capturing 套件 </a>，並到 擴充功能(chrome://extensions/) 啟用 </h3> <br> <h4>註 : 請勿使用無痕模式</h4>",
+                                    buttons: {
+                                        cancel : {
+                                            label : "我知道了，先不安裝",
+                                            className : "btn-danger"
+                                        },
+                                        ok : {
+                                            label : "點我立即安裝" ,
+                                            className : "btn-success",
+                                            callback : function(){
+                                                var installSC = document.createElement('a');
+                                                installSC.setAttribute('href', 'https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk');
+                                                installSC.setAttribute('target', 'screenCapturing');
+                                                installSC.click();
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                            return status;
+                        });
+                    }else{  // Not use chrome 
+                    var dialog = bootbox.dialog({
+                                    title : "<h2 align='center'>系統提醒</h2>",
+                                    message : "<h3>若要使用<font color='red'> 線上課程廣播 </font>功能來擷取螢幕並廣播，請使用 <font color='red'>Google Chrome</font> 並安裝 <a target='screenCapturing' href='https://chrome.google.com/webstore/detail/screen-capturing/ajhifddimkapgcifgcodmmfdlknahffk'>Screen Capturing 套件 </a> </h3>",
+                                    buttons: {
+                                        cancel : {
+                                            label : "我知道了，先不使用廣播功能",
+                                            className : "btn-danger"
+                                        }
+                                    }       
+                                });
+                        return 'not-chrome';
+                    }
+                    
+                }
 
                 // ask node.js server to look for a broadcast
                 // if broadcast is available, simply join it. i.e. "join-broadcaster" event should be emitted.
                 // if broadcast is absent, simply create it. i.e. "start-broadcasting" event should be fired.
                 //document.getElementById('open-or-join').onclick = function() {
-                function liveBroadcast(){
+                function startBroadcasting(){
                     var promiseResult = new Promise(function(resolve,reject){
-                    // get the live code according to the chapter title 
+                    // Use the cid as the broadcastId, so that each course has its own broadcast stream.
                     var courseRef = firebase.database().ref("courses/" + "<%= courseName %>");
                         courseRef.on("value",function(data){
                             resolve(data.val().cid);
@@ -413,7 +422,9 @@
                     });
                 }
 
-                connection.onstreamended = function() {};
+                connection.onstreamended = function() {
+                    location.reload(); 
+                };
                 var allRecordedBlobs = [];
 
                 function repeatedlyRecordStream(stream) {
