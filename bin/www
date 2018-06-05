@@ -56,7 +56,7 @@ if (isUseHTTPs) {
 /**
  * Listen on provided port, on all network interfaces.
  */
-
+// If you use pm2 to run your app in cluster mode , you have to add  "server.listen(port + process.env.NODE_APP_INSTANCE);"
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
