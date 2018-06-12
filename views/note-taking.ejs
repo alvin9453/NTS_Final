@@ -385,6 +385,9 @@
                                             
                                     };                    
                                 });
+                            }).catch( err => {
+                                console.log(err);
+                                bootbox.alert('<h3>伺服器忙碌中，請稍後再試一次 ! </h3>');
                             });
                         });
                     };
