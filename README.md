@@ -1,4 +1,4 @@
-Note-taking system - Final version
+Note-taking system ( Final version )
 ======================================
 
 Introduction
@@ -22,7 +22,23 @@ Build
         $ mkdir ssl
         $ mv <certificate.crt> <private.key> ssl/
 
-3. Edit ``callbackURL`` in ``config/auth.json``, if you just test in localhost , use this code : 
+3. Edit ``bin/www``
+
+   If you just build on localhost : 
+        
+        var isUseHTTPs = false;
+        ....
+        // var port = 443;  // comment this line
+        var port = normalizePort(process.env.PORT || '8080');
+
+   If you deploy this application in https domain : 
+
+        var isUseHTTPs = true;
+        ....
+        var port = 443;
+        // var port = normalizePort(process.env.PORT || '8080'); // comment this line
+
+4. Edit ``callbackURL`` in ``config/auth.json``, if you just test in localhost , use this code : 
 
         "callbackURL" : "http://localhost:8080/auth/google/callback"
 
@@ -30,9 +46,12 @@ Build
 
         "callbackURL" : "http://<your_domain>/auth/google/callback"
 
-4. Start this application : 
+5. Start this application : 
 
-    $ npm start
+        $ npm start
+
+
+Then open ``localhost:8080`` or ``https://<your_domain>`` in your browser.
 
 
 Demo
