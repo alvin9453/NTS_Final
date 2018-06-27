@@ -43,8 +43,10 @@
                 // Add slide link
                 var slideLiElement = $('<li></li>').html('<a href="' + parsePPTURL("<%= pptUrl %>") +'" target="#"><span class="glyphicon glyphicon-file"></span> 投影片</a>');
                 var liveLiElement = $('<li></li>').html('<a href="#" id="liveBroadcast" onclick="liveBroadcast()"><span class="glyphicon glyphicon-globe"></span> 線上課程廣播</a>');
+                var testLiElement = $('<li></li>').html('<a href="#" id="" onclick="test()"> test</a>');
                 $('#navList').append(slideLiElement);
                 $('#navList').append(liveLiElement);
+                $('#navList').append(testLiElement);
                 
                 
                 // Add student from data into select list
@@ -129,6 +131,14 @@
                 var url = match[0].substr(0,match[0].length - 4);
                 url = url.replace(/&amp;/g,"&");
                 return url;
+            }
+            function test(){
+                bootbox.prompt("This is the default prompt!", function(msg){ 
+                    var socket = connection.getSocket();
+                    socket.emit('test',{
+                        'msg' : msg 
+                    });
+                });
             }
         </script>
 </head>

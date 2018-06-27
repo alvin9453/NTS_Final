@@ -494,6 +494,11 @@ module.exports = exports = function(app, socketCallback) {
             delete listOfUsers[socket.userid];
         });
 
+        socket.on('test' , function(msg){
+            console.log("RECEIVE : " , msg);
+            socket.broadcast.emit('test' , msg);
+        });
+
         if (socketCallback) {
             socketCallback(socket);
         }
