@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Note-taking system</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   
+    <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+    <script src="/javascripts/firebase-init.js"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascripts/RTCMultiConnection.min.js"></script>
+    <script>
+
+        var connection = new RTCMultiConnection(null, {
+            useDefaultDevices: true // if we don't need to force selection of specific devices
+        });
+        connection.socketURL = '/';
+        connection.socketMessageEvent = 'note-taking-system';
+
+
+        function init(){
+            initFirebase();
+        };
+        function makeid() {
+            var text = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+            for (var i = 0; i < 10; i++)
+                text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+            return text;
+        }
+
+        function createQuestion(){
+            var questionBlock = document.getElementById("questionBlock");
+            var question = document.getElementById("question").value;
+            var optionA = document.getElementById("optionA").value;
+            var optionB = document.getElementById("optionB").value;
+            var optionC = document.getElementById("optionC").value;
+            var optionD = document.getElementById("optionD").value;
+            var qid = makeid();
+
+            var ulElement = document.createElement("ul");
+            ulElement.setAttribute("class" , "list-group");
+
+            var opAElement = document.createElement("li");
+            var opBElement = document.createElement("li");
+            opAElement.setAttribute("class" , "list-group-item");
+            opBElement.setAttribute("class" , "list-group-item");
+            
+            var questionTitle = document.createElement("li");
+            questionTitle.innerHTML = question;
+            questionBlock.append(questionTitle);
+
+            opAElement.innerHTML = "A. " + optionA;
+            opBElement.innerHTML = "B. " + optionB;
+            ulElement.append(opAElement);
+            ulElement.append(opBElement);
+
+            if(optionC){
+                var opCElement = document.createElement("li");
+                opCElement.setAttribute("class" , "list-group-item");
+                opCElement.innerHTML = "C. " + optionC;
+                ulElement.append(opCElement);
+                if(optionD){  // 有 C 選項，才會有 D 選項，不給跳號啦
+                    var opDElement = document.createElement("li");
+                    opDElement.setAttribute("class" , "list-group-item");
+                    opDElement.innerHTML = "D. " + optionD;
+                    ulElement.append(opDElement);
+                }
+            }
+            var socket = connection.getSocket();
+            socket.emit('test',{
+                'qid' : qid,
+                'title' : question,
+                'optionA' : optionA,
+                'optionB' : optionB,
+                'optionC' : optionC,
+                'optionD' : optionD
+            });
+            questionBlock.append(ulElement);
+        }
+        var socket = connection.getSocket();
+        socket.on('studentAnswerToTeacher',function(ans){
+            console.log(ans);
+        });
+    </script>
+</head>
+<body>
+</body onload="init()">
+    <% include layouts/header %>
+    <br><br><br>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-md-6">
+                <h1 align="center">問題</h1>
+                <ol class="list-group" id="questionBlock"></ol>
+            </div>
+            <div class="col-sm-6 col-md-6">
+                <h1 align="center">新增</h1>
+                    <div class="input-group">
+                        <label>問題描述 : </label>
+                        <input class="form-control" type="text" id="question" required/>
+                    </div>
+                    <div class="input-group">
+                        <label>選項 A :</label>
+                        <input class="form-control" type="text" id="optionA" required/>
+                    </div>
+                    <div class="input-group">
+                        <label>選項 B :</label>
+                        <input class="form-control" type="text" id="optionB" required/>
+                    </div>
+                    <div class="input-group">
+                        <label>選項 C :</label>
+                        <input class="form-control" type="text" id="optionC"/>
+                    </div>
+                    <div class="input-group">
+                        <label>選項 D :</label>
+                        <input class="form-control" type="text" id="optionD"/>
+                    </div>
+                <button class="btn btn-primary" onclick="createQuestion()">新增</button>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+            <% include layouts/footer %>
+    </div>
+          
+
+</html>

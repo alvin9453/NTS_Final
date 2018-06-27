@@ -96,6 +96,16 @@ module.exports = function(passport){
      { user: req.user }
     );
   });
+  router.get('/irs', function(req, res) {
+    res.render('irs',
+     { user: req.user }
+    );
+  });
+  router.get('/irs-student', function(req, res) {
+    res.render('irs-student',
+     { user: req.user }
+    );
+  });
 
   router.post('/note-taking', ensureAuthenticated, function(req, res) {
 

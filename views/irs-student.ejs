@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Note-taking system</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        input { width:100%; }
+        h3 {text-align : center;}
+        .btn:focus {
+            background-color: #FFCC22;
+        }
+        .btn:hover {
+            background-color: #F0FFFF;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   
+    <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+    <script src="/javascripts/firebase-init.js"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascripts/RTCMultiConnection.min.js"></script>
+    <script>
+
+        var connection = new RTCMultiConnection(null, {
+            useDefaultDevices: true // if we don't need to force selection of specific devices
+        });
+        connection.socketURL = '/';
+        connection.socketMessageEvent = 'note-taking-system';
+
+
+        function init(){
+            initFirebase();
+        }
+        function createButtonInList(qid,value,text){
+            var btn = document.createElement('a');
+            //btn.setAttribute('type','button');
+            btn.setAttribute('align',"left;");
+            btn.setAttribute('onclick',"sendAnswer(\'" + qid + "\',this.value);");
+            btn.setAttribute('class',"list-group-item btn btn-default");
+            btn.value = value;
+            btn.innerHTML = text;
+            console.log(text);
+            return btn;
+        }
+        function sendAnswer(qid , option){
+            console.log(option);
+             var socket = connection.getSocket();
+             socket.emit("studentAnswer" , {"qid" : qid ,"answer" : option });
+        }
+        function appendQuestion(question){
+            var questionBlock = document.getElementById("questionBlock");
+            
+            var ulElement = document.createElement("ul");
+            ulElement.setAttribute("class" , "list-group");
+
+            var questionTitle = document.createElement("li");
+            var qid = question.qid;
+            var optionA = question.optionA;
+            var optionB = question.optionB;
+            var optionC = question.optionC;
+            var optionD = question.optionD;
+
+            questionTitle.innerHTML = question.title;
+            questionBlock.append(questionTitle);
+
+            
+            /* Option A */
+            var opAElement = document.createElement("li");
+            opAElement.append(createButtonInList(qid ,'A' , "A. " + optionA ));
+            ulElement.append(opAElement);
+
+            /* Option B */
+            var opBElement = document.createElement("li");
+            opBElement.append(createButtonInList(qid , 'B' , "B. " + optionB ));
+            ulElement.append(opBElement);
+            
+            if(optionC){
+                var opCElement = document.createElement("li");
+                opCElement.append(createButtonInList(qid , 'C' , "C. " + optionC ));
+                ulElement.append(opCElement);
+                if(optionD){  // 有 C 選項，才會有 D 選項，不給跳號啦
+                    var opDElement = document.createElement("li");
+                    opDElement.append(createButtonInList(qid, 'D' , "D. " + optionD ));
+                    ulElement.append(opDElement);
+                }
+            }            
+            questionBlock.append(ulElement);
+
+        }
+        var socket = connection.getSocket();
+        socket.on('test' , function(question){
+            appendQuestion(question);
+        });
+    </script>
+</head>
+<body>
+</body onload="init()">
+    <% include layouts/header %>
+    <br><br><br>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-md-6">
+                <h1 align="center">目前問題</h1>
+                <ol class="list-group" id="questionBlock"></ol>
+            </div>
+            <div class="col-sm-6 col-md-6">
+                <h1 align="center">統計</h1>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+            <% include layouts/footer %>
+    </div>
+          
+
+</html>

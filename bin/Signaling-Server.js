@@ -495,8 +495,11 @@ module.exports = exports = function(app, socketCallback) {
         });
 
         socket.on('test' , function(msg){
-            console.log("RECEIVE : " , msg);
             socket.broadcast.emit('test' , msg);
+        });
+        socket.on('studentAnswer' , function(answer){      
+            console.log("RECEIVE ANS : " , answer);      
+            socket.broadcast.emit('studentAnswerToTeacher' , answer);
         });
 
         if (socketCallback) {
