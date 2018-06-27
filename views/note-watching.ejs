@@ -65,8 +65,9 @@
 
                 // Select list click
                 $('#studentSelect').change(function(){
-                    var name = $('#studentSelect').find(':selected').text();
+                    var info = $('#studentSelect').find(':selected').text();
                     var email = $('#studentSelect').find(':selected').val();
+                    var name = info.split('<')[0];
                     $('#studentName').text(name);
                     var userEID = email.split('@')[0];
                     choosePad(userEID);
@@ -76,8 +77,9 @@
                 $('#randomStudent').click(function(){
                     var options = $('#studentSelect').find('option');
                     var randomIndex = Math.floor((Math.random() * options.length));
-                    var name = options.eq(randomIndex).text();
+                    var info = options.eq(randomIndex).text();
                     var email = options.eq(randomIndex).val();
+                    var name = info.split('<')[0];
                     $('#studentName').text(name);
                     var userEID = email.split('@')[0];
                     choosePad(userEID);
@@ -141,12 +143,12 @@
                 <textarea class="form-control" id="showAsking" readonly></textarea>
             </div>
             <div class="col-sm-4 col-md-4">
-                <br><br>
+                <br><br><br>
                 <h3 align="center"><strong><%= title %></strong></h3>
                 <hr>
                 <div class="form-group" id="studentBlock">
-                    <button id = "randomStudent" type="button" class="btn btn-success">隨機挑選學生</button>
-                    <h3>你選擇的是 : <b><div id="studentName">尚未選擇</div> </b></h3>
+                    <button id = "randomStudent" type="button" class="btn btn-success">隨機挑選</button>
+                    <h3>正在觀看 : <b><div id="studentName">尚未選擇</div> </b></h3>
                     <select class="form-control" id="studentSelect" size="25">
                     </select>
                 </div>
