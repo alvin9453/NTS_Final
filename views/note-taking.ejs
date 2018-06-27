@@ -67,13 +67,6 @@
                 liElement.appendChild(btn);
                 $('#navList').append(liElement);
                 showPPT();
-
-                var socket = connection.getSocket();
-                socket.on('test' , function(msg){
-                    alert(msg);
-                });
-
-
             }
 
             function showPPT() {
