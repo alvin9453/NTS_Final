@@ -87,21 +87,17 @@ module.exports = function(passport){
     res.redirect('/home');
   }); 
 
-  router.get('/screen-broadcast', function(req, res) {
-    res.render('Scalable-Screen-Broadcast');
-  });
-
   router.get('/addSlide', function(req, res) {
     res.render('addSlide',
      { user: req.user }
     );
   });
-  router.get('/irs', function(req, res) {
+  router.get('/irs', ensureAuthenticated , function(req, res) {
     res.render('irs',
      { user: req.user }
     );
   });
-  router.get('/irs-student', function(req, res) {
+  router.get('/irs-student', ensureAuthenticated,function(req, res) {
     res.render('irs-student',
      { user: req.user }
     );
