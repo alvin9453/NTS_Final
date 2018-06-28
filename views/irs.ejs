@@ -12,20 +12,64 @@
     <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
     <script src="/javascripts/firebase-init.js"></script>
 
+    <script src="/javascripts/bootbox.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/javascripts/RTCMultiConnection.min.js"></script>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
 
+        // init socket.io
         var connection = new RTCMultiConnection(null, {
             useDefaultDevices: true // if we don't need to force selection of specific devices
         });
         connection.socketURL = '/';
         connection.socketMessageEvent = 'note-taking-system';
 
-
+        // Load the Visualization API and the corechart package.
+        google.charts.load('current', {'packages':['corechart']});
+    
         function init(){
             initFirebase();
         };
+        function drawChart(qid) {
+            // Create the data table.
+            var title = document.getElementById(qid + "-Q").innerHTML;
+            var countA = document.getElementById(qid + "-A").innerHTML;
+            var countB = document.getElementById(qid + "-B").innerHTML;
+            var countC = 0
+            if ( document.getElementById(qid + "-C") )
+                countC = document.getElementById(qid + "-C").innerHTML;
+            var countD = 0;
+            if ( document.getElementById(qid + "-D") )
+                countD = document.getElementById(qid + "-D").innerHTML;
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Topping');
+            data.addColumn('number', 'Slices');
+            /*data.addRows([
+                ['A', Number(countA)],
+                ['B', Number(countB)],
+                ['C', Number(countC)],
+                ['D', Number(countD)]
+            ]);*/
+            data.addRows([
+                ['A', Number(countA)],
+                ['B', Number(countB)],
+                ['C', Number(countC)],
+                ['D', Number(countD)]
+            ]);
+
+            // Set chart options
+            var options = {'title': title,
+                        'width':400,
+                        'height':300};
+
+            // Instantiate and draw our chart, passing in some options.
+            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+      
+        }
         function makeid() {
             var text = "";
             var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -36,6 +80,42 @@
             return text;
         }
 
+        function createQuestionLiElement(qid, option, content){
+            var liElement = document.createElement("li");
+            liElement.setAttribute("class" , "list-group-item");
+            liElement.innerHTML = option + ". " + content;
+
+            var span = document.createElement("span");
+            span.setAttribute("class", "badge");
+            span.setAttribute("id", qid + "-" + option );
+            span.innerHTML = 0;
+            liElement.append(span);
+
+            return liElement;
+        }
+
+        function validInput(q , a, b, c, d){
+            if(q == ''){
+                bootbox.alert("<h2>請填寫問題描述 !</h2>");
+                return false;
+            }
+            else if(a == ''){
+                bootbox.alert("<h2>請至少填寫兩個選項 - A 和 B</h2>");
+                return false;
+            }
+            else if(b == ''){
+                bootbox.alert("<h2>請至少填寫兩個選項 - A 和 B</h2>");
+                return false;
+            }
+            else if(c == '' && d != ''){
+                bootbox.alert("<h2>若要新增 D 選項，請先填寫 C 選項的內容 !</h2>");
+                return false;
+            }else{
+                return true;
+            }
+                
+        }
+
         function createQuestion(){
             var questionBlock = document.getElementById("questionBlock");
             var question = document.getElementById("question").value;
@@ -43,34 +123,37 @@
             var optionB = document.getElementById("optionB").value;
             var optionC = document.getElementById("optionC").value;
             var optionD = document.getElementById("optionD").value;
+
+            if ( !validInput(question , optionA, optionB, optionC, optionD) )
+                return;
+
+            document.getElementById("question").value = '';
+            document.getElementById("optionA").value = '';
+            document.getElementById("optionB").value = '';
+            document.getElementById("optionC").value = '';
+            document.getElementById("optionD").value = '';
             var qid = makeid();
 
-            var ulElement = document.createElement("ul");
-            ulElement.setAttribute("class" , "list-group");
 
-            var opAElement = document.createElement("li");
-            var opBElement = document.createElement("li");
-            opAElement.setAttribute("class" , "list-group-item");
-            opBElement.setAttribute("class" , "list-group-item");
+            var opAElement = createQuestionLiElement(qid , 'A' , optionA);
+            var opBElement = createQuestionLiElement(qid , 'B' , optionB);
             
             var questionTitle = document.createElement("li");
+            questionTitle.setAttribute('id' , qid + "-Q");
             questionTitle.innerHTML = question;
             questionBlock.append(questionTitle);
 
-            opAElement.innerHTML = "A. " + optionA;
-            opBElement.innerHTML = "B. " + optionB;
+            var ulElement = document.createElement("ul");
+            ulElement.setAttribute("class" , "list-group");            
+
             ulElement.append(opAElement);
             ulElement.append(opBElement);
 
             if(optionC){
-                var opCElement = document.createElement("li");
-                opCElement.setAttribute("class" , "list-group-item");
-                opCElement.innerHTML = "C. " + optionC;
+                var opCElement = createQuestionLiElement(qid , 'C' , optionC);
                 ulElement.append(opCElement);
                 if(optionD){  // 有 C 選項，才會有 D 選項，不給跳號啦
-                    var opDElement = document.createElement("li");
-                    opDElement.setAttribute("class" , "list-group-item");
-                    opDElement.innerHTML = "D. " + optionD;
+                    var opDElement =createQuestionLiElement(qid , 'D' , optionD);
                     ulElement.append(opDElement);
                 }
             }
@@ -84,10 +167,18 @@
                 'optionD' : optionD
             });
             questionBlock.append(ulElement);
+            drawChart(qid);
         }
         var socket = connection.getSocket();
-        socket.on('studentAnswerToTeacher',function(ans){
-            console.log(ans);
+        socket.on('studentAnswerToTeacher',function(res){
+            var qid = res.qid;
+            var answer = res.answer;
+            var optionId = qid + "-" + answer;
+            console.log(optionId);
+            var count = Number(document.getElementById(optionId).innerHTML);
+            document.getElementById(optionId).innerHTML = ++count;
+            drawChart(qid);
+            
         });
     </script>
 </head>
@@ -99,9 +190,10 @@
         <div class="row">
             <div class="col-sm-6 col-md-6">
                 <h1 align="center">問題</h1>
-                <ol class="list-group" id="questionBlock"></ol>
+                <ul class="list-group" id="questionBlock"></ul>
             </div>
             <div class="col-sm-6 col-md-6">
+                <div id="chart_div" style="width: 300px; height: 300px;"></div>
                 <h1 align="center">新增</h1>
                     <div class="input-group">
                         <label>問題描述 : </label>

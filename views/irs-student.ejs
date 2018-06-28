@@ -38,37 +38,48 @@
         }
         function createButtonInList(qid,value,text){
             var btn = document.createElement('a');
-            //btn.setAttribute('type','button');
-            btn.setAttribute('align',"left;");
+            btn.setAttribute('id' , qid + "-" + value);
             btn.setAttribute('onclick',"sendAnswer(\'" + qid + "\',this.value);");
             btn.setAttribute('class',"list-group-item btn btn-default");
             btn.value = value;
             btn.innerHTML = text;
-            console.log(text);
             return btn;
         }
         function sendAnswer(qid , option){
-            console.log(option);
              var socket = connection.getSocket();
              socket.emit("studentAnswer" , {"qid" : qid ,"answer" : option });
+
+             //disable this question button
+             /*
+             document.getElementById(qid + "-A").style.pointerEvents = "none";
+             document.getElementById(qid + "-B").style.pointerEvents = "none";
+             if(document.getElementById(qid + "-C"))
+                document.getElementById(qid + "-C").style.pointerEvents = "none";
+             if(document.getElementById(qid + "-D"))
+                document.getElementById(qid + "-D").style.pointerEvents = "none";
+            */
+             document.getElementById(qid + "-" + option ).style.background = "#FFDD55";
+
         }
         function appendQuestion(question){
             var questionBlock = document.getElementById("questionBlock");
             
+            var questionTitle = document.createElement("li");
+            questionTitle.innerHTML = question.title;
+            
+
             var ulElement = document.createElement("ul");
+            ulElement.setAttribute("style" , "list-style-type:none")
             ulElement.setAttribute("class" , "list-group");
 
-            var questionTitle = document.createElement("li");
+            
             var qid = question.qid;
             var optionA = question.optionA;
             var optionB = question.optionB;
             var optionC = question.optionC;
             var optionD = question.optionD;
 
-            questionTitle.innerHTML = question.title;
-            questionBlock.append(questionTitle);
-
-            
+        
             /* Option A */
             var opAElement = document.createElement("li");
             opAElement.append(createButtonInList(qid ,'A' , "A. " + optionA ));
@@ -89,7 +100,9 @@
                     ulElement.append(opDElement);
                 }
             }            
-            questionBlock.append(ulElement);
+            questionTitle.append(ulElement);
+            questionBlock.append(questionTitle);
+            
 
         }
         var socket = connection.getSocket();
@@ -106,7 +119,7 @@
         <div class="row">
             <div class="col-sm-6 col-md-6">
                 <h1 align="center">目前問題</h1>
-                <ol class="list-group" id="questionBlock"></ol>
+                <ul class="list-group" id="questionBlock"></ul>
             </div>
             <div class="col-sm-6 col-md-6">
                 <h1 align="center">統計</h1>
