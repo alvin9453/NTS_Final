@@ -52,12 +52,13 @@
                     }
                 });
 
+                var irsLiElement = $('<li></li>').html('<a href="irs" target="irs"><span class="glyphicon glyphicon-flash"></span> 即時互動問答</a>');
+                $('#navList').append(irsLiElement);
                 var watchLink = $('<li></li>').html('<a href="#" onclick="watchNote()"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;觀看同學筆記</a>');
                 $('#navList').append(watchLink);
                 var liveLink = $('<li></li>').html('<a href="#" id="joinBroadcast" onclick="livebtn()"><span class="glyphicon glyphicon-globe"></span> 查看課程廣播</a>');
                 $('#navList').append(liveLink);
                 
-
                 var btn = document.createElement("button");
                 btn.setAttribute('onclick',"slidebtn()");
                 btn.setAttribute('id',"slidebtn");

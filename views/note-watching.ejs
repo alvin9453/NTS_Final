@@ -41,9 +41,11 @@
                 initFirebase();
 
                 // Add slide link
+                var irsLiElement = $('<li></li>').html('<a href="irs" target="irs"><span class="glyphicon glyphicon-flash"></span> 即時互動問答</a>');
+                $('#navList').append(irsLiElement);
                 var slideLiElement = $('<li></li>').html('<a href="' + parsePPTURL("<%= pptUrl %>") +'" target="#"><span class="glyphicon glyphicon-file"></span> 投影片</a>');
-                var liveLiElement = $('<li></li>').html('<a href="#" id="liveBroadcast" onclick="liveBroadcast()"><span class="glyphicon glyphicon-globe"></span> 線上課程廣播</a>');
                 $('#navList').append(slideLiElement);
+                var liveLiElement = $('<li></li>').html('<a href="#" id="liveBroadcast" onclick="liveBroadcast()"><span class="glyphicon glyphicon-globe"></span> 線上課程廣播</a>');
                 $('#navList').append(liveLiElement);
                 
                 

@@ -31,10 +31,14 @@
                 var character = data.val().character;
                 if( character == 'teacher'){
                     $('#character').text('老師');
-                    var liElement = $('<li></li>').html('<a href="addSlide" target="#">新增課程投影片</a>');
+                    var liElement = $('<li></li>').html('<a href="addSlide" target="newSlide">新增課程投影片</a>');
+                    var irsLiElement = $('<li></li>').html('<a href="irs" target="irs"><span class="glyphicon glyphicon-flash"></span> 即時互動問答</a>');
                     $('#navList').append(liElement);
+                    $('#navList').append(irsLiElement);
                 }else if(character == 'student'){
                     $('#character').text('學生');
+                    var irsLiElement = $('<li></li>').html('<a href="irs-student" target="irs-student"><span class="glyphicon glyphicon-flash"></span> 即時互動問答</a>');
+                    $('#navList').append(irsLiElement);
                 }
             });
             // old version : Students have to join the course
