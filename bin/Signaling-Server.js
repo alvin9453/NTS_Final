@@ -493,17 +493,16 @@ module.exports = exports = function(app, socketCallback) {
 
             delete listOfUsers[socket.userid];
         });
-
+        // Teacher new a question
         socket.on('newQuestion' , function(question){
             socket.broadcast.emit('newQuestion' , question);
         });
+        // Student choose an option as his answer and response to teacher
         socket.on('studentAnswer' , function(answer){      
-            console.log("RECEIVE ANS : " , answer);      
             socket.broadcast.emit('studentAnswerToTeacher' , answer);
         });
-
+        // Teacher send question statistics to all students
         socket.on('sendStatistics' , function(statistics){
-            console.log("statistics : " , statistics);
             socket.broadcast.emit('answerStatistics' , statistics);
         });
 
