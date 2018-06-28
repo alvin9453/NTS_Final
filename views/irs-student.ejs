@@ -19,11 +19,12 @@
     <link rel="stylesheet" href="/stylesheets/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   
-    <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
-    <script src="/javascripts/firebase-init.js"></script>
+
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/javascripts/RTCMultiConnection.min.js"></script>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
 
         var connection = new RTCMultiConnection(null, {
@@ -32,10 +33,8 @@
         connection.socketURL = '/';
         connection.socketMessageEvent = 'note-taking-system';
 
+        google.charts.load('current', {'packages':['corechart']});
 
-        function init(){
-            initFirebase();
-        }
         function createButtonInList(qid,value,text){
             var btn = document.createElement('a');
             btn.setAttribute('id' , qid + "-" + value);
@@ -50,35 +49,32 @@
              socket.emit("studentAnswer" , {"qid" : qid ,"answer" : option });
 
              //disable this question button
-             /*
+             
              document.getElementById(qid + "-A").style.pointerEvents = "none";
              document.getElementById(qid + "-B").style.pointerEvents = "none";
              if(document.getElementById(qid + "-C"))
                 document.getElementById(qid + "-C").style.pointerEvents = "none";
              if(document.getElementById(qid + "-D"))
                 document.getElementById(qid + "-D").style.pointerEvents = "none";
-            */
              document.getElementById(qid + "-" + option ).style.background = "#FFDD55";
 
         }
         function appendQuestion(question){
             var questionBlock = document.getElementById("questionBlock");
-            
-            var questionTitle = document.createElement("li");
-            questionTitle.innerHTML = question.title;
-            
-
             var ulElement = document.createElement("ul");
             ulElement.setAttribute("style" , "list-style-type:none")
             ulElement.setAttribute("class" , "list-group");
 
-            
             var qid = question.qid;
             var optionA = question.optionA;
             var optionB = question.optionB;
             var optionC = question.optionC;
             var optionD = question.optionD;
 
+            var questionTitle = document.createElement("li");
+            questionTitle.setAttribute('id' , qid + "-Q");
+            questionTitle.innerHTML = question.title;
+            
         
             /* Option A */
             var opAElement = document.createElement("li");
@@ -106,23 +102,67 @@
 
         }
         var socket = connection.getSocket();
-        socket.on('test' , function(question){
+        socket.on('newQuestion' , function(question){
             appendQuestion(question);
         });
+        
+        socket.on('answerStatistics', function(result){
+            var qid = result.qid;
+            if( document.getElementById(qid + "-A").style.pointerEvents != "none")
+                return;
+            // Create the data table.
+            var title = (document.getElementById(qid + "-Q").innerHTML).split('<')[0];
+            var countA = result.countA;
+            var countB = result.countB;
+            var countC = result.countC;
+            var countD = result.countD;
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Topping');
+            data.addColumn('number', 'Slices');
+            data.addRows([
+                ['A', Number(countA)],
+                ['B', Number(countB)],
+                ['C', Number(countC)],
+                ['D', Number(countD)]
+            ]);
+
+            // Set chart options
+            var options = {'title': title,
+                            'titleTextStyle' : {
+                                fontSize : 16, fontName : 'Noto Sans TC', bold : false
+                        },
+                        'legend' : { textStyle: { fontSize: 14} },
+                        'pieSliceTextStyle' : {
+                            fontName : 'Noto Sans TC',
+                            fontSize : 16,
+                        },
+                        'width':500,
+                        'height':200};
+
+            // Instantiate and draw our chart, passing in some options.
+            var newDiv = document.createElement('div');
+            newDiv.setAttribute('id' , qid);
+            chartDiv.append(newDiv);
+            var chart = new google.visualization.PieChart(document.getElementById(qid));
+
+            chart.draw(data, options);
+        });
+
     </script>
 </head>
 <body>
-</body onload="init()">
+</body>
     <% include layouts/header %>
     <br><br><br>
     <div class="container">
         <div class="row">
             <div class="col-sm-6 col-md-6">
-                <h1 align="center">目前問題</h1>
+                <h2 align="center">目前問題</h2>
                 <ul class="list-group" id="questionBlock"></ul>
             </div>
             <div class="col-sm-6 col-md-6">
-                <h1 align="center">統計</h1>
+                <h2 align="center">統計資料</h2>
+                <div id="chartDiv" align="center"></div>
             </div>
         </div>
     </div>

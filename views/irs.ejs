@@ -17,6 +17,19 @@
     <script src="/javascripts/RTCMultiConnection.min.js"></script>
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+        #createQ {
+            background-color: #66DD00;
+            color : white;
+            font-weight: 400;
+            font-size: 20px;
+        }
+        a.hover {
+            background-color : pink;
+        }
+    
+    </style>
+
     <script>
 
         // init socket.io
@@ -47,12 +60,6 @@
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'Topping');
             data.addColumn('number', 'Slices');
-            /*data.addRows([
-                ['A', Number(countA)],
-                ['B', Number(countB)],
-                ['C', Number(countC)],
-                ['D', Number(countD)]
-            ]);*/
             data.addRows([
                 ['A', Number(countA)],
                 ['B', Number(countB)],
@@ -62,12 +69,33 @@
 
             // Set chart options
             var options = {'title': title,
-                        'width':400,
-                        'height':300};
+                            'titleTextStyle' : {
+                                fontSize : 16, fontName : 'Noto Sans TC', bold : false
+                        },
+                        'legend' : { textStyle: { fontSize: 14} },
+                        'pieSliceTextStyle' : {
+                            fontName : 'Noto Sans TC',
+                            fontSize : 16,
+                        },
+                        'width':500,
+                        'height':200};
 
             // Instantiate and draw our chart, passing in some options.
-            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+            var newDiv = document.createElement('div');
+            newDiv.setAttribute('id' , qid);
+            chartDiv.append(newDiv);
+            var chart = new google.visualization.PieChart(document.getElementById(qid));
+
             chart.draw(data, options);
+
+            var socket = connection.getSocket();
+            socket.emit('sendStatistics' , {
+                qid : qid,
+                countA : countA,
+                countB : countB,
+                countC : countC,
+                countD : countD
+            });
       
         }
         function makeid() {
@@ -115,60 +143,102 @@
             }
                 
         }
-
         function createQuestion(){
-            var questionBlock = document.getElementById("questionBlock");
-            var question = document.getElementById("question").value;
-            var optionA = document.getElementById("optionA").value;
-            var optionB = document.getElementById("optionB").value;
-            var optionC = document.getElementById("optionC").value;
-            var optionD = document.getElementById("optionD").value;
+            var dialog = bootbox.dialog({
+                title: '<h1 align="center">即時互動問答 - 新增問題</h1>',
+                message: `
+                    <div class="input-group">
+                        <div class="col-sm-12">
+                            <label>問題描述 (必填) : </label>
+                            <input class="form-control " type="text" id="question"/>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="input-group">
+                        <div class="col-sm-12">
+                            <label>選項 A (必填):</label>
+                            <input class="form-control" type="text" id="optionA"/>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="input-group">
+                        <div class="col-sm-12">
+                            <label>選項 B (必填):</label>
+                            <input class="form-control" type="text" id="optionB"/>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="input-group">
+                        <div class="col-sm-12">
+                            <label>選項 C :</label>
+                            <input class="form-control" type="text" id="optionC"/>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="input-group">
+                        <div class="col-sm-12">
+                            <label>選項 D :</label>
+                            <input class="form-control" type="text" id="optionD"/>
+                        </div>
+                    </div>
+                `,
+                buttons: {
+                    cancel: {
+                        label: "取消",
+                        className: 'btn-danger'
+                    },
+                    ok: {
+                        label: "新增",
+                        className: 'btn-info',
+                        callback: function(){
+                            var question = document.getElementById("question").value;
+                            var optionA = document.getElementById("optionA").value;
+                            var optionB = document.getElementById("optionB").value;
+                            var optionC = document.getElementById("optionC").value;
+                            var optionD = document.getElementById("optionD").value;
+                            if ( !validInput(question , optionA, optionB, optionC, optionD) )
+                                return;
+                            var qid = makeid();
+                            var opAElement = createQuestionLiElement(qid , 'A' , optionA);
+                            var opBElement = createQuestionLiElement(qid , 'B' , optionB);
+                            
+                            var questionTitle = document.createElement("li");
+                            questionTitle.setAttribute('id' , qid + "-Q");
+                            questionTitle.innerHTML = question;
+                            questionBlock.append(questionTitle);
 
-            if ( !validInput(question , optionA, optionB, optionC, optionD) )
-                return;
+                            var ulElement = document.createElement("ul");
+                            ulElement.setAttribute("class" , "list-group");            
 
-            document.getElementById("question").value = '';
-            document.getElementById("optionA").value = '';
-            document.getElementById("optionB").value = '';
-            document.getElementById("optionC").value = '';
-            document.getElementById("optionD").value = '';
-            var qid = makeid();
+                            ulElement.append(opAElement);
+                            ulElement.append(opBElement);
 
-
-            var opAElement = createQuestionLiElement(qid , 'A' , optionA);
-            var opBElement = createQuestionLiElement(qid , 'B' , optionB);
-            
-            var questionTitle = document.createElement("li");
-            questionTitle.setAttribute('id' , qid + "-Q");
-            questionTitle.innerHTML = question;
-            questionBlock.append(questionTitle);
-
-            var ulElement = document.createElement("ul");
-            ulElement.setAttribute("class" , "list-group");            
-
-            ulElement.append(opAElement);
-            ulElement.append(opBElement);
-
-            if(optionC){
-                var opCElement = createQuestionLiElement(qid , 'C' , optionC);
-                ulElement.append(opCElement);
-                if(optionD){  // 有 C 選項，才會有 D 選項，不給跳號啦
-                    var opDElement =createQuestionLiElement(qid , 'D' , optionD);
-                    ulElement.append(opDElement);
+                            if(optionC){
+                                var opCElement = createQuestionLiElement(qid , 'C' , optionC);
+                                ulElement.append(opCElement);
+                                if(optionD){  // 有 C 選項，才會有 D 選項，不給跳號啦
+                                    var opDElement =createQuestionLiElement(qid , 'D' , optionD);
+                                    ulElement.append(opDElement);
+                                }
+                            }
+                            var socket = connection.getSocket();
+                            socket.emit('newQuestion',{
+                                'qid' : qid,
+                                'title' : question,
+                                'optionA' : optionA,
+                                'optionB' : optionB,
+                                'optionC' : optionC,
+                                'optionD' : optionD
+                            });
+                            questionBlock.append(ulElement);
+                            drawChart(qid);
+                        }
+                    }
                 }
-            }
-            var socket = connection.getSocket();
-            socket.emit('test',{
-                'qid' : qid,
-                'title' : question,
-                'optionA' : optionA,
-                'optionB' : optionB,
-                'optionC' : optionC,
-                'optionD' : optionD
             });
-            questionBlock.append(ulElement);
-            drawChart(qid);
         }
+
+        // Listen to students' answers
         var socket = connection.getSocket();
         socket.on('studentAnswerToTeacher',function(res){
             var qid = res.qid;
@@ -188,34 +258,19 @@
     <br><br><br>
     <div class="container">
         <div class="row">
+                <h1 align="center">即時互動問答系統</h1>    
+        </div>
+        <div class="row">
+            <a id="createQ" class="btn btn-success list-group-item" onclick="createQuestion()"><span class="glyphicon glyphicon-plus"></span>  新增一個互動問題</a>
+        </div>
+        <div class="row">
             <div class="col-sm-6 col-md-6">
-                <h1 align="center">問題</h1>
+                <h2 align="center">問題列表</h2>
                 <ul class="list-group" id="questionBlock"></ul>
             </div>
             <div class="col-sm-6 col-md-6">
-                <div id="chart_div" style="width: 300px; height: 300px;"></div>
-                <h1 align="center">新增</h1>
-                    <div class="input-group">
-                        <label>問題描述 : </label>
-                        <input class="form-control" type="text" id="question" required/>
-                    </div>
-                    <div class="input-group">
-                        <label>選項 A :</label>
-                        <input class="form-control" type="text" id="optionA" required/>
-                    </div>
-                    <div class="input-group">
-                        <label>選項 B :</label>
-                        <input class="form-control" type="text" id="optionB" required/>
-                    </div>
-                    <div class="input-group">
-                        <label>選項 C :</label>
-                        <input class="form-control" type="text" id="optionC"/>
-                    </div>
-                    <div class="input-group">
-                        <label>選項 D :</label>
-                        <input class="form-control" type="text" id="optionD"/>
-                    </div>
-                <button class="btn btn-primary" onclick="createQuestion()">新增</button>
+                <h2 align="center">統計圖表</h2>
+                <div id="chartDiv" align="center"></div>
             </div>
         </div>
     </div>

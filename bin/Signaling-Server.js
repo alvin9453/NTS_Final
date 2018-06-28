@@ -494,12 +494,17 @@ module.exports = exports = function(app, socketCallback) {
             delete listOfUsers[socket.userid];
         });
 
-        socket.on('test' , function(msg){
-            socket.broadcast.emit('test' , msg);
+        socket.on('newQuestion' , function(question){
+            socket.broadcast.emit('newQuestion' , question);
         });
         socket.on('studentAnswer' , function(answer){      
             console.log("RECEIVE ANS : " , answer);      
             socket.broadcast.emit('studentAnswerToTeacher' , answer);
+        });
+
+        socket.on('sendStatistics' , function(statistics){
+            console.log("statistics : " , statistics);
+            socket.broadcast.emit('answerStatistics' , statistics);
         });
 
         if (socketCallback) {
