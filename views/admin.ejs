@@ -1,1 +1,108 @@
-<p>Hello, <%= user.username  %></p>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>教學筆記系統</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   
+    <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+    <script src="/javascripts/firebase-init.js"></script>
+    <script src="/javascripts/bootbox.min.js"></script>
+    <script>  
+        function init(){
+            initFirebase();
+            var courseRef = firebase.database().ref("courses/");
+            courseRef.on('value',function(data){
+                $('#existedCourse').text("");
+                for(var courseName in data.val()){
+                    var liElement = document.createElement('li');
+                    liElement.setAttribute('class', 'list-group-item');
+                    liElement.innerHTML = courseName;
+                    $('#existedCourse').append( liElement );
+                }
+            });
+        };
+        function validate(form) {
+            if ( confirm('確定要新增此課程的投影片嗎?') ){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        function newCourse(){
+            var courseName = document.getElementById("newCourseName").value;
+            var ulChilds = document.getElementById("existedCourse").childNodes;
+            var courseNameArray = new Array();
+            ulChilds.forEach( element =>{
+                courseNameArray.push(element.innerHTML);
+                console.log(element.innerHTML);
+            });
+
+            var addCoursePromise = new Promise(function(resolve,reject){
+                var courseRef = firebase.database().ref("courses/");
+                var newCourseKey = firebase.database().ref("course/").push().key;
+                var postData = {
+                    cid : newCourseKey,
+                    slides : "",
+                }
+                var updates = {};
+                updates[courseName] = postData;
+                courseRef.update(updates);
+                resolve();
+            });
+            var courseExistPromise = new Promise(function(resolve, reject){
+                if( courseNameArray.indexOf(courseName) <= 0 ){
+                    resolve();
+                }else{
+                    reject();
+                }
+            });
+            courseExistPromise.then( resolve =>{
+                addCoursePromise.then(success => {
+                    bootbox.alert("新增成功!");
+                });
+            }, reject =>{
+                bootbox.alert("此課程已存在!");
+            });            
+        }
+    </script>
+</head>
+<body onload="init()">
+    <% include layouts/header %>
+    <br><br><br>
+    <div class="container">
+        <div class="row">
+            <h1 align="center">管理員功能</h1>
+            <hr>
+            <h2 align="center">新增課程</h1>
+            <hr>
+            <div class="form-group">
+                <div class="col-sm-6 col-md-6">
+                    <label>現有課程</label>
+                    <ul id="existedCourse" class="list-group">
+
+                    </ul>
+                </div>
+                <div class="col-sm-6 col-md-6">
+                    <div class="input-group">
+                        <label>新增一門課程 : 請輸入課程名稱</label>
+                            <input class="form-control" type="text" id="newCourseName" required/>
+                    </div>
+                    <br>
+                    <button class="btn btn-primary" onclick="newCourse()">確定</button>
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+            <% include layouts/footer %>
+    </div>
+          
+</body>
+</html>
