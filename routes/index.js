@@ -144,6 +144,7 @@ module.exports = function(passport){
     var pptTitle = req.body.pptTitle;
     var pptUrl = req.body.pptUrl;
     pptUrl = pptUrl.replace(/\"/g,"'");
+    pptUrl = pptUrl.replace(/\&amp;/g,"\&");
     var courseRef = firebase.database().ref('courses/' + courseName +  '/slides/');
     var newCourseKey = firebase.database().ref('courses/' + courseName + '/slides/').push().key;
     var postData = {
