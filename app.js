@@ -67,10 +67,13 @@ passport.use(new LocalStrategy({
   },
   function(req , username, password, done){
     var user = {
-      username : 'admin',
-      password : 'admin'
+      displayName : 'admin',
+      password : 'admin',
+      photos : [
+        {value : ""}
+      ]
     };
-    if( user == null || user.password != password){
+    if( user.displayName != username || user.password != password){
       return done(null, false, req.flash('message' ,'登入失敗'));
     }else{
       done( null, user );
