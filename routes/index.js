@@ -6,15 +6,21 @@ module.exports = function(passport){
 
   /* GET home page. */
   router.get('/', function(req, res, next) {
-    res.render('index', { user: req.user });
+    res.render('index', { user: req.user , message : req.flash('message')});
+  });
+  
+  router.get('/admin',ensureAuthenticated, function(req, res) {
+    res.render('admin',
+     { user: req.user }
+    );
   });
 
+  router.post('/admin', passport.authenticate('local', {
+		successRedirect: '/admin',
+		failureRedirect: '/',
+		failureFlash : true
+	}));
 
-  router.get('/login', function(req, res) {
-    res.render('login', {
-      user: req.user
-    });
-  });
 
   // GET /auth/google
   //   Use passport.authenticate() as route middleware to authenticate the

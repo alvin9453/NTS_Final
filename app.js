@@ -8,6 +8,8 @@ var passport = require('passport');
 var cookieSession = require('cookie-session');
 var firebase = require('firebase');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+var LocalStrategy = require( 'passport-local' ).Strategy;
+var flash = require('connect-flash');
 
 var authConfig = require('./config/auth')
 var users = require('./routes/users');
@@ -29,6 +31,7 @@ app.use(cookieSession({
   key: 'session',
   secret: 'SSOSESSION'
 }));
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -57,6 +60,22 @@ passport.use(new GoogleStrategy(
         // callback.
         return done(null, profile);
       }
+));
+
+passport.use(new LocalStrategy({
+  passReqToCallback : true
+  },
+  function(req , username, password, done){
+    var user = {
+      username : 'admin',
+      password : 'admin'
+    };
+    if( user == null || user.password != password){
+      return done(null, false, req.flash('message' ,'登入失敗'));
+    }else{
+      done( null, user );
+    }
+  }
 ));
 
 // view engine setup
