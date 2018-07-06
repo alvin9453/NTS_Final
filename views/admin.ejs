@@ -25,6 +25,24 @@
                     $('#existedCourse').append( liElement );
                 }
             });
+            var userRef = firebase.database().ref("users/");
+            userRef.on('value',function(data){
+                $('#userList').text("");
+                var userObjArray = Object.values(data.val());
+                for(var i = 0; i < userObjArray.length; i++){
+                    var liElement = document.createElement('li');
+                    liElement.setAttribute('class', 'list-group-item');
+                    if ( userObjArray[i].character == "teacher" ){
+                        liElement.setAttribute('style', 'background-color:LightGreen;');
+                        liElement.innerHTML = userObjArray[i].name;
+                    }
+                    else{
+                        liElement.innerHTML = userObjArray[i].name;
+                    }
+                    
+                    $('#userList').append( liElement );
+                }
+            });
         };
         function validate(form) {
             if ( confirm('確定要新增此課程的投影片嗎?') ){
@@ -39,35 +57,65 @@
             var courseNameArray = new Array();
             ulChilds.forEach( element =>{
                 courseNameArray.push(element.innerHTML);
-                console.log(element.innerHTML);
             });
 
-            var addCoursePromise = new Promise(function(resolve,reject){
-                var courseRef = firebase.database().ref("courses/");
-                var newCourseKey = firebase.database().ref("course/").push().key;
-                var postData = {
-                    cid : newCourseKey,
-                    slides : "",
-                }
-                var updates = {};
-                updates[courseName] = postData;
-                courseRef.update(updates);
-                resolve();
-            });
             var courseExistPromise = new Promise(function(resolve, reject){
-                if( courseNameArray.indexOf(courseName) <= 0 ){
+                if( courseName == "" ){
+                    reject("請輸入課程名稱");
+                }
+                else if( courseNameArray.indexOf(courseName) <= 0 ){
                     resolve();
                 }else{
-                    reject();
+                    reject("此課程已存在!");
                 }
             });
             courseExistPromise.then( resolve =>{
+                var addCoursePromise = new Promise(function(resolve,reject){
+                    var courseRef = firebase.database().ref("courses/");
+                    var newCourseKey = firebase.database().ref("course/").push().key;
+                    var postData = {
+                        cid : newCourseKey,
+                        slides : "",
+                    }
+                    var updates = {};
+                    updates[courseName] = postData;
+                    courseRef.update(updates);
+                    resolve();
+                });
                 addCoursePromise.then(success => {
                     bootbox.alert("新增成功!");
                 });
             }, reject =>{
-                bootbox.alert("此課程已存在!");
+                bootbox.alert(reject);
             });            
+        }
+        function changeChar(){
+            var userName = document.getElementById("userName").value;
+            var newCharacter = document.querySelector('input[name="characterRadio"]:checked').value;
+
+            var ulChilds = document.getElementById("userList").childNodes;
+            var userNameArray = new Array();
+            ulChilds.forEach( element =>{
+                userNameArray.push(element.innerHTML);
+            });
+            if( userNameArray.indexOf(userName) >= 0 ){
+                var charPromise = new Promise(function(resolve, reject){
+                    var userRef = firebase.database().ref("users/");
+                    userRef.orderByChild('name').equalTo(userName).on('value',function(data){
+                        var userKey = Object.keys(data.val())[0];
+                        resolve(userKey);
+                    });
+                    
+                });
+                charPromise.then(userKey =>{
+                    firebase.database().ref("users/" + userKey + "/character").set(newCharacter);
+                    bootbox.alert("修改角色成功!");
+                });
+            }else{
+                bootbox.alert("查無此使用者");
+            }
+
+            
         }
     </script>
 </head>
@@ -78,7 +126,7 @@
         <div class="row">
             <h1 align="center">管理員功能</h1>
             <hr>
-            <h2 align="center">新增課程</h1>
+            <h2 align="center">1. 新增課程</h1>
             <hr>
             <div class="form-group">
                 <div class="col-sm-6 col-md-6">
@@ -93,11 +141,34 @@
                             <input class="form-control" type="text" id="newCourseName" required/>
                     </div>
                     <br>
-                    <button class="btn btn-primary" onclick="newCourse()">確定</button>
+                    <button class="btn btn-primary" onclick="newCourse()">確定新增</button>
                 </div>
-
-                
             </div>
+        </div>
+        <hr>
+        <div class="row">
+            <h2 align="center">2. 變更使用者身分</h1>
+            <div class="form-group">
+            <div class="col-sm-6 col-md-6">
+                <label>所有使用者 (綠色 : 教師)</label>
+                <ul id="userList" class="list-group">
+                </ul>
+            </div>
+            <div class="col-sm-6 col-md-6">
+                <form>
+                    <label>使用者名稱 : </label>
+                    <input class="form-control" type="text" id="userName" required/>
+                    <br>
+                    <label>變更身分為 : </label>
+                    <div class="radio">
+                        <label><input type="radio" name = "characterRadio" value="teacher">教師</label>
+                        <label><input type="radio" name="characterRadio" value="student">學生</label>
+                    </div>
+                </form>
+                <br>
+                <button class="btn btn-primary" onclick="changeChar()">確定變更</button>
+            </div>
+            
         </div>
     </div>
     <div class="footer">
