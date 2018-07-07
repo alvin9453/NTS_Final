@@ -24,7 +24,18 @@ Preparation
 	
     1. Create a new project.
     2. In project page, click **Add Firebase to your web app**.
-    3. Copy project's customized code snippet and save. More details will be told in **Build** chapter.
+    3. Copy project's customized code snippet and save. More details will be told in **Build** chapter. This is the sample of customized code you have to copy : 
+    
+    > var config = {
+    >     apiKey: "your_api_key",
+    >     authDomain: "note-taking-system-final.firebaseapp.com",
+    >     databaseURL: "https://note-taking-system-final.firebaseio.com",
+    >     projectId: "note-taking-system-final",
+    >     storageBucket: "note-taking-system-final.appspot.com",
+    >     messagingSenderId: "your_id"
+    >  };
+    > firebase.initializeApp(config);
+
     4. Choose **Database** => **Realtime Database** => **Rule**. Substitute the new content below for the old ones.
     	
         
@@ -86,8 +97,6 @@ Build
 
 
 Then open ``localhost:8080`` or ``https://<your_domain>`` in your browser.
-
-And user can login this system as a student !
 
 
 Demo
