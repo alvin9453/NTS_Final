@@ -6,6 +6,38 @@ Introduction
 
 To be continued...
 
+Preparation
+----------------
+
+1. Ubuntu 16.04
+
+2. Node.js >= v8.11.2
+
+3. [Google OAuth API](https://developers.google.com/identity/protocols/OAuth2)
+	
+    1. Create a new project.
+    2. In project page, create **OAuth Client ID** credentials.
+    3. Add `http://localhost:8080` or `https://<your_doamin>` in  **Authorized JavaScript origins**.
+    4. Add `http://localhost:8080/auth/google/callback` or `https://<your_domain>/auth/google/callback` in **Authorized redirect URIs**.
+
+4. [Firebase Realtime Database](https://firebase.google.com/docs/web/setup?authuser=0)
+	
+    1. Create a new project.
+    2. In project page, click **Add Firebase to your web app**.
+    3. Copy project's customized code snippet and save. More details will be told in **Build** chapter.
+    4. Choose **Database** => **Realtime Database** => **Rule**. Substitute the new content below for the old ones.
+    	
+        
+        {
+          "rules": {
+            ".read": true,
+            ".write": true,
+            "users" : {
+              ".indexOn": "email"
+            },
+          }
+        }
+        
 
 Build
 ------------
@@ -46,20 +78,22 @@ Build
 
         "callbackURL" : "http://<your_domain>/auth/google/callback"
 
-5. Start this application : 
+5. Copy Firebase customized code in `firebase-init.js` and `app.js`. You have to replace the old content to the new code that you copied.
+
+6. Start this application : 
 
         $ npm start
 
 
 Then open ``localhost:8080`` or ``https://<your_domain>`` in your browser.
 
+And user can login this system as a student !
+
 
 Demo
 -------
 
-To be continued...
-
-Old version (No screen broadcast) : https://ncnu-nts.herokuapp.com/
+https://ncnu-note.tk/
 
 LICENCE
 ------------
