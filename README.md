@@ -15,28 +15,28 @@ Preparation
 
 3. [Google OAuth API](https://developers.google.com/identity/protocols/OAuth2)
 	
-    1. Create a new project.
-    2. In project page, create **OAuth Client ID** credentials.
-    3. Add `http://localhost:8080` or `https://<your_doamin>` in  **Authorized JavaScript origins**.
-    4. Add `http://localhost:8080/auth/google/callback` or `https://<your_domain>/auth/google/callback` in **Authorized redirect URIs**.
+> (1). Create a new project.
+> (2). In project page, create **OAuth Client ID** credentials.
+> (3). Add `http://localhost:8080` or `https://<your_doamin>` in  **Authorized JavaScript origins**.
+> (4). Add `http://localhost:8080/auth/google/callback` or `https://<your_domain>/auth/google/callback` in **Authorized redirect URIs**.
 
 4. [Firebase Realtime Database](https://firebase.google.com/docs/web/setup?authuser=0)
 	
-    1. Create a new project.
-    2. In project page, click **Add Firebase to your web app**.
-    3. Copy project's customized code snippet and save. More details will be told in **Build** chapter. This is the sample of customized code you have to copy : 
+> (1). Create a new project.
+> (2). In project page, click **Add Firebase to your web app**.
+> (3). Copy project's customized code snippet and save. More details will be told in **Build** chapter. This is the sample of customized code you have to copy : 
     
-    > var config = {
-    >     apiKey: "your_api_key",
-    >     authDomain: "note-taking-system-final.firebaseapp.com",
-    >     databaseURL: "https://note-taking-system-final.firebaseio.com",
-    >     projectId: "note-taking-system-final",
-    >     storageBucket: "note-taking-system-final.appspot.com",
-    >     messagingSenderId: "your_id"
-    >  };
-    > firebase.initializeApp(config);
+    var config = {
+         apiKey: "your_api_key",
+         authDomain: "note-taking-system-final.firebaseapp.com",
+         databaseURL: "https://note-taking-system-final.firebaseio.com",
+         projectId: "note-taking-system-final",
+         storageBucket: "note-taking-system-final.appspot.com",
+         messagingSenderId: "your_id"
+      };
+    firebase.initializeApp(config);
 
-    4. Choose **Database** => **Realtime Database** => **Rule**. Substitute the new content below for the old ones.
+> (4). Choose **Database** => **Realtime Database** => **Rule**. Substitute the new content below for the old ones.
     	
         
         {
