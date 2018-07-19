@@ -202,6 +202,12 @@
                         console.log('join-broadcaster', hintsToJoinBroadcast);
 
                         connection.session = hintsToJoinBroadcast.typeOfStreams;
+			connection.bandwidth = {
+                                video : 256,
+                                screen: 300
+                            };
+			
+
                         connection.sdpConstraints.mandatory = {
                             OfferToReceiveVideo: true,
                             OfferToReceiveAudio: false
@@ -431,7 +437,7 @@
                 connection.onstreamended = function() {
                     //location.reload(); 
                     console.log("stream end");
-                    bootbox.alert('<h3>廣播已結束，若要再次開啟廣播，請<font color="red">重新整理(F5)</font>此頁面 ! </h3>')
+                    //bootbox.alert('<h3>廣播已結束，若要再次開啟廣播，請<font color="red">重新整理(F5)</font>此頁面 ! </h3>')
                 };
                 var allRecordedBlobs = [];
 

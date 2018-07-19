@@ -44,7 +44,9 @@
             // old version : Students have to join the course
             // demo version : Studnets can look all course in system
             var courseRef = firebase.database().ref("courses/");
-            courseRef.once('value').then(function(data){
+            courseRef.on('value',function(data){
+                var courseBlock = document.getElementById('course');
+		courseBlock.innerHTML = "";
                 for(var courseName in data.val()){
                     var courseBlock = document.getElementById('course');
                     var btn = document.createElement('input');
@@ -60,10 +62,10 @@
         function courseInfo(courseName){
             var courseRef = firebase.database().ref("courses/" + courseName + '/');
             var showList = document.getElementById('details');
-            showList.innerHTML = "";
             var courseTitle = document.getElementById('courseTitle');
             courseTitle.innerHTML = '<b><font color="#FFAA33">'+ courseName + '</font></b> 課程投影片';
-            courseRef.once('value').then(function(data){
+            courseRef.on('value',function(data){
+            	showList.innerHTML = "";
                 var index = Object.keys(data.val()).indexOf("slides");
                 if(index != -1){
                     var slidesObject = Object.values(data.val())[index];

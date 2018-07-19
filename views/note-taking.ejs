@@ -111,7 +111,7 @@
             function watchNote(){
                 var dialog = bootbox.dialog({
                     title: '請輸入同學的Email帳號',
-                    message: "<p>例如 : <font color='red'>abc@gmail.com</font> 或 <font color='red'>abc@ncnu.edu.tw</font> 只要輸入 <big><font color='red'>abc</font></big> 即可</p><input id='userEID' type='text' class='form-control'>",
+                    message: "<p>例如 : <font color='red'>abc@gmail.com</font> 或 <font color='red'>abc@ncnu.edu.tw</font> 只要輸入 <big><font color='red'>abc</font></big> 即可</p><p><b>*口試demo*</b> : 請輸入 s102321003 來當作範例 </p><input id='userEID' type='text' class='form-control'>",
                     buttons: {
                         cancel: {
                             label: "取消",
@@ -224,6 +224,10 @@
                             console.log('join-broadcaster', hintsToJoinBroadcast);
 
                             connection.session = hintsToJoinBroadcast.typeOfStreams;
+			    connection.bandwidth = {
+				video : 256,
+				screen: 300
+			    };
                             connection.sdpConstraints.mandatory = {
                                 OfferToReceiveVideo: true,
                                 OfferToReceiveAudio: false
