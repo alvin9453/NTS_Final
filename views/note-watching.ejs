@@ -48,7 +48,6 @@
                 var sharedCountRef = firebase.database().ref("/shared-count");
                 sharedCountRef.on('value',function(data){
                     sharedCountList = data.val();
-                    console.log(sharedCountList);
                     if(document.getElementById("studentList").innerHTML != null){
                         updateSharedCount();
                     }      
@@ -56,7 +55,19 @@
 
                 var userRef = firebase.database().ref("users/");
                 userRef.on('value',function(data){
-                    $('#studentList').html("");
+                    var userTable = document.getElementById("studentList");
+                    userTable.innerHTML = "";
+                    var trNode = document.createElement("tr");
+                    var thNodeCount = document.createElement("th");
+                    var thNodeStudent = document.createElement("th");
+                    thNodeCount.setAttribute("onclick" , "sortTableByCount(0)" );
+                    thNodeCount.innerHTML = "共享次數";
+                    thNodeStudent.setAttribute("onclick", "sortTableByUID(1)" );
+                    thNodeStudent.innerHTML = "學生列表";
+                    trNode.appendChild(thNodeCount);
+                    trNode.appendChild(thNodeStudent);
+                    userTable.append(trNode);
+
                     for( var i in data.val()){
                         if(data.val()[i].character == "student"){
                             var name = data.val()[i].name;
@@ -81,19 +92,23 @@
                             $('#studentList').append(trElement);
 
                             if( Object.keys(sharedCountList).indexOf(userEID) > -1){
-                                var count = sharedCountList[userEID]["<%= title %>"].count;
-                                document.getElementById("count-" + userEID).innerHTML = count;
+                                if( sharedCountList[userEID]["<%= title %>"] ){
+                                    var count = sharedCountList[userEID]["<%= title %>"].count;
+                                    document.getElementById("count-" + userEID).innerHTML = count;
+                                }   
                             }
-                            
-
                         }
                     }
+                    sortTableByUID(1);
                 });
                 function updateSharedCount(){
                     var sharedCountListInArray = Object.keys(sharedCountList);
                     for(var index in sharedCountListInArray){
                         var eachUserEID = sharedCountListInArray[index];
-                        var sharedCount = sharedCountList[eachUserEID]["<%= title %>"].count;
+                        var sharedCount = 0;
+                        if( sharedCountList[eachUserEID]["<%= title %>"] ){
+                            sharedCount = sharedCountList[eachUserEID]["<%= title %>"].count;
+                        }
                         if( document.getElementById("count-" + eachUserEID) ){
                             document.getElementById("count-" + eachUserEID).innerHTML = sharedCount;
                         }
@@ -127,23 +142,26 @@
                     choosePad(userEID);
                 });
 */
-/*
+
                 // Random choose button
                 $('#randomStudent').click(function(){
-                    var options = $('#studentSelect').find('option');
+                    var options = $('#studentList').find('input');
                     var randomIndex = Math.floor((Math.random() * options.length));
-                    var info = options.eq(randomIndex).text();
+                    var info = options[randomIndex].value;
+                    console.log(info);
                     var email = options.eq(randomIndex).val();
                     var name = info.split('<')[0];
-                    $('#studentName').text(name);
-                    var userEID = email.split('@')[0];
+                    var userEID = info.split('<')[1].split('@')[0].split(' ')[1];
                     choosePad(userEID);
+                    $('#studentName').text("隨機挑選 : " + name);
                 });
-                */
+
                 
             }; 
             // change pad depend on user
             function choosePad(userEID){
+                if(document.getElementById("studentName").innerHTML != "")
+                    document.getElementById("studentName").innerHTML = "<br>";
                 var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
                 var firepadContainer = document.getElementById('firepad-container');
                 firepadContainer.innerHTML = "";
@@ -283,6 +301,78 @@
                 });
                 startBroadcastingPromise(promiseResult);
             }
+            function sortTableByUID(n) {
+                var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+                table = document.getElementById("studentList");
+                switching = true;
+                dir = "asc";
+                while (switching) {
+                    switching = false;
+                    rows = table.getElementsByTagName("TR");
+                    for (i = 1; i < (rows.length - 1); i++) {
+                        shouldSwitch = false;
+                        x = rows[i].getElementsByTagName("TD")[n];
+                        y = rows[i + 1].getElementsByTagName("TD")[n];
+                        if (dir == "asc") {
+                            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else if (dir == "desc") {
+                            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                            }
+                        }
+                    }
+                    if (shouldSwitch) {
+                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                        switching = true;
+                        switchcount ++;
+                    } else {
+                        if (switchcount == 0 && dir == "asc") {
+                            dir = "desc";
+                            switching = true;
+                        }
+                    }
+                }
+            }           
+            function sortTableByCount(n) {
+                var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+                table = document.getElementById("studentList");
+                switching = true;
+                dir = "desc";
+                while (switching) {
+                    switching = false;
+                    rows = table.getElementsByTagName("TR");
+                    for (i = 1; i < (rows.length - 1); i++) {
+                        shouldSwitch = false;
+                        x = rows[i].getElementsByTagName("TD")[n];
+                        y = rows[i + 1].getElementsByTagName("TD")[n];
+                        if (dir == "asc") {
+                            if ( Number(x.innerHTML) > Number(y.innerHTML)) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else if (dir == "desc") {
+                            if (Number(x.innerHTML) < Number(y.innerHTML)) {
+                            shouldSwitch = true;
+                            break;
+                            }
+                        }
+                    }
+                    if (shouldSwitch) {
+                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                        switching = true;
+                        switchcount ++;
+                    } else {
+                        if (switchcount == 0 && dir == "desc") {
+                            dir = "asc";
+                            switching = true;
+                        }
+                    }
+                }
+            }   
         </script>
 </head>
 <body onload="init();">
@@ -301,19 +391,9 @@
                 <hr>
                 <div class="form-group" id="studentBlock">
                     <button id = "randomStudent" type="button" class="btn btn-success">隨機挑選</button>
-                    <h3>正在觀看 : <b><div id="studentName">尚未選擇</div> </b></h3>
-                    
-                    <table class="table table-bordered" id="studentList">
-                        <thead>
-                            <tr>
-                                <td>觀看次數</td>
-                                <td>學生</td>
-                            </tr>
-                        </thead>
-                        </tbody class="list-group" ></tbody>
+                    <h3 id="studentName"></h3>
+                    <table class="table" id="studentList">
                     </table>
-                    <select class="form-control" id="studentSelect" size="0">
-                    </select>
                 </div>
             </div>
             <script src="/javascripts/broadcast-teacher.js"></script>

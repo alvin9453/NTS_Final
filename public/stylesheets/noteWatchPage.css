@@ -67,3 +67,11 @@ input { width:100%; }
 .btn:hover {
     background-color: #F0FFFF;
 }
+
+.btn-success:hover{
+  background-color:  	#5bc0de;
+}
+
+.btn:focus {
+  background-color: #5cb85c;
+}
