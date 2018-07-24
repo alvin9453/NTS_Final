@@ -59,3 +59,11 @@ body { margin: 0; height: 100%; }
 .CodeMirror .cm-url { color: blue; }    
 .CodeMirror .cm-qa { color: orange; font-weight: bold; font-size: 18px; font-family:"Comic Sans MS", cursive, sans-serif;}    
 .CodeMirror .cm-asking { color: #B088FF; font-weight: bold; font-size: 18px; font-family:"Comic Sans MS", cursive, sans-serif;}    
+
+input { width:100%; }
+.btn:focus {
+    background-color: #FFCC22;
+}
+.btn:hover {
+    background-color: #F0FFFF;
+}

@@ -132,8 +132,25 @@
                                                 bootbox.alert('查無此人筆記，請重新輸入');            
                                             }
                                             else{
-                                                var alertBox = bootbox.alert(shareFirepad.getHtml());
-                                                alertBox.find('.modal-content').css({'user-select': 'none'});
+                                                /* Shared-note count */
+                                                // 筆記第一次被觀看時，就會把它紀錄在 /shared-note 裡面，並且初始值為 1
+                                                var content = shareFirepad.getHtml();
+                                                var sharedCountRef = firebase.database().ref('/'+'shared-count' + '/' + userEID + '/<%= title %>');
+                                                sharedCountRef.once('value').then(function(data){
+                                                    if( data.val() == null ){
+                                                        sharedCountRef.set({
+                                                            count : '1'
+                                                        });
+                                                        showSharedNote(1 , content);
+                                                    }else{ 
+                                                        var count = data.val().count;
+                                                        count = Number(count) + 1;
+                                                        sharedCountRef.set({
+                                                            count : count
+                                                        });
+                                                        showSharedNote(count ,content);
+                                                    }
+                                                }); 
                                             }
                                             shareFirepad.dispose();
                                         });
@@ -145,9 +162,21 @@
                         }
                     }
                 });
-
-
-            }       
+            }      
+            // 顯示共享筆記
+            function showSharedNote(count, content){
+                var dialog = bootbox.dialog({
+                    title: '<p align="center">已被觀看次數 : <font color="red">' + count + '</font></p>',
+                    message: content,
+                    buttons: {
+                        ok: {
+                            label: "關閉",
+                            className: 'btn-info'
+                        }
+                    }
+                });
+                dialog.find('.modal-content').css({'user-select': 'none'}); // 選取功能限制
+            } 
             function liveSwitchBtn(){
                 var pptUrl = parsePPTURL("<%= pptUrl %>");
                 var switchBtn = document.getElementById("liveSwitchBtn");

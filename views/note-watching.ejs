@@ -43,8 +43,63 @@
                 $('#navList').append(slideLiElement);
                 var liveLiElement = $('<li></li>').html('<a href="#" id="liveBroadcast" onclick="liveBroadcast()"><span class="glyphicon glyphicon-globe"></span> 線上課程廣播</a>');
                 $('#navList').append(liveLiElement);
-                
-                
+
+                var sharedCountList = {};
+                var sharedCountRef = firebase.database().ref("/shared-count");
+                sharedCountRef.on('value',function(data){
+                    sharedCountList = data.val();
+                    console.log(sharedCountList);
+                    if(document.getElementById("studentList").innerHTML != null){
+                        updateSharedCount();
+                    }      
+                });
+
+                var userRef = firebase.database().ref("users/");
+                userRef.on('value',function(data){
+                    $('#studentList').html("");
+                    for( var i in data.val()){
+                        if(data.val()[i].character == "student"){
+                            var name = data.val()[i].name;
+                            var email = data.val()[i].email;
+                            var userEID = email.split('@')[0];
+                            var btn = document.createElement('input');
+                            btn.setAttribute('type','button');
+                            btn.setAttribute('onclick',"courseInfo(this.textContent);");
+                            btn.setAttribute('class',"list-group-item btn btn-default");
+                            btn.setAttribute('value' , name + ' < ' + email + ' > '  );
+                            btn.setAttribute('onclick',"choosePad(\'" + userEID + "\');");
+
+                            var trElement = document.createElement('tr');
+                            var tdCountElement = document.createElement('td');
+                            var tdUserElement = document.createElement('td');
+                            tdCountElement.innerHTML = "0";                  
+                            tdCountElement.setAttribute('id' , 'count-'+userEID);      
+                            tdUserElement.appendChild(btn);
+                            trElement.appendChild(tdCountElement);
+                            trElement.appendChild(tdUserElement);
+
+                            $('#studentList').append(trElement);
+
+                            if( Object.keys(sharedCountList).indexOf(userEID) > -1){
+                                var count = sharedCountList[userEID]["<%= title %>"].count;
+                                document.getElementById("count-" + userEID).innerHTML = count;
+                            }
+                            
+
+                        }
+                    }
+                });
+                function updateSharedCount(){
+                    var sharedCountListInArray = Object.keys(sharedCountList);
+                    for(var index in sharedCountListInArray){
+                        var eachUserEID = sharedCountListInArray[index];
+                        var sharedCount = sharedCountList[eachUserEID]["<%= title %>"].count;
+                        if( document.getElementById("count-" + eachUserEID) ){
+                            document.getElementById("count-" + eachUserEID).innerHTML = sharedCount;
+                        }
+                    }
+                }
+/*
                 // Add student from data into select list
                 var userRef = firebase.database().ref("users/");
                 userRef.on('value',function(data){
@@ -60,7 +115,8 @@
                         }
                     }
                 });
-
+                */
+/*
                 // Select list click
                 $('#studentSelect').change(function(){
                     var info = $('#studentSelect').find(':selected').text();
@@ -70,7 +126,8 @@
                     var userEID = email.split('@')[0];
                     choosePad(userEID);
                 });
-
+*/
+/*
                 // Random choose button
                 $('#randomStudent').click(function(){
                     var options = $('#studentSelect').find('option');
@@ -82,6 +139,7 @@
                     var userEID = email.split('@')[0];
                     choosePad(userEID);
                 });
+                */
                 
             }; 
             // change pad depend on user
@@ -244,7 +302,17 @@
                 <div class="form-group" id="studentBlock">
                     <button id = "randomStudent" type="button" class="btn btn-success">隨機挑選</button>
                     <h3>正在觀看 : <b><div id="studentName">尚未選擇</div> </b></h3>
-                    <select class="form-control" id="studentSelect" size="25">
+                    
+                    <table class="table table-bordered" id="studentList">
+                        <thead>
+                            <tr>
+                                <td>觀看次數</td>
+                                <td>學生</td>
+                            </tr>
+                        </thead>
+                        </tbody class="list-group" ></tbody>
+                    </table>
+                    <select class="form-control" id="studentSelect" size="0">
                     </select>
                 </div>
             </div>
