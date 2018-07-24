@@ -46,7 +46,7 @@
             var courseRef = firebase.database().ref("courses/");
             courseRef.on('value',function(data){
                 var courseBlock = document.getElementById('course');
-		courseBlock.innerHTML = "";
+		        courseBlock.innerHTML = "";
                 for(var courseName in data.val()){
                     var courseBlock = document.getElementById('course');
                     var btn = document.createElement('input');
