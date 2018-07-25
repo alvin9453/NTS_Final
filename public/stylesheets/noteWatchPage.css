@@ -62,7 +62,8 @@ body { margin: 0; height: 100%; }
 
 input { width:100%; }
 .btn:focus {
-    background-color: #5bc0de;
+    background-color: #428bca;
+    color:white;
 }
 
 
