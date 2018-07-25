@@ -61,9 +61,9 @@
                     var thNodeCount = document.createElement("th");
                     var thNodeStudent = document.createElement("th");
                     thNodeCount.setAttribute("onclick" , "sortTableByCount(0)" );
-                    thNodeCount.innerHTML = "共享次數";
+                    thNodeCount.innerHTML = '共享次數<span class="glyphicon glyphicon-menu-up"></span>';
                     thNodeStudent.setAttribute("onclick", "sortTableByUID(1)" );
-                    thNodeStudent.innerHTML = "學生列表";
+                    thNodeStudent.innerHTML = '學生列表<span class="glyphicon glyphicon-menu-down"></span>';
                     trNode.appendChild(thNodeCount);
                     trNode.appendChild(thNodeStudent);
                     userTable.append(trNode);
@@ -76,7 +76,7 @@
                             var btn = document.createElement('input');
                             btn.setAttribute('type','button');
                             btn.setAttribute('onclick',"courseInfo(this.textContent);");
-                            btn.setAttribute('class',"list-group-item btn btn-default");
+                            btn.setAttribute('class',"btn btn-default");
                             btn.setAttribute('value' , name + ' < ' + email + ' > '  );
                             btn.setAttribute('onclick',"choosePad(\'" + userEID + "\');");
 
@@ -99,7 +99,7 @@
                             }
                         }
                     }
-                    sortTableByUID(1);
+                    sortTableByUID(1); // Defalut sort by UID
                 });
                 function updateSharedCount(){
                     var sharedCountListInArray = Object.keys(sharedCountList);
@@ -114,41 +114,12 @@
                         }
                     }
                 }
-/*
-                // Add student from data into select list
-                var userRef = firebase.database().ref("users/");
-                userRef.on('value',function(data){
-                    $('#studentSelect').html("");
-                    for(var i in data.val()){
-                        if(data.val()[i].character == "student"){
-                            var name = data.val()[i].name;
-                            var email = data.val()[i].email;
-                            var newOption = document.createElement('option');
-                            newOption.innerHTML = name + ' < ' + email + ' > ' ;
-                            newOption.setAttribute('value',email);
-                            $('#studentSelect').append( newOption );
-                        }
-                    }
-                });
-                */
-/*
-                // Select list click
-                $('#studentSelect').change(function(){
-                    var info = $('#studentSelect').find(':selected').text();
-                    var email = $('#studentSelect').find(':selected').val();
-                    var name = info.split('<')[0];
-                    $('#studentName').text(name);
-                    var userEID = email.split('@')[0];
-                    choosePad(userEID);
-                });
-*/
 
                 // Random choose button
                 $('#randomStudent').click(function(){
                     var options = $('#studentList').find('input');
                     var randomIndex = Math.floor((Math.random() * options.length));
                     var info = options[randomIndex].value;
-                    console.log(info);
                     var email = options.eq(randomIndex).val();
                     var name = info.split('<')[0];
                     var userEID = info.split('<')[1].split('@')[0].split(' ')[1];
@@ -304,6 +275,12 @@
             function sortTableByUID(n) {
                 var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
                 table = document.getElementById("studentList");
+                var thStudentList = table.getElementsByTagName("TR")[0].getElementsByTagName("TH")[n].innerHTML;
+                if( thStudentList == '學生列表<span class="glyphicon glyphicon-menu-up"></span>' ){
+                    table.getElementsByTagName("TR")[0].getElementsByTagName("TH")[n].innerHTML = '學生列表<span class="glyphicon glyphicon-menu-down"></span>'
+                }else{
+                    table.getElementsByTagName("TR")[0].getElementsByTagName("TH")[n].innerHTML = '學生列表<span class="glyphicon glyphicon-menu-up"></span>'
+                }
                 switching = true;
                 dir = "asc";
                 while (switching) {
@@ -311,15 +288,17 @@
                     rows = table.getElementsByTagName("TR");
                     for (i = 1; i < (rows.length - 1); i++) {
                         shouldSwitch = false;
-                        x = rows[i].getElementsByTagName("TD")[n];
-                        y = rows[i + 1].getElementsByTagName("TD")[n];
+                        x = rows[i].getElementsByTagName("TD")[n].getElementsByTagName("input")[0].value;
+                        y = rows[i + 1].getElementsByTagName("TD")[n].getElementsByTagName("input")[0].value;
+                        var x_uemail = x.split('<')[1];
+                        var y_uemail = y.split('<')[1];
                         if (dir == "asc") {
-                            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            if (x_uemail.toLowerCase() > y_uemail.toLowerCase()) {
                                 shouldSwitch = true;
                                 break;
                             }
                         } else if (dir == "desc") {
-                            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            if (x_uemail.toLowerCase() < y_uemail.toLowerCase()) {
                             shouldSwitch = true;
                             break;
                             }
@@ -340,6 +319,12 @@
             function sortTableByCount(n) {
                 var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
                 table = document.getElementById("studentList");
+                var thSharedCount = table.getElementsByTagName("TR")[0].getElementsByTagName("TH")[n].innerHTML;
+                if( thSharedCount == '共享次數<span class="glyphicon glyphicon-menu-up"></span>' ){
+                    table.getElementsByTagName("TR")[0].getElementsByTagName("TH")[n].innerHTML = '共享次數<span class="glyphicon glyphicon-menu-down"></span>'
+                }else{
+                    table.getElementsByTagName("TR")[0].getElementsByTagName("TH")[n].innerHTML = '共享次數<span class="glyphicon glyphicon-menu-up"></span>'
+                }
                 switching = true;
                 dir = "desc";
                 while (switching) {
@@ -389,12 +374,10 @@
                 <br><br><br>
                 <h3 align="center"><strong><%= title %></strong></h3>
                 <hr>
-                <div class="form-group" id="studentBlock">
-                    <button id = "randomStudent" type="button" class="btn btn-success">隨機挑選</button>
-                    <h3 id="studentName"></h3>
-                    <table class="table" id="studentList">
-                    </table>
-                </div>
+                <button id = "randomStudent" type="button" class="btn btn-success">隨機挑選</button>
+                <h3 id="studentName"></h3>
+                <table class="table" id="studentList">
+                </table>
             </div>
             <script src="/javascripts/broadcast-teacher.js"></script>
     </div>

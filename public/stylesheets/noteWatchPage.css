@@ -62,16 +62,22 @@ body { margin: 0; height: 100%; }
 
 input { width:100%; }
 .btn:focus {
-    background-color: #FFCC22;
-}
-.btn:hover {
-    background-color: #F0FFFF;
+    background-color: #5bc0de;
 }
 
-.btn-success:hover{
-  background-color:  	#5bc0de;
+
+table {
+  border-collapse: collapse;
 }
 
-.btn:focus {
-  background-color: #5cb85c;
+table, th, td {
+  border: 1px solid black;
+  text-align: center;
+  font-weight: 500;
+}
+
+th {
+  background-color: #5bc0de;
+  height: 40px;
+  
 }
