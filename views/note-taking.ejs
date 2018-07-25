@@ -34,6 +34,8 @@
         
 
         <script>
+            var excepList = [];
+
             function init(){ 
                 initFirebase();
                 var userEmail = "<%= user.emails[0].value %>";
@@ -59,6 +61,9 @@
                 $('#navList').append(watchLink);
                 var liveLink = $('<li></li>').html('<a href="#" id="joinBroadcast" onclick="livebtn()"><span class="glyphicon glyphicon-globe"></span> 查看課程廣播</a>');
                 $('#navList').append(liveLink);
+
+                var settingLink = $('<li></li>').html('<a href="#" id="setting" onclick="settingbtn()"><span class="glyphicon glyphicon-edit"></span> 設定</a>');
+                $('#navList').append(settingLink);
                 
                 var btn = document.createElement("button");
                 btn.setAttribute('onclick',"slidebtn()");
@@ -68,7 +73,22 @@
                 var liElement = document.createElement("li");
                 liElement.appendChild(btn);
                 $('#navList').append(liElement);
-                showPPT();
+                //showPPT();
+
+                /* Init ACL when user acceses note first time */
+                var sharedAclRef = firebase.database().ref('/'+'shared-acl' + '/' + userEID + '/<%= title %>');
+                sharedAclRef.once('value').then(function(data){
+                    if(data.val() == null){
+                        sharedAclRef.set({
+                            all : 'allow',
+                            excepList : []
+                        });
+                        console.log("INIT");
+                    }else{
+                        console.log(data.val());
+                    }
+
+                });
             }
 
             function showPPT() {
@@ -230,7 +250,47 @@
                         bootbox.alert('<h3>伺服器忙碌中，請稍後再試一次 ! </h3>');
                     });
                 });
-        };
+            };
+            function settingbtn(){
+                var dialog = bootbox.dialog({
+                    title: '設定',
+                    message: `
+                        <!-- Rounded switch -->
+                        <p>Deny all <label class="switch"><input class="aclSwitch" type="checkbox"><span class="slider round"></span></label></p>`
+                         + '<p>例外名單帳號(以 , 分隔) : <input class="form-control" id="excepList" value="' + excepList + '"></p>'
+                    ,
+                    buttons: {
+                        ok: {
+                            label: "儲存",
+                            className: 'btn-info',
+                            callback: function(){
+                                var userEmail = "<%= user.emails[0].value %>";
+                                var userEID = userEmail.split('@')[0];
+                                var sharedAclRef = firebase.database().ref('/'+'shared-acl' + '/' + userEID + '/<%= title %>');
+                                var excepListContent = document.getElementById("excepList").value;
+                                var excepList = excepListContent.split(',');
+                                    
+                                if ( document.querySelector('.aclSwitch:checked') ){
+                                    sharedAclRef.set({
+                                        all : 'deny',
+                                        excep : excepList
+                                    });
+                                    console.log(excepList);
+                                    bootbox.alert("Deny all , excep");
+                                }
+                                else{
+                                    sharedAclRef.set({
+                                        all : 'allow',
+                                        excep : excepList
+                                    });
+                                    console.log(excepList);
+                                    bootbox.alert("Allow all, excep");
+                                }                                    
+                            }
+                        }
+                    }
+                });
+            }
         </script>
 </head>
 <body onload="init();">
@@ -242,7 +302,7 @@
                     <iframe id="ppt" allowFullScreen></iframe>
                     <script>
                         var pptUrl = parsePPTURL("<%= pptUrl %>");
-                        $('#ppt').attr('src', pptUrl);
+                        //$('#ppt').attr('src', pptUrl);
                     </script>
                 </div>
                 <video id="video-preview" controls="false"></video>       
