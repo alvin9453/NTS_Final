@@ -55,16 +55,18 @@
                         firepad.setHtml('<span style="font-size: 24px;"><%= title %> </span>');
                     }
                 });
-
+                var sharedDirLink = $('<li class="dropdown"></li>').html(`
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;共享筆記<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" onclick="watchNote()"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;&nbsp;觀看同學筆記</a></li>
+                            <li><a href="#" id="setting" onclick="settingbtn()"><span class="glyphicon glyphicon-wrench"></span>&nbsp;&nbsp;共享權限設定</a></li></ul></li>
+                `);
+                $('#navList').append(sharedDirLink);
                 var irsLiElement = $('<li></li>').html('<a href="irs-student" target="irs-student"><span class="glyphicon glyphicon-flash"></span> 即時互動問答</a>');
                 $('#navList').append(irsLiElement);
-                var watchLink = $('<li></li>').html('<a href="#" onclick="watchNote()"><span class="glyphicon glyphicon-folder-open"></span>&nbsp;&nbsp;觀看同學筆記</a>');
-                $('#navList').append(watchLink);
                 var liveLink = $('<li></li>').html('<a href="#" id="joinBroadcast" onclick="livebtn()"><span class="glyphicon glyphicon-globe"></span> 查看課程廣播</a>');
                 $('#navList').append(liveLink);
 
-                var settingLink = $('<li></li>').html('<a href="#" id="setting" onclick="settingbtn()"><span class="glyphicon glyphicon-edit"></span> 設定</a>');
-                $('#navList').append(settingLink);
                 
                 var btn = document.createElement("button");
                 btn.setAttribute('onclick',"slidebtn()");
@@ -74,7 +76,7 @@
                 var liElement = document.createElement("li");
                 liElement.appendChild(btn);
                 $('#navList').append(liElement);
-                //showPPT();
+                showPPT();
 
                 /* Init ACL when user acceses note first time */
                 var sharedAclRef = firebase.database().ref('/'+'shared-acl' + '/' + userEID + '/<%= title %>');
