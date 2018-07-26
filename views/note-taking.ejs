@@ -35,6 +35,7 @@
 
         <script>
             var excepList = [];
+            var accessibility = "allow";
 
             function init(){ 
                 initFirebase();
@@ -77,15 +78,15 @@
 
                 /* Init ACL when user acceses note first time */
                 var sharedAclRef = firebase.database().ref('/'+'shared-acl' + '/' + userEID + '/<%= title %>');
-                sharedAclRef.once('value').then(function(data){
+                sharedAclRef.on('value',function(data){
                     if(data.val() == null){
                         sharedAclRef.set({
                             all : 'allow',
-                            excepList : []
+                            excep : ""
                         });
-                        console.log("INIT");
                     }else{
-                        console.log(data.val());
+                        accessibility = data.val().all;
+                        excepList = data.val().excep;
                     }
 
                 });
@@ -129,8 +130,8 @@
             }
             function watchNote(){
                 var dialog = bootbox.dialog({
-                    title: '請輸入同學的Email帳號',
-                    message: "<p>例如 : <font color='red'>abc@gmail.com</font> 或 <font color='red'>abc@ncnu.edu.tw</font> 只要輸入 <big><font color='red'>abc</font></big> 即可</p><p><b>*口試demo*</b> : 請輸入 s102321003 來當作範例 </p><input id='userEID' type='text' class='form-control'>",
+                    title: '<h3>請輸入同學的Email帳號</h3>',
+                    message: "<h4>例如 : <font color='red'>abc@gmail.com</font> 或 <font color='red'>abc@ncnu.edu.tw</font> 只要輸入 <big><font color='red'>abc</font></big> 即可</p></h4><input id='classmateEID' type='text' class='form-control'>",
                     buttons: {
                         cancel: {
                             label: "取消",
@@ -139,50 +140,83 @@
                         ok: {
                             label: "觀看",
                             className: 'btn-info',
-                            callback: function(){
-                                var userEID = document.getElementById('userEID').value;
-                                if(userEID != "" && userEID != undefined){
-                                        var firepadRef = firebase.database().ref('/'+'note-'+ userEID).child('<%= title %>');
-                                        var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });// Actually, you will not modify the content of firepad-container... But it has to do this to use firepad.getHtml()
-                                        var shareFirepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
-                                            { richTextToolbar: false, richTextShortcuts: true , userId:"<%= user.displayName %>" }
-                                        );
-                                        shareFirepad.on('ready', function() {
-                                            if(shareFirepad.getHtml() == ""){
-                                                bootbox.alert('查無此人筆記，請重新輸入');            
-                                            }
-                                            else{
-                                                /* Shared-note count */
-                                                // 筆記第一次被觀看時，就會把它紀錄在 /shared-note 裡面，並且初始值為 1
-                                                var content = shareFirepad.getHtml();
-                                                var sharedCountRef = firebase.database().ref('/'+'shared-count' + '/' + userEID + '/<%= title %>');
-                                                sharedCountRef.once('value').then(function(data){
-                                                    if( data.val() == null ){
-                                                        sharedCountRef.set({
-                                                            count : '1'
-                                                        });
-                                                        showSharedNote(1 , content);
-                                                    }else{ 
-                                                        var count = data.val().count;
-                                                        count = Number(count) + 1;
-                                                        sharedCountRef.set({
-                                                            count : count
-                                                        });
-                                                        showSharedNote(count ,content);
-                                                    }
-                                                }); 
-                                            }
-                                            shareFirepad.dispose();
-                                        });
+                            callback: function(){            
+                                var classmateEID = document.getElementById('classmateEID').value;
+                                // Input nothing => alert and return
+                                if(classmateEID == "" || classmateEID == undefined){
+                                    bootbox.alert("<h3><font color='red'><span class='glyphicon glyphicon-remove'></span></font> 請輸入Email帳號</h3>");
+                                    return;
                                 }
-                                else{
-                                    bootbox.alert('請輸入Email帳號');
-                                }
+                                sharedNoteProcess(classmateEID.trim());
                             }
                         }
                     }
                 });
             }      
+            function legalSharedNoteProcessResult(classmateEID){      
+                var firepadRef = firebase.database().ref('/'+'note-'+ classmateEID).child('<%= title %>');
+                var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });// Actually, you will not modify the content of firepad-container... But it has to do this to use firepad.getHtml()
+                var shareFirepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
+                    { richTextToolbar: false, richTextShortcuts: true , userId:"<%= user.displayName %>" }
+                );
+                shareFirepad.on('ready', function() {
+                    if(shareFirepad.getHtml() == ""){
+                        bootbox.alert("<h3><font color='red'><span class='glyphicon glyphicon-remove'></span></font> 查無此人筆記，請重新輸入</h3>");            
+                    }else{
+                        /* Shared-note count */
+                        // 筆記第一次被觀看時，就會把它紀錄在 /shared-note 裡面，並且初始值為 1
+                        var content = shareFirepad.getHtml();
+                        var sharedCountRef = firebase.database().ref('/'+'shared-count' + '/' + classmateEID + '/<%= title %>');
+                        sharedCountRef.once('value').then(function(data){
+                            if( data.val() == null ){
+                                sharedCountRef.set({
+                                    count : '1'
+                                });
+                                showSharedNote(1 , content);
+                            }else{ 
+                                var count = data.val().count;
+                                count = Number(count) + 1;
+                                sharedCountRef.set({
+                                    count : count
+                                });
+                                showSharedNote(count ,content);
+                            }
+                        }); 
+                    }
+                    shareFirepad.dispose();
+                });
+            }
+            function sharedNoteProcess(classmateEID){
+                var sharedAclRef = firebase.database().ref('/'+'shared-acl' + '/' + classmateEID + '/<%= title %>');
+                var aclDataPromise = new Promise( (resolve, reject) => {
+                    sharedAclRef.once('value').then( (data) => {
+                        resolve(data.val());
+                    })
+                });
+                aclDataPromise.then( (aclData) => {
+                    if(aclData == null){
+                        legalSharedNoteProcessResult(classmateEID);
+                    }else{
+                        var thisUserEID =  "<%= user.emails[0].value %>".split('@')[0];
+                        var eList = aclData.excep;
+                        if( aclData.all == "deny" && ( eList == "" || eList.indexOf(thisUserEID) == -1 ) ){ // Deny all, but not in exception list => Forbidden
+                            bootbox.alert("<h3 align='center'><font color='red'><span class='glyphicon glyphicon-remove'></span></font> 沒有觀看權限</h3>");
+                        }
+                        else if ( aclData.all == "allow" &&  ( eList == "" || eList.indexOf(thisUserEID) == -1 ) ){ // Allow all , but not in exception list  => Allow
+                            legalSharedNoteProcessResult(classmateEID);
+                        }
+                        else if( aclData.all == "deny" && eList.indexOf(thisUserEID) > -1 ){ // Deny all, but in exception list => Allow
+                            legalSharedNoteProcessResult(classmateEID);
+                        }
+                        else if ( aclData.all == "allow" && eList.indexOf(thisUserEID) > -1 ){ // Allow all, but in exception list => Forbidden
+                            bootbox.alert("<h3 align='center'><font color='red'><span class='glyphicon glyphicon-remove'></span></font> 沒有觀看權限</h3>");
+                        }
+                    }
+                }).catch( (err) => {
+                    bootbox.alert("<h3><font color='red'><span class='glyphicon glyphicon-remove'></span></font> 系統錯誤，請通知系統管理員</h3>");
+                    console.log(err);
+                });
+            }
             // 顯示共享筆記
             function showSharedNote(count, content){
                 var dialog = bootbox.dialog({
@@ -196,7 +230,7 @@
                     }
                 });
                 dialog.find('.modal-content').css({'user-select': 'none'}); // 選取功能限制
-            } 
+            }
             function liveSwitchBtn(){
                 var pptUrl = parsePPTURL("<%= pptUrl %>");
                 var switchBtn = document.getElementById("liveSwitchBtn");
@@ -252,12 +286,13 @@
                 });
             };
             function settingbtn(){
+                var showExcepList = excepList;
                 var dialog = bootbox.dialog({
-                    title: '設定',
+                    title: '<h3 align="center">共享筆記權限設定</h3>',
                     message: `
-                        <!-- Rounded switch -->
-                        <p>Deny all <label class="switch"><input class="aclSwitch" type="checkbox"><span class="slider round"></span></label></p>`
-                         + '<p>例外名單帳號(以 , 分隔) : <input class="form-control" id="excepList" value="' + excepList + '"></p>'
+                        <p><b><big>變更權限</big></b> <label class="switch"><input class="aclSwitch" type="checkbox" onclick="aclSwitchBtn()"><span class="slider round"></span></label></p>`
+                        + "<h4 id='dialogAclDescription'>目前權限 : <font color='green'>允許</font>所有人存取，但清單內的帳號<font color='red'>禁止</font>存取。</h4>"
+                        + "<h4>例外名單帳號(以 , 分隔) : </h4><br><input class='form-control' id='excepList' value='" + showExcepList + "'></p>"
                     ,
                     buttons: {
                         ok: {
@@ -265,31 +300,54 @@
                             className: 'btn-info',
                             callback: function(){
                                 var userEmail = "<%= user.emails[0].value %>";
-                                var userEID = userEmail.split('@')[0];
-                                var sharedAclRef = firebase.database().ref('/'+'shared-acl' + '/' + userEID + '/<%= title %>');
+                                var thisUserEID = userEmail.split('@')[0];
+                                var sharedAclRef = firebase.database().ref('/'+'shared-acl' + '/' + thisUserEID + '/<%= title %>');
                                 var excepListContent = document.getElementById("excepList").value;
-                                var excepList = excepListContent.split(',');
-                                    
+                                var newExcepList = [];
+                                var splitExcepList = excepListContent.split(',');
+                                var listMsg = "";
+                                for( var i in splitExcepList){
+                                    newExcepList.push( splitExcepList[i].trim() );
+                                    listMsg += splitExcepList[i].trim() + "<br>";
+                                }   
                                 if ( document.querySelector('.aclSwitch:checked') ){
                                     sharedAclRef.set({
                                         all : 'deny',
-                                        excep : excepList
+                                        excep : newExcepList
                                     });
-                                    console.log(excepList);
-                                    bootbox.alert("Deny all , excep");
+                                    if( newExcepList == "" )
+                                        newExcepList = "無";
+                                    
+                                    bootbox.alert("<h4><font color='red'>禁止</font>所有人觀看我的共享筆記，但是下列名單<font color='green'>例外</font> </h4> <h5>" + listMsg + "</h5>");
                                 }
                                 else{
                                     sharedAclRef.set({
                                         all : 'allow',
-                                        excep : excepList
+                                        excep : newExcepList
                                     });
-                                    console.log(excepList);
-                                    bootbox.alert("Allow all, excep");
+                                    if( newExcepList == "" )
+                                        newExcepList = "無";
+                                    bootbox.alert("<h4><font color='green'>允許</font>所有人觀看我的共享筆記，但是下列名單<font color='red'>例外</font> : </h4> <h5>" + listMsg + "</h5>");
                                 }                                    
                             }
                         }
                     }
                 });
+                if( accessibility == "deny" ){
+                    document.getElementsByClassName("aclSwitch")[0].checked = true;
+                    aclSwitchBtn();
+                }else{
+                    document.getElementsByClassName("aclSwitch")[0].checked = false;
+                    aclSwitchBtn();
+                }
+                    
+            }
+            function aclSwitchBtn(){
+                if( document.getElementsByClassName("aclSwitch")[0].checked )
+                    document.getElementById("dialogAclDescription").innerHTML = "目前權限 : <font color='red'>禁止</font>所有人存取，但清單內的帳號<font color='green'>允許</font>存取。";
+                else
+                    document.getElementById("dialogAclDescription").innerHTML = "目前權限 : <font color='green'>允許</font>所有人存取，但清單內的帳號<font color='red'>禁止</font>存取。";
+                
             }
         </script>
 </head>
@@ -302,7 +360,7 @@
                     <iframe id="ppt" allowFullScreen></iframe>
                     <script>
                         var pptUrl = parsePPTURL("<%= pptUrl %>");
-                        //$('#ppt').attr('src', pptUrl);
+                        $('#ppt').attr('src', pptUrl);
                     </script>
                 </div>
                 <video id="video-preview" controls="false"></video>       
