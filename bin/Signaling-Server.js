@@ -506,6 +506,12 @@ module.exports = exports = function(app, socketCallback) {
             socket.broadcast.emit('answerStatistics' , statistics);
         });
 
+        socket.on('inputMessage' , function(data){
+            console.log(data);
+            socket.emit('msgBroadcast', data); // Send to my self
+            socket.broadcast.emit('msgBroadcast', data); // Send to another one
+        });
+
         if (socketCallback) {
             socketCallback(socket);
         }
