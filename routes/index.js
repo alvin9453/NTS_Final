@@ -98,8 +98,8 @@ module.exports = function(passport){
      { user: req.user }
     );
   });
-  router.get('/irs', ensureAuthenticated , function(req, res) {
-    res.render('irs',
+  router.get('/irs-teacher', ensureAuthenticated , function(req, res) {
+    res.render('irs-teacher',
      { user: req.user }
     );
   });
