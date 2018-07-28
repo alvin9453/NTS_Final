@@ -506,11 +506,31 @@ module.exports = exports = function(app, socketCallback) {
             socket.broadcast.emit('answerStatistics' , statistics);
         });
 
-        socket.on('inputMessage' , function(data){
+        socket.on('inputMessage' , function(data){ // Normal Message
             console.log(data);
             socket.emit('msgBroadcast', data); // Send to my self
             socket.broadcast.emit('msgBroadcast', data); // Send to another one
         });
+
+        socket.on('inputSlashQuestion', function(data){   // Slash Question
+            socket.emit('slashQuestion' , data);
+            socket.broadcast.emit('slashQuestion' , data);
+        });
+
+        socket.on('inputSlashAnswer', function(data){ // Slash Answer
+/*            var userRef = firebase.database().ref("slash-command/");
+            var newUserKey = firebase.database().ref("slash-command/").push().key;
+            var postData = {
+                name : data,
+                character : 'student',
+                email : userEmail
+              };
+*/
+            socket.broadcast.emit('slashAnswer' , data);
+
+        });
+
+
 
         if (socketCallback) {
             socketCallback(socket);

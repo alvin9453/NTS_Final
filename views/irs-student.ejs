@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>互動式共享筆記系統</title>
+    <title>即時互動問答</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
@@ -33,8 +33,8 @@
             margin: 0; 
             padding: 0; 
             width: 100%;
-            height: 200px;
-            background-color : white;
+            height: 300px;
+            background-color :  rgb(235, 235, 235);
             border-style: solid;    
             padding : 10px;
             overflow: scroll;
@@ -47,7 +47,17 @@
             padding : 2px;
             margin-left : 0px;
         }
-        .systemMsg{
+        .systemMsg-q{
+            padding : 2px;
+            margin-left : 0px;
+            color: blue ;
+        }
+        .systemMsg-ans{
+            padding : 2px;
+            margin-left : 0px;
+            color: green;
+        }
+        .systemMsg-alert{
             padding : 2px;
             margin-left : 0px;
             color: red;
@@ -195,60 +205,100 @@
             var msg = document.getElementById("msg").value;
             var msgBlock = document.getElementById("messageBlock");
             //document.getElementById("msg").value = "";
-            socket.emit('inputMessage' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg } );
+            if(isSlashAnswer(msg)){    // Students only send answer
+                var index = msg.split(" ")[1];
+                if( !validInputQunstionNumber(index) ){
+                    displayEachMessage("【系統】題號錯誤" , "system-alert");  
+                    return;
+                }else{
+                    var content = "";
+                    for( var i = 2; i < msg.split(" ").length; i++)
+                        content += msg.split(" ")[i] + " ";
+                    var newAns = document.createElement("div");
+                    newAns.innerHTML = "<font color='green'>(回答 : " + content + ")</font>";
+                    var slashQuestionsHtmlCollection = document.getElementById("slashQuestionBlock").getElementsByTagName("li");
+                    var realIndex = Number(index) - 1;
+                    slashQuestionsHtmlCollection[realIndex].appendChild(newAns);
+                    displayEachMessage("【系統】您已回答問題 <b>" + index + "</b>" , "system-ans");
+                    socket.emit('inputSlashAnswer' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg } );
+                }
+            }else if(isSlashQuestion(msg)){
+                displayEachMessage("【系統】教師限定功能" , "system-alert");  
+            }else{
+                socket.emit('inputMessage' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg , character : "student" } );
+            }
+            
+        }
+
+        function validInputQunstionNumber(index){
+            var slashQuestionsHtmlCollection = document.getElementById("slashQuestionBlock").getElementsByTagName("li");
+            var totalQuestionInList = slashQuestionsHtmlCollection.length;
+            if( Number(index) > totalQuestionInList || Number(index) < 1){
+                return false;
+            }else{
+                return true;
+            }
         }
 
         socket.on('msgBroadcast', function(msgObj){
             var msg = msgObj.msg;
             var userName = msgObj.uname;
             var showMsg = ""
-            if ( isSlashQuestion(msg) ){
-                showMsg = msg.split(' ')[1];
-                console.log(showMsg);
-                var questionKey = firebase.database().ref("slashQuestion/").push().key;
-                displayEachSlashQuestion(showMsg , questionKey);
-                displayEachMessage("【系統】已新增一則問答" , "system");
-            }else{
-                showMsg = userName + " : " + msg;
+            if ( isSlashQuestion(msg) ){ // Slash Command /Q
+                showMsg = msg.slice(3);
+                displayEachSlashQuestion(showMsg);
+                displayEachMessage("【系統】已新增一則問題" , "system-q");
+            }else{  // Normal message
+                if(msgObj.character == "teacher")
+                    showMsg += "[教師]"
+                showMsg += userName + " : " + msg;
                 displayEachMessage(showMsg);
             }
-
-            
-
+        });
+        socket.on('slashQuestion', function(msg){
+            var showMsg = msg.msg.slice(3);
+            var userName = msg.uname;
+            displayEachSlashQuestion(showMsg);
+            displayEachMessage("【系統】已新增一則問題" , "system-q");
         });
     
         function displayEachMessage(content , type){
-            var msgType = ["msg" , "system"];
+            // msgType : 1. msg , 2. system-q , 3. system-ans 4. system-alert
             var msgBlock = document.getElementById("messageBlock");
             var newMsg = document.createElement("li");
             switch(type){
                 case "msg" :
                     newMsg.setAttribute("class" , "msg");
                     break;
-                case "system" :
-                    newMsg.setAttribute("class" , "systemMsg");
+                case "system-q" :
+                    newMsg.setAttribute("class" , "systemMsg-q");
+                    break;
+                case "system-ans" :
+                    newMsg.setAttribute("class" , "systemMsg-ans");
+                    break;
+                case "system-alert" :
+                    newMsg.setAttribute("class" , "systemMsg-alert");
                     break;
             }
             newMsg.innerHTML = content;
             msgBlock.append(newMsg);
             msgBlock.scrollTop = msgBlock.scrollHeight;
         }
-        function displayEachSlashQuestion(content, key){
+        function displayEachSlashQuestion(content){
             var msgBlock = document.getElementById("slashQuestionBlock");
             var newMsg = document.createElement("li");
             newMsg.setAttribute("class" , "slashQuestion");
-            newMsg.setAttribute("id", key);
             newMsg.innerHTML = content;
             msgBlock.append(newMsg);
             msgBlock.scrollTop = msgBlock.scrollHeight;
         }
 
         function isSlashQuestion(msg){
-            var qaPatt= new RegExp("^\/Q .*");
+            var qaPatt= /^\/Q\s.+/i;
             return qaPatt.test(msg);
         }
         function isSlashAnswer(msg){
-            var qaPatt= new RegExp("^\/A .*");
+            var qaPatt= /^\/A\s[\d]+\s.+/i;
             return qaPatt.test(msg);
         }
 
@@ -258,24 +308,31 @@
 </body>
     <% include layouts/header %>
     <br><br><br>
-    <div class="container-fluid">
+    <h2 align="center">即時互動問答</h1>   
+    <hr> 
+    <div class="container">
         <div class="row">
-            <h1 align="center">即時互動問答系統</h1>    
-            <div class="col-sm-5 col-md-5">
-                <h2 align="center">目前問題</h2>
+            <div class="col-sm-6 col-md-6">
+                    <h3 align="center">互動聊天室</h3>
+                    <ul id="messageBlock" class="messageBlock"></ul>
+                    <input class="msgInput" id="msg" autocomplete="off" /><button onclick="msgSendBtn()">送出</button>
+            </div>
+            <div class="col-sm-6 col-md-6">
+                    <h3 align="center">斜線指令問答紀錄</h3>
+                    <ul id="slashQuestionBlock" class="slashQuestionBlock"></ul>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-sm-6 col-md-6">
+                <h2 align="center">選項</h2>
                 <ul class="list-group" id="questionBlock"></ul>
             </div>
             <div class="col-sm-4 col-md-4">
                 <h2 align="center">統計資料</h2>
                 <div id="chartDiv" align="center"></div>
             </div>
-            <div class="col-sm-3 col-md-3">
-                <h2 align="center">Chatroom</h2>
-                <ul id="slashQuestionBlock" class="slashQuestionBlock"></ul>
-                <br>
-                <ul id="messageBlock" class="messageBlock"></ul>
-                <input class="msgInput" id="msg" autocomplete="off" /><button onclick="msgSendBtn()">送出</button>
-            </div>
+            
         </div>
     </div>
     <div class="footer">
