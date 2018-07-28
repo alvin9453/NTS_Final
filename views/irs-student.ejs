@@ -97,7 +97,7 @@
         function msgSendBtn(){
             var msg = document.getElementById("msg").value;
             var msgBlock = document.getElementById("messageBlock");
-            //document.getElementById("msg").value = "";
+            document.getElementById("msg").value = "";
             if(isSlashAnswer(msg)){    // Students only send answer
                 var index = msg.split(" ")[1];
                 if( !validInputQunstionNumber(index) ){
@@ -262,7 +262,21 @@
             <div class="col-sm-6 col-md-6">
                     <h3 align="center">互動聊天室</h3>
                     <ul id="messageBlock" class="messageBlock"></ul>
-                    <input class="msgInput" id="msg" autocomplete="off" /><button onclick="msgSendBtn()">送出</button>
+                    <div class="form-group">
+                        <br>
+                        <input class="form-control" id="msg" autocomplete="off" />
+                        <button id="msgSendBtn" class="btn btn-primary" onclick="msgSendBtn()" style="float: right;">送出</button>
+                        <script>
+                            /* Enter trigger onclick event */
+                            var msgInput = document.getElementById("msg");
+                            msgInput.addEventListener("keyup", function(event) {
+                                event.preventDefault();
+                                if (event.keyCode === 13) {
+                                    document.getElementById("msgSendBtn").click();
+                                }
+                            });
+                        </script>
+                    </div>
             </div>
             <div class="col-sm-6 col-md-6">
                     <h3 align="center">斜線指令問答紀錄</h3>

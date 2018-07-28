@@ -20,9 +20,6 @@ a.hover {
     overflow: scroll;
     text-align : left
 }
-.msgInput {
-     width: 100%; 
-}
 .slashQuestionBlock{
     list-style-type:decimal;
     margin: 0; 
