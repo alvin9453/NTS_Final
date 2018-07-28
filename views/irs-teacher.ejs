@@ -233,6 +233,8 @@
 
         function msgSendBtn(){
             var msg = document.getElementById("msg").value;
+            if( msg == "" )
+                return;
             var msgBlock = document.getElementById("messageBlock");
             document.getElementById("msg").value = "";
             if(isSlashAnswer(msg)){  // Teachers only send questions
@@ -367,8 +369,10 @@
                     <ul id="slashQuestionBlock" class="slashQuestionBlock"></ul>
             </div>                
         </div>
+        <hr>
+        <h3 align="center">選項問答與統計</h3>
         <div class="row">
-            <a id="createQ" class="btn btn-success list-group-item" onclick="createQuestion()"><span class="glyphicon glyphicon-plus"></span>  新增一個互動問題</a>
+            <a id="createQ" class="btn btn-success list-group-item" onclick="createQuestion()"><span class="glyphicon glyphicon-plus"></span>  新增一個選擇題</a>
         </div>
         <div class="row">
             <div class="col-sm-6 col-md-6">

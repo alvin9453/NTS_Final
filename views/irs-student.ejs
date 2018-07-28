@@ -96,6 +96,8 @@
 
         function msgSendBtn(){
             var msg = document.getElementById("msg").value;
+            if( msg == "" )
+                return;
             var msgBlock = document.getElementById("messageBlock");
             document.getElementById("msg").value = "";
             if(isSlashAnswer(msg)){    // Students only send answer

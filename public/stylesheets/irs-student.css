@@ -3,9 +3,7 @@ h3 {text-align : center;}
 .btn:focus {
     background-color: #FFCC22;
 }
-.btn:hover {
-    background-color: #F0FFFF;
-}
+
 .messageBlock {
     list-style-type: none;
     margin: 0; 
