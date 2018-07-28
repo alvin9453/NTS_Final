@@ -508,7 +508,6 @@ module.exports = exports = function(app, socketCallback) {
         });
 
         socket.on('inputMessage' , function(data){ // Normal Message
-            console.log(data);
             socket.emit('msgBroadcast', data); // Send to my self
             socket.broadcast.emit('msgBroadcast', data); // Send to another one
         });
@@ -530,7 +529,6 @@ module.exports = exports = function(app, socketCallback) {
             updates[newKey] = postData;
             slashCommandRef.update(updates);
         });
-
         socket.on('inputSlashAnswer', function(data){ // Slash Answer
             var qid = data.qid;
             var response = "";
@@ -550,9 +548,6 @@ module.exports = exports = function(app, socketCallback) {
             socket.broadcast.emit('slashAnswer' , data);
 
         });
-
-
-
         if (socketCallback) {
             socketCallback(socket);
         }

@@ -4,80 +4,18 @@
     <title>即時互動問答</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        input { width:100%; }
-        h3 {text-align : center;}
-        .btn:focus {
-            background-color: #FFCC22;
-        }
-        .btn:hover {
-            background-color: #F0FFFF;
-        }
-        .messageBlock {
-            list-style-type: none;
-            margin: 0; 
-            padding: 0; 
-            width: 100%;
-            height: 300px;
-            background-color : white;
-            border-style: solid;    
-            padding : 10px;
-            overflow: scroll;
-            text-align : left
-        }
-        .msgInput {
-             width: 100%; 
-        }
-        .slashQuestionBlock{
-            list-style-type:decimal;
-            margin: 0; 
-            padding: 0; 
-            width: 100%;
-            height: 300px;
-            background-color :  rgb(235, 235, 235);
-            border-style: solid;    
-            padding : 10px;
-            overflow: scroll;
-        }
-        .slashQuestion{
-            padding : 2px;
-            margin-left : 15px;
-        }
-        .msg{
-            padding : 2px;
-            margin-left : 0px;
-        }
-        .systemMsg-q{
-            padding : 2px;
-            margin-left : 0px;
-            color: blue ;
-        }
-        .systemMsg-ans{
-            padding : 2px;
-            margin-left : 0px;
-            color: green;
-        }
-        .systemMsg-alert{
-            padding : 2px;
-            margin-left : 0px;
-            color: red;
-        }
-    </style>
-
+    
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/irs-student.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>   
-    <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
-    <script src="/javascripts/firebase-init.js"></script>
-
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/javascripts/RTCMultiConnection.min.js"></script>
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
-        initFirebase();   
         var userEmail = "<%= user.emails[0].value %>";
         var thisUserEID = userEmail.split('@')[0];
 
@@ -155,6 +93,92 @@
             
 
         }
+
+        function msgSendBtn(){
+            var msg = document.getElementById("msg").value;
+            var msgBlock = document.getElementById("messageBlock");
+            //document.getElementById("msg").value = "";
+            if(isSlashAnswer(msg)){    // Students only send answer
+                var index = msg.split(" ")[1];
+                if( !validInputQunstionNumber(index) ){
+                    displayEachMessage("【系統】題號錯誤" , "system-alert");  
+                    return;
+                }else{
+                    var content = "";
+                    for( var i = 2; i < msg.split(" ").length; i++){
+                        content += msg.split(" ")[i] + " ";
+                    }
+                    content.trim();
+                    var newAns = document.createElement("div");
+                    newAns.innerHTML = "<font color='green'>(回答 : " + content + ")</font>";
+                    var slashQuestionsHtmlCollection = document.getElementById("slashQuestionBlock").getElementsByTagName("li");
+                    var realIndex = Number(index) - 1;
+                    var qid = slashQuestionsHtmlCollection[realIndex].id;
+                    slashQuestionsHtmlCollection[realIndex].appendChild(newAns);
+                    displayEachMessage("【系統】您已回答問題 <b>" + index + "</b>" , "system-ans");
+                    socket.emit('inputSlashAnswer' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg , qid : qid} );
+                }
+            }else if(isSlashQuestion(msg)){
+                displayEachMessage("【系統】教師限定功能" , "system-alert");  
+            }else{
+                socket.emit('inputMessage' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg , character : "student" } );
+            }
+            
+        }
+
+        function validInputQunstionNumber(index){
+            var slashQuestionsHtmlCollection = document.getElementById("slashQuestionBlock").getElementsByTagName("li");
+            var totalQuestionInList = slashQuestionsHtmlCollection.length;
+            if( Number(index) > totalQuestionInList || Number(index) < 1){
+                return false;
+            }else{
+                return true;
+            }
+        }
+    
+        function displayEachMessage(content , type){
+            // msgType : 1. msg , 2. system-q , 3. system-ans 4. system-alert
+            var msgBlock = document.getElementById("messageBlock");
+            var newMsg = document.createElement("li");
+            switch(type){
+                case "msg" :
+                    newMsg.setAttribute("class" , "msg");
+                    break;
+                case "system-q" :
+                    newMsg.setAttribute("class" , "systemMsg-q");
+                    break;
+                case "system-ans" :
+                    newMsg.setAttribute("class" , "systemMsg-ans");
+                    break;
+                case "system-alert" :
+                    newMsg.setAttribute("class" , "systemMsg-alert");
+                    break;
+            }
+            newMsg.innerHTML = content;
+            msgBlock.append(newMsg);
+            msgBlock.scrollTop = msgBlock.scrollHeight;
+        }
+        function displayEachSlashQuestion(content , qid){
+            var msgBlock = document.getElementById("slashQuestionBlock");
+            var newMsg = document.createElement("li");
+            newMsg.setAttribute("class" , "slashQuestion");
+            newMsg.setAttribute("id" , qid);
+            newMsg.innerHTML = content;
+            msgBlock.append(newMsg);
+            msgBlock.scrollTop = msgBlock.scrollHeight;
+        }
+
+        function isSlashQuestion(msg){
+            var qaPatt= /^\/Q\s.+/i;
+            return qaPatt.test(msg);
+        }
+        function isSlashAnswer(msg){
+            var qaPatt= /^\/A\s[\d]+\s.+/i;
+            return qaPatt.test(msg);
+        }
+
+
+        /* socket.on */
         socket.on('newQuestion' , function(question){
             appendQuestion(question);
         });
@@ -201,48 +225,6 @@
             chart.draw(data, options);
         });
 
-        function msgSendBtn(){
-            var msg = document.getElementById("msg").value;
-            var msgBlock = document.getElementById("messageBlock");
-            //document.getElementById("msg").value = "";
-            if(isSlashAnswer(msg)){    // Students only send answer
-                var index = msg.split(" ")[1];
-                if( !validInputQunstionNumber(index) ){
-                    displayEachMessage("【系統】題號錯誤" , "system-alert");  
-                    return;
-                }else{
-                    var content = "";
-                    for( var i = 2; i < msg.split(" ").length; i++){
-                        content += msg.split(" ")[i] + " ";
-                    }
-                    content.trim();
-                    var newAns = document.createElement("div");
-                    newAns.innerHTML = "<font color='green'>(回答 : " + content + ")</font>";
-                    var slashQuestionsHtmlCollection = document.getElementById("slashQuestionBlock").getElementsByTagName("li");
-                    var realIndex = Number(index) - 1;
-                    var qid = slashQuestionsHtmlCollection[realIndex].id;
-                    slashQuestionsHtmlCollection[realIndex].appendChild(newAns);
-                    displayEachMessage("【系統】您已回答問題 <b>" + index + "</b>" , "system-ans");
-                    socket.emit('inputSlashAnswer' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg , qid : qid} );
-                }
-            }else if(isSlashQuestion(msg)){
-                displayEachMessage("【系統】教師限定功能" , "system-alert");  
-            }else{
-                socket.emit('inputMessage' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg , character : "student" } );
-            }
-            
-        }
-
-        function validInputQunstionNumber(index){
-            var slashQuestionsHtmlCollection = document.getElementById("slashQuestionBlock").getElementsByTagName("li");
-            var totalQuestionInList = slashQuestionsHtmlCollection.length;
-            if( Number(index) > totalQuestionInList || Number(index) < 1){
-                return false;
-            }else{
-                return true;
-            }
-        }
-
         socket.on('msgBroadcast', function(msgObj){
             var msg = msgObj.msg;
             var userName = msgObj.uname;
@@ -265,49 +247,9 @@
             displayEachSlashQuestion(showMsg , qid);
             displayEachMessage("【系統】已新增一則問題" , "system-q");
         });
-    
-        function displayEachMessage(content , type){
-            // msgType : 1. msg , 2. system-q , 3. system-ans 4. system-alert
-            var msgBlock = document.getElementById("messageBlock");
-            var newMsg = document.createElement("li");
-            switch(type){
-                case "msg" :
-                    newMsg.setAttribute("class" , "msg");
-                    break;
-                case "system-q" :
-                    newMsg.setAttribute("class" , "systemMsg-q");
-                    break;
-                case "system-ans" :
-                    newMsg.setAttribute("class" , "systemMsg-ans");
-                    break;
-                case "system-alert" :
-                    newMsg.setAttribute("class" , "systemMsg-alert");
-                    break;
-            }
-            newMsg.innerHTML = content;
-            msgBlock.append(newMsg);
-            msgBlock.scrollTop = msgBlock.scrollHeight;
-        }
-        function displayEachSlashQuestion(content , qid){
-            var msgBlock = document.getElementById("slashQuestionBlock");
-            var newMsg = document.createElement("li");
-            newMsg.setAttribute("class" , "slashQuestion");
-            newMsg.setAttribute("id" , qid);
-            newMsg.innerHTML = content;
-            msgBlock.append(newMsg);
-            msgBlock.scrollTop = msgBlock.scrollHeight;
-        }
-
-        function isSlashQuestion(msg){
-            var qaPatt= /^\/Q\s.+/i;
-            return qaPatt.test(msg);
-        }
-        function isSlashAnswer(msg){
-            var qaPatt= /^\/A\s[\d]+\s.+/i;
-            return qaPatt.test(msg);
-        }
 
     </script>
+
 </head>
 <body>
 </body>
