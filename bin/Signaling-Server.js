@@ -497,10 +497,36 @@ module.exports = exports = function(app, socketCallback) {
         // Teacher new a question
         socket.on('newQuestion' , function(question){
             socket.broadcast.emit('newQuestion' , question);
+
+            // store in database, for the analysis in future
+            var questionRef = firebase.database().ref("choice-question/");
+            var newKey = question.qid;
+            var postData = {
+                title : question.title,
+                optionA : question.optionA,
+                optionB : question.optionB,
+                optionC : question.optionC,
+                optionD : question.optionD,
+            };
+            var updates = {};
+            updates[newKey] = postData;
+            questionRef.update(updates);
         });
         // Student choose an option as his answer and response to teacher
         socket.on('studentAnswer' , function(answer){      
             socket.broadcast.emit('studentAnswerToTeacher' , answer);
+
+            // store in database, for the analysis in future
+            var qid = answer.qid;
+            var answerRef = firebase.database().ref("choice-question/" + qid + "/responses");
+            var newKey = firebase.database().ref("choice-question/" + qid + "/responses").push().key
+            var postData = {
+                uname : answer.uname,
+                choice : answer.answer
+            };
+            var updates = {};
+            updates[newKey] = postData;
+            answerRef.update(updates);
         });
         // Teacher send question statistics to all students
         socket.on('sendStatistics' , function(statistics){

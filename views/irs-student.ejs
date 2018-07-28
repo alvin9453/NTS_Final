@@ -38,7 +38,7 @@
             return btn;
         }
         function sendAnswer(qid , option){
-             socket.emit("studentAnswer" , {"qid" : qid ,"answer" : option });
+             socket.emit("studentAnswer" , {"uname": "<%= user.displayName %>" ,"qid" : qid ,"answer" : option });
 
              //disable this question button
              
