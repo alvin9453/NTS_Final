@@ -312,7 +312,8 @@
                 displayEachMessage("【系統】學生限定功能" , "system-alert");  
                 return;
             }else if(isSlashQuestion(msg)){
-                socket.emit('inputSlashQuestion' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg } );
+                var questionKey = firebase.database().ref("slash-command/").push().key;
+                socket.emit('inputSlashQuestion' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg , qid : questionKey } );
             }else{
                 socket.emit('inputMessage' , {uname : "<%= user.displayName %>" ,  uid : thisUserEID , msg : msg , character:"teacher" } );
             }
@@ -337,6 +338,7 @@
             for( var i = 2; i < msgObj.msg.split(" ").length; i++){
                 content += msgObj.msg.split(" ")[i] + " ";
             }
+            content.trim();
             var newAns = document.createElement("div");
             var studentName = msgObj.uname;
             newAns.innerHTML = "<font color='green'>- " + studentName  + " : " + content + "</font>";
@@ -348,8 +350,8 @@
         socket.on('slashQuestion', function(msgObj){
             var showMsg = msgObj.msg.slice(3);
             var userName = msgObj.uname;
-            var questionKey = firebase.database().ref("slashQuestion/").push().key;
-            displayEachSlashQuestion(showMsg , questionKey);
+            
+            displayEachSlashQuestion(showMsg);
             displayEachMessage("【系統】已新增一則問題" , "system-q");
         });
     
@@ -375,11 +377,10 @@
             msgBlock.append(newMsg);
             msgBlock.scrollTop = msgBlock.scrollHeight;
         }
-        function displayEachSlashQuestion(content, key){
+        function displayEachSlashQuestion(content){
             var msgBlock = document.getElementById("slashQuestionBlock");
             var newMsg = document.createElement("li");
             newMsg.setAttribute("class" , "slashQuestion");
-            newMsg.setAttribute("id", key);
             newMsg.innerHTML = content;
             msgBlock.append(newMsg);
             msgBlock.scrollTop = msgBlock.scrollHeight;

@@ -212,15 +212,18 @@
                     return;
                 }else{
                     var content = "";
-                    for( var i = 2; i < msg.split(" ").length; i++)
+                    for( var i = 2; i < msg.split(" ").length; i++){
                         content += msg.split(" ")[i] + " ";
+                    }
+                    content.trim();
                     var newAns = document.createElement("div");
                     newAns.innerHTML = "<font color='green'>(回答 : " + content + ")</font>";
                     var slashQuestionsHtmlCollection = document.getElementById("slashQuestionBlock").getElementsByTagName("li");
                     var realIndex = Number(index) - 1;
+                    var qid = slashQuestionsHtmlCollection[realIndex].id;
                     slashQuestionsHtmlCollection[realIndex].appendChild(newAns);
                     displayEachMessage("【系統】您已回答問題 <b>" + index + "</b>" , "system-ans");
-                    socket.emit('inputSlashAnswer' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg } );
+                    socket.emit('inputSlashAnswer' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg , qid : qid} );
                 }
             }else if(isSlashQuestion(msg)){
                 displayEachMessage("【系統】教師限定功能" , "system-alert");  
@@ -258,7 +261,8 @@
         socket.on('slashQuestion', function(msg){
             var showMsg = msg.msg.slice(3);
             var userName = msg.uname;
-            displayEachSlashQuestion(showMsg);
+            var qid = msg.qid;
+            displayEachSlashQuestion(showMsg , qid);
             displayEachMessage("【系統】已新增一則問題" , "system-q");
         });
     
@@ -284,10 +288,11 @@
             msgBlock.append(newMsg);
             msgBlock.scrollTop = msgBlock.scrollHeight;
         }
-        function displayEachSlashQuestion(content){
+        function displayEachSlashQuestion(content , qid){
             var msgBlock = document.getElementById("slashQuestionBlock");
             var newMsg = document.createElement("li");
             newMsg.setAttribute("class" , "slashQuestion");
+            newMsg.setAttribute("id" , qid);
             newMsg.innerHTML = content;
             msgBlock.append(newMsg);
             msgBlock.scrollTop = msgBlock.scrollHeight;

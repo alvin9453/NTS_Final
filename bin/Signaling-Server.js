@@ -15,6 +15,7 @@ var shiftedModerationControls = {};
 
 // for scalable-broadcast demos
 var ScalableBroadcast;
+var firebase = require('firebase');
 
 module.exports = exports = function(app, socketCallback) {
     socketCallback = socketCallback || function() {};
@@ -515,17 +516,37 @@ module.exports = exports = function(app, socketCallback) {
         socket.on('inputSlashQuestion', function(data){   // Slash Question
             socket.emit('slashQuestion' , data);
             socket.broadcast.emit('slashQuestion' , data);
+
+            // store in database, for the analysis in future
+            var slashCommandRef = firebase.database().ref("slash-command/");
+            var newKey = data.qid;
+            var questionContent = data.msg.slice(3);
+            var postData = {
+                uid : data.uid,
+                uname : data.uname,
+                question : questionContent
+            };
+            var updates = {};
+            updates[newKey] = postData;
+            slashCommandRef.update(updates);
         });
 
         socket.on('inputSlashAnswer', function(data){ // Slash Answer
-/*            var userRef = firebase.database().ref("slash-command/");
-            var newUserKey = firebase.database().ref("slash-command/").push().key;
+            var qid = data.qid;
+            var response = "";
+            for( var i = 2; i < data.msg.split(" ").length; i++)
+                response += data.msg.split(" ")[i] + " ";
+            response.trim();
+            var answerKey = firebase.database().ref("slash-command/" + qid + "/responses").push().key;
+            var slashCommandQuestionRef = firebase.database().ref("slash-command/" + qid + "/responses");
             var postData = {
-                name : data,
-                character : 'student',
-                email : userEmail
-              };
-*/
+                uid : data.uid,
+                name : data.uname,
+                response : response,
+            };
+            var updates = {};
+            updates[answerKey] = postData;
+            slashCommandQuestionRef.update(updates);
             socket.broadcast.emit('slashAnswer' , data);
 
         });
