@@ -36,6 +36,8 @@
         <script>
             var excepList = [];
             var accessibility = "allow";
+            var interactiveCount = 0;
+            var firstTimeInThisPage = true;
 
             function init(){ 
                 initFirebase();
@@ -62,7 +64,11 @@
                             <li><a href="#" id="setting" onclick="settingbtn()"><span class="glyphicon glyphicon-wrench"></span>&nbsp;&nbsp;共享權限設定</a></li></ul></li>
                 `);
                 $('#navList').append(sharedDirLink);
-                var irsLiElement = $('<li></li>').html('<a href="irs-student" target="irs-student"><span class="glyphicon glyphicon-flash"></span> 即時互動問答</a>');
+                var irsLiElement = $('<li class="dropdown"></li>').html(`
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="irsButton" onclick="interactiveReset()"><span class="glyphicon glyphicon-flash"></span>&nbsp;&nbsp;課堂即時互動<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="irs-student" target="irs-student"><span class="glyphicon glyphicon-education"></span>&nbsp;&nbsp;互動問答</a></li>
+                `);
                 $('#navList').append(irsLiElement);
                 var liveLink = $('<li></li>').html('<a href="#" id="joinBroadcast" onclick="livebtn()"><span class="glyphicon glyphicon-globe"></span> 查看課程廣播</a>');
                 $('#navList').append(liveLink);
@@ -92,6 +98,24 @@
                     }
 
                 });
+                var connection = new RTCMultiConnection(null, {
+                    useDefaultDevices: true // if we don't need to force selection of specific devices
+                });
+                connection.socketURL = '/';
+                connection.socketMessageEvent = 'note-taking-system';
+                var socket = connection.getSocket();
+                socket.on('newChoiceQuestion' , function(question){
+                    interactiveCount++;
+                    showInteractiveNotice(interactiveCount);
+                });
+                socket.emit("requestCurrentChoiceQuestionFromStudent" , {});
+                socket.on("responseCurrentChoiceQuestionFromTeacher",function(questions){
+                    if( firstTimeInThisPage ){
+                        interactiveCount+= questions.length;
+                        showInteractiveNotice(interactiveCount);
+                    }
+                    firstTimeInThisPage = false;
+                });   
             }
 
             function showPPT() {
@@ -351,6 +375,17 @@
                     document.getElementById("dialogAclDescription").innerHTML = "目前權限 : <font color='green'>允許</font>所有人存取，但清單內的帳號<font color='red'>禁止</font>存取。";
                 
             }
+
+            function showInteractiveNotice(count){
+                $("#irsButton").append('<span class="label label-danger">' + count + '</span>');
+            }
+ 
+            function interactiveReset(){
+                var irsBtn = document.getElementById("irsButton");
+                if( irsBtn.getElementsByTagName("span")[2] )
+                    irsBtn.removeChild(irsBtn.getElementsByTagName("span")[2]);
+                interactiveCount = 0;
+            };
         </script>
 </head>
 <body onload="init();">
@@ -373,6 +408,6 @@
                 </div>
             </div>
     </div>
-    
+
 </body>
 </html>
