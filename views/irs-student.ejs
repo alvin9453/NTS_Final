@@ -187,6 +187,8 @@
         
         socket.on('answerStatistics', function(result){
             var qid = result.qid;
+            if( !document.getElementById(qid + "-A") )
+                return;
             if( document.getElementById(qid + "-A").style.pointerEvents != "none")
                 return;
             // Create the data table.
