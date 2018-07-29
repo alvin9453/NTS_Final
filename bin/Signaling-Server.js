@@ -540,6 +540,13 @@ module.exports = exports = function(app, socketCallback) {
             socket.broadcast.emit('responseCurrentChoiceQuestionFromTeacher',data);
         });
 
+        socket.on('requestCurrentSlashQuestionFromStudent',function(data){
+            socket.broadcast.emit('requestCurrentSlashQuestionToTeacher');
+        });
+        socket.on('responseCurrentSlashQuestionToStudent',function(data){
+            socket.broadcast.emit('responseCurrentSlashQuestionFromTeacher',data);
+        });
+        
         socket.on('inputMessage' , function(data){ // Normal Message
             socket.emit('msgBroadcast', data); // Send to my self
             socket.broadcast.emit('msgBroadcast', data); // Send to another one

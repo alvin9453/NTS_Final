@@ -26,6 +26,7 @@
         var userEmail = "<%= user.emails[0].value %>";
         var thisUserEID = userEmail.split('@')[0];
         var choiceQuestionStack = [];
+        var slashQuestionStack = [];
         // init socket.io
         var connection = new RTCMultiConnection(null, {
             useDefaultDevices: true // if we don't need to force selection of specific devices
@@ -245,7 +246,9 @@
                 return;
             }else if(isSlashQuestion(msg)){
                 var questionKey = firebase.database().ref("slash-command/").push().key;
-                socket.emit('inputSlashQuestion' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg , qid : questionKey } );
+                var newSlashQuestion = {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg , qid : questionKey };
+                socket.emit('inputSlashQuestion' , newSlashQuestion);
+                slashQuestionStack.push(newSlashQuestion);
             }else{
                 socket.emit('inputMessage' , {uname : "<%= user.displayName %>" ,  uid : thisUserEID , msg : msg , character:"teacher" } );
             }
@@ -347,6 +350,13 @@
             
             displayEachSlashQuestion(showMsg);
             displayEachMessage("【系統】已新增一則問題" , "system-q");
+        });
+
+        socket.on('requestCurrentSlashQuestionToTeacher',function(data){
+            if( slashQuestionStack.length == 0 ){
+                return;
+            }
+            socket.emit('responseCurrentSlashQuestionToStudent' ,slashQuestionStack);
         });
     </script>
 </head>

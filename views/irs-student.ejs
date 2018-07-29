@@ -28,6 +28,7 @@
 
         // If student open this page, ask teacher for current choice question on teacher's page
         socket.emit("requestCurrentChoiceQuestionFromStudent" , {});
+        socket.emit("requestCurrentSlashQuestionFromStudent" , {});
 
         google.charts.load('current', {'packages':['corechart']});
 
@@ -193,7 +194,7 @@
                     appendChoiceQuestion(questions[i]);
             }
         });
-        
+      
         socket.on('choiceAnswerStatistics', function(result){
             var qid = result.qid;
             if( !document.getElementById(qid + "-A") )
@@ -237,14 +238,13 @@
 
             chart.draw(data, options);
         });
-
         socket.on('msgBroadcast', function(msgObj){
             var msg = msgObj.msg;
             var userName = msgObj.uname;
             var showMsg = ""
             if ( isSlashQuestion(msg) ){ // Slash Command /Q
                 showMsg = msg.slice(3);
-                displayEachSlashQuestion(showMsg);
+                displayEachSlashQuestion(showMsg,msgObj.qid);
                 displayEachMessage("【系統】已新增一則問題" , "system-q");
             }else{  // Normal message
                 if(msgObj.character == "teacher")
@@ -260,6 +260,16 @@
             displayEachSlashQuestion(showMsg , qid);
             displayEachMessage("【系統】已新增一則問題" , "system-q");
         });
+        socket.on("responseCurrentSlashQuestionFromTeacher",function(questions){
+            if( document.getElementById("slashQuestionBlock").innerHTML == "" ){
+                var showMsg = "";
+                for(var i = 0; i < questions.length; i++){
+                    showMsg = questions[i].msg.slice(3);
+                    displayEachSlashQuestion(showMsg , questions[i].qid);
+                }
+            }
+        });
+
 
     </script>
 
