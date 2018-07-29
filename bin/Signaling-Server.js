@@ -495,8 +495,8 @@ module.exports = exports = function(app, socketCallback) {
             delete listOfUsers[socket.userid];
         });
         // Teacher new a question
-        socket.on('newQuestion' , function(question){
-            socket.broadcast.emit('newQuestion' , question);
+        socket.on('newChoiceQuestion' , function(question){
+            socket.broadcast.emit('newChoiceQuestion' , question);
 
             // store in database, for the analysis in future
             var questionRef = firebase.database().ref("choice-question/");
@@ -513,8 +513,8 @@ module.exports = exports = function(app, socketCallback) {
             questionRef.update(updates);
         });
         // Student choose an option as his answer and response to teacher
-        socket.on('studentAnswer' , function(answer){      
-            socket.broadcast.emit('studentAnswerToTeacher' , answer);
+        socket.on('studentChoiceAnswer' , function(answer){      
+            socket.broadcast.emit('studentChoiceAnswerToTeacher' , answer);
 
             // store in database, for the analysis in future
             var qid = answer.qid;
@@ -529,8 +529,15 @@ module.exports = exports = function(app, socketCallback) {
             answerRef.update(updates);
         });
         // Teacher send question statistics to all students
-        socket.on('sendStatistics' , function(statistics){
-            socket.broadcast.emit('answerStatistics' , statistics);
+        socket.on('sendChoiceQuestionStatistics' , function(statistics){
+            socket.broadcast.emit('choiceAnswerStatistics' , statistics);
+        });
+
+        socket.on('requestCurrentChoiceQuestionFromStudent',function(data){
+            socket.broadcast.emit('requestCurrentChoiceQuestionToTeacher');
+        });
+        socket.on('responseCurrentChoiceQuestionToStudent',function(data){
+            socket.broadcast.emit('responseCurrentChoiceQuestionFromTeacher',data);
         });
 
         socket.on('inputMessage' , function(data){ // Normal Message

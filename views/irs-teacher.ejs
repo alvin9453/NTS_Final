@@ -25,6 +25,7 @@
         initFirebase(); 
         var userEmail = "<%= user.emails[0].value %>";
         var thisUserEID = userEmail.split('@')[0];
+        var choiceQuestionStack = [];
         // init socket.io
         var connection = new RTCMultiConnection(null, {
             useDefaultDevices: true // if we don't need to force selection of specific devices
@@ -82,7 +83,7 @@
 
             chart.draw(data, options);
 
-            socket.emit('sendStatistics' , {
+            socket.emit('sendChoiceQuestionStatistics' , {
                 qid : qid,
                 countA : countA,
                 countB : countB,
@@ -101,7 +102,7 @@
             return text;
         }
 
-        function createQuestionLiElement(qid, option, content){
+        function createChoiceQuestionLiElement(qid, option, content){
             var liElement = document.createElement("li");
             liElement.setAttribute("class" , "list-group-item");
             liElement.innerHTML = option + ". " + content;
@@ -136,7 +137,7 @@
             }
                 
         }
-        function createQuestion(){
+        function createChoiceQuestion(){
             var dialog = bootbox.dialog({
                 title: '<h1 align="center">即時互動問答 - 新增問題</h1>',
                 message: `
@@ -192,8 +193,8 @@
                             if ( !validInput(question , optionA, optionB, optionC, optionD) )
                                 return;
                             var qid = makeid();
-                            var opAElement = createQuestionLiElement(qid , 'A' , optionA);
-                            var opBElement = createQuestionLiElement(qid , 'B' , optionB);
+                            var opAElement = createChoiceQuestionLiElement(qid , 'A' , optionA);
+                            var opBElement = createChoiceQuestionLiElement(qid , 'B' , optionB);
                             
                             var questionTitle = document.createElement("li");
                             questionTitle.setAttribute('id' , qid + "-Q");
@@ -207,22 +208,24 @@
                             ulElement.append(opBElement);
 
                             if(optionC){
-                                var opCElement = createQuestionLiElement(qid , 'C' , optionC);
+                                var opCElement = createChoiceQuestionLiElement(qid , 'C' , optionC);
                                 ulElement.append(opCElement);
                                 if(optionD){  // 有 C 選項，才會有 D 選項，不給跳號啦
-                                    var opDElement =createQuestionLiElement(qid , 'D' , optionD);
+                                    var opDElement =createChoiceQuestionLiElement(qid , 'D' , optionD);
                                     ulElement.append(opDElement);
                                 }
                             }
                             var socket = connection.getSocket();
-                            socket.emit('newQuestion',{
+                            var newChoiceQuestion = {
                                 'qid' : qid,
                                 'title' : question,
                                 'optionA' : optionA,
                                 'optionB' : optionB,
                                 'optionC' : optionC,
                                 'optionD' : optionD
-                            });
+                            }
+                            socket.emit('newChoiceQuestion',newChoiceQuestion);
+                            choiceQuestionStack.push(newChoiceQuestion)
                             questionBlock.append(ulElement);
                             drawChart(qid);
                         }
@@ -291,8 +294,8 @@
 
         /* socket.on */
 
-        // Listen to students' answers
-        socket.on('studentAnswerToTeacher',function(res){
+        // Listen to students' choice answers
+        socket.on('studentChoiceAnswerToTeacher',function(res){
             var qid = res.qid;
             var answer = res.answer;
             var optionId = qid + "-" + answer;
@@ -301,6 +304,15 @@
             drawChart(qid);
             
         });
+
+        // When student open irs-student page, send current choice
+        socket.on('requestCurrentChoiceQuestionToTeacher',function(data){
+            if( choiceQuestionStack.length == 0 ){
+                return;
+            }
+            socket.emit('responseCurrentChoiceQuestionToStudent' ,choiceQuestionStack);
+        });
+
 
         socket.on('msgBroadcast', function(msgObj){ // Normal message
             var msg = msgObj.msg;
@@ -371,7 +383,7 @@
         <hr>
         <h3 align="center">選項問答與統計</h3>
         <div class="row">
-            <a id="createQ" class="btn btn-success list-group-item" onclick="createQuestion()"><span class="glyphicon glyphicon-plus"></span>  新增一個選擇題</a>
+            <a id="createQ" class="btn btn-success list-group-item" onclick="createChoiceQuestion()"><span class="glyphicon glyphicon-plus"></span>  新增一個選擇題</a>
         </div>
         <div class="row">
             <div class="col-sm-6 col-md-6">

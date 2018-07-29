@@ -26,19 +26,22 @@
         connection.socketMessageEvent = 'note-taking-system';
         var socket = connection.getSocket();
 
+        // If student open this page, ask teacher for current choice question on teacher's page
+        socket.emit("requestCurrentChoiceQuestionFromStudent" , {});
+
         google.charts.load('current', {'packages':['corechart']});
 
         function createButtonInList(qid,value,text){
             var btn = document.createElement('a');
             btn.setAttribute('id' , qid + "-" + value);
-            btn.setAttribute('onclick',"sendAnswer(\'" + qid + "\',this.value);");
+            btn.setAttribute('onclick',"sendChoiceAnswer(\'" + qid + "\',this.value);");
             btn.setAttribute('class',"list-group-item btn btn-default");
             btn.value = value;
             btn.innerHTML = text;
             return btn;
         }
-        function sendAnswer(qid , option){
-             socket.emit("studentAnswer" , {"uname": "<%= user.displayName %>" ,"qid" : qid ,"answer" : option });
+        function sendChoiceAnswer(qid , option){
+             socket.emit("studentChoiceAnswer" , {"uname": "<%= user.displayName %>" ,"qid" : qid ,"answer" : option });
 
              //disable this question button
              
@@ -51,8 +54,8 @@
              document.getElementById(qid + "-" + option ).style.background = "#FFDD55";
 
         }
-        function appendQuestion(question){
-            var questionBlock = document.getElementById("questionBlock");
+        function appendChoiceQuestion(question){
+            var choiceQuestionBlock = document.getElementById("choiceQuestionBlock");
             var ulElement = document.createElement("ul");
             ulElement.setAttribute("style" , "list-style-type:none")
             ulElement.setAttribute("class" , "list-group");
@@ -63,9 +66,9 @@
             var optionC = question.optionC;
             var optionD = question.optionD;
 
-            var questionTitle = document.createElement("li");
-            questionTitle.setAttribute('id' , qid + "-Q");
-            questionTitle.innerHTML = question.title;
+            var choiceQuestionTitle = document.createElement("li");
+            choiceQuestionTitle.setAttribute('id' , qid + "-Q");
+            choiceQuestionTitle.innerHTML = question.title;
             
         
             /* Option A */
@@ -88,8 +91,8 @@
                     ulElement.append(opDElement);
                 }
             }            
-            questionTitle.append(ulElement);
-            questionBlock.append(questionTitle);
+            choiceQuestionTitle.append(ulElement);
+            choiceQuestionBlock.append(choiceQuestionTitle);
             
 
         }
@@ -181,11 +184,17 @@
 
 
         /* socket.on */
-        socket.on('newQuestion' , function(question){
-            appendQuestion(question);
+        socket.on('newChoiceQuestion' , function(question){
+            appendChoiceQuestion(question);
+        });
+        socket.on("responseCurrentChoiceQuestionFromTeacher",function(questions){
+            if( document.getElementById("choiceQuestionBlock").innerHTML == "" ){
+                for(var i = 0; i < questions.length; i++)
+                    appendChoiceQuestion(questions[i]);
+            }
         });
         
-        socket.on('answerStatistics', function(result){
+        socket.on('choiceAnswerStatistics', function(result){
             var qid = result.qid;
             if( !document.getElementById(qid + "-A") )
                 return;
@@ -290,7 +299,7 @@
         <div class="row">
             <div class="col-sm-6 col-md-6">
                 <h2 align="center">選項</h2>
-                <ul class="list-group" id="questionBlock"></ul>
+                <ul class="list-group" id="choiceQuestionBlock"></ul>
             </div>
             <div class="col-sm-4 col-md-4">
                 <h2 align="center">統計資料</h2>
