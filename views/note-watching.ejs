@@ -24,6 +24,7 @@
         <link rel="stylesheet" href="/stylesheets/noteWatchPage.css" />
         <link rel="stylesheet" href="/stylesheets/style.css">
 
+        <script src="/javascripts/keywordOverlay.js"></script>
         <script src="/javascripts/bootbox.min.js"></script>
 
         <!-- Screen Broadcast -->
@@ -136,6 +137,7 @@
                 var firepadContainer = document.getElementById('firepad-container');
                 firepadContainer.innerHTML = "";
                 var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
+                hyperlinkOverlay(codeMirror);
                 var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
                     { richTextToolbar: true, richTextShortcuts: true , userId:"<%= user.displayName %>" }
                 );
