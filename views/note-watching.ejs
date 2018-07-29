@@ -24,7 +24,6 @@
         <link rel="stylesheet" href="/stylesheets/noteWatchPage.css" />
         <link rel="stylesheet" href="/stylesheets/style.css">
 
-        <script src="/javascripts/keywordOverlay.js"></script>
         <script src="/javascripts/bootbox.min.js"></script>
 
         <!-- Screen Broadcast -->
@@ -137,35 +136,11 @@
                 var firepadContainer = document.getElementById('firepad-container');
                 firepadContainer.innerHTML = "";
                 var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
-                hyperlinkOverlay(codeMirror);
-                qaOverlay(codeMirror);
-                askingOverlay(codeMirror);
                 var firepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
                     { richTextToolbar: true, richTextShortcuts: true , userId:"<%= user.displayName %>" }
                 );
-                $('#showQA').html("");
-                $('#showAsking').html("");
                 firepad.on('ready', function() {
-                    var contentArray = firepad.getText().split("\n");
-                    var qaPatt = new RegExp("(^\/Q .*)|(^\/A .*)","i");
-                    var qPatt = new RegExp("(^\/Q .*)","i");
-                    var aPatt = new RegExp("(^\/A .*)","i");
-                    var askingPatt = new RegExp("(^\/[?] .*)","i");
-                    for( var i = 0; i < contentArray.length; i++){
-                        if( askingPatt.test(contentArray[i]) ){
-                            $('#showAsking').append(contentArray[i] + '\n\n');
-                        }
-                        else if( qaPatt.test(contentArray[i]) ){
-                            if (qPatt.test(contentArray[i])){
-                                if ( document.getElementById("showQA").innerHTML != "" ){
-                                    $('#showQA').append('\n');
-                                }
-                                $('#showQA').append(contentArray[i] + '\n');
-                            }else{
-                                $('#showQA').append(contentArray[i] + '\n');
-                            } 
-                        }
-                    }
+                    // Nothing to do
                 });
             }
             function parsePPTURL(pptUrl){
@@ -367,8 +342,6 @@
             <div class="col-sm-8 col-md-8">
                 <div id="firepad-container">
                 </div>    
-                <textarea class="form-control" id="showQA" readonly></textarea>
-                <textarea class="form-control" id="showAsking" readonly></textarea>
             </div>
             <div class="col-sm-4 col-md-4">
                 <br><br><br>

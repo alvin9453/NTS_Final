@@ -9,38 +9,9 @@ body { margin: 0; height: 100%; }
   height: auto;
   right: 33%;
   left : 0%;
-  bottom: 30%;
+  bottom: 0%;
   top : 50px;
   background-color: rgba(0, 0, 0, 0.788);
-}
-
-#showQA {
-  position: fixed;
-  width: 40%;
-  height: 30%;
-  left : 0%;
-  bottom: 10%;
-  top : 70%;
-  color : #00FF00;
-  background-color: #4e4e4e;
-  font-size : 20px;
-  font-weight: 400;
-  resize: none;
-}
-
-#showAsking {
-  position: fixed;
-  width: 27%;
-  height: 30%;
-  right: 33%;
-  left : 40%;
-  bottom: 10%;
-  top : 70%;
-  color : #00FF00;
-  background-color: #4e4e4e;
-  font-size : 20px;
-  font-weight: 400;
-  resize: none;
 }
 
 #studentBlock {
@@ -57,8 +28,6 @@ body { margin: 0; height: 100%; }
 
 
 .CodeMirror .cm-url { color: blue; }    
-.CodeMirror .cm-qa { color: orange; font-weight: bold; font-size: 18px; font-family:"Comic Sans MS", cursive, sans-serif;}    
-.CodeMirror .cm-asking { color: #B088FF; font-weight: bold; font-size: 18px; font-family:"Comic Sans MS", cursive, sans-serif;}    
 
 input { width:100%; }
 .btn:focus {
