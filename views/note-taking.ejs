@@ -37,7 +37,7 @@
             var excepList = [];
             var accessibility = "allow";
             var interactiveCount = 0;
-            var firstTimeInThisPage = true;
+            var firstTimeInThisPage = [true , true];
 
             function init(){ 
                 initFirebase();
@@ -110,12 +110,24 @@
                 });
                 socket.emit("requestCurrentChoiceQuestionFromStudent" , {});
                 socket.on("responseCurrentChoiceQuestionFromTeacher",function(questions){
-                    if( firstTimeInThisPage ){
+                    if( firstTimeInThisPage[0] ){
                         interactiveCount+= questions.length;
                         showInteractiveNotice(interactiveCount);
                     }
-                    firstTimeInThisPage = false;
-                });   
+                    firstTimeInThisPage[0] = false;
+                });
+                socket.on('slashQuestion', function(msg){
+                    interactiveCount++;
+                    showInteractiveNotice(interactiveCount);
+                });
+                socket.emit("requestCurrentSlashQuestionFromStudent" , {});
+                socket.on("responseCurrentSlashQuestionFromTeacher",function(questions){
+                    if( firstTimeInThisPage[1] ){
+                        interactiveCount+= questions.length;
+                        showInteractiveNotice(interactiveCount);
+                    }
+                    firstTimeInThisPage[1] = false;
+                });
             }
 
             function showPPT() {
@@ -377,7 +389,12 @@
             }
 
             function showInteractiveNotice(count){
-                $("#irsButton").append('<span class="label label-danger">' + count + '</span>');
+                var irsBtn = document.getElementById("irsButton");
+                if( irsBtn.getElementsByTagName("span")[2] ){
+                    irsBtn.getElementsByTagName("span")[2].innerHTML = count;
+                }else{
+                    $("#irsButton").append('<span class="label label-danger">' + count + '</span>');
+                }
             }
  
             function interactiveReset(){
