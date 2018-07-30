@@ -237,9 +237,11 @@
 
         function msgSendBtn(){
             var msg = document.getElementById("msg").value;
-            if( msg == "" )
-                return;
             var msgBlock = document.getElementById("messageBlock");
+            if( msg == "" || msg == "\n" ){
+                document.getElementById("msg").value = "";   
+                return;
+            }
             document.getElementById("msg").value = "";
             if(isSlashAnswer(msg)){  // Teachers only send questions
                 displayEachMessage("【系統】學生限定功能" , "system-alert");  
@@ -272,6 +274,9 @@
                 case "system-alert" :
                     newMsg.setAttribute("class" , "systemMsg-alert");
                     break;
+                case "system-asking" : 
+                    newMsg.setAttribute("class" , "systemMsg-asking ");
+                    break;
             }
             newMsg.innerHTML = content;
             msgBlock.append(newMsg);
@@ -292,6 +297,10 @@
         }
         function isSlashAnswer(msg){
             var qaPatt= /^\/A\s[\d]+\s.+/i;
+            return qaPatt.test(msg);
+        }
+        function isSlashAsking(msg){
+            var qaPatt= /^\/\?\s.+/i;
             return qaPatt.test(msg);
         }
 
@@ -317,14 +326,20 @@
         });
 
 
-        socket.on('msgBroadcast', function(msgObj){ // Normal message
+        socket.on('msgBroadcast', function(msgObj){ 
             var msg = msgObj.msg;
             var userName = msgObj.uname;
-            var showMsg = ""
-            if(msgObj.character == "teacher")
-                showMsg += "[教師]";
-            showMsg += userName + " : " + msg;
-            displayEachMessage(showMsg);
+            var showMsg = "";
+            if(isSlashAsking(msg) ){
+                var asking = msg.slice(3);
+                displayEachMessage("【學生發問】" + asking , "system-asking");  
+            }else{
+                if(msgObj.character == "teacher") // Normal message
+                    showMsg += "[教師]";
+                showMsg += userName + " : " + msg;
+                displayEachMessage(showMsg);
+            }
+            
             
         });
 
@@ -397,11 +412,11 @@
         </div>
         <div class="row">
             <div class="col-sm-6 col-md-6">
-                <h2 align="center">問題列表</h2>
+                <h3 align="center">問題列表</h3>
                 <ul class="list-group" id="questionBlock"></ul>
             </div>
             <div class="col-sm-6 col-md-6">
-                <h2 align="center">統計圖表</h2>
+                <h3 align="center">統計圖表</h3>
                 <div id="chartDiv" align="center"></div>
             </div>
         </div>

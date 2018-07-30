@@ -56,6 +56,11 @@ a.hover {
     margin-left : 0px;
     color: red;
 }
+.systemMsg-asking{
+    padding : 2px;
+    margin-left : 0px;
+    color: #7700FF;
+}
 textarea{
     resize: none;
 }
