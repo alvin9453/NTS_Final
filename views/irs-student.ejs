@@ -126,7 +126,7 @@
                     displayEachMessage("【系統】您已回答問題 <b>" + index + "</b>" , "system-ans");
                     socket.emit('inputSlashAnswer' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg , qid : qid} ); // Only students can send slash answer.
                 }
-            }else if(isSlashQuestion(msg)){
+            }else if(isSlashQuestion(msg) || isSlashRes(msg)){
                 displayEachMessage("【系統】教師限定功能" , "system-alert");  
             }else{
                 socket.emit('inputMessage' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg , character : "student" } );
@@ -189,6 +189,10 @@
         }
         function isSlashAsking(msg){
             var qaPatt= /^\/\?\s.+/i;
+            return qaPatt.test(msg);
+        }
+        function isSlashRes(msg){
+            var qaPatt= /^\/r\s.+/i;
             return qaPatt.test(msg);
         }
 
@@ -257,6 +261,9 @@
             }else if(isSlashAsking(msg) ){
                 var asking = msg.slice(3);
                 displayEachMessage("【學生發問】" + asking , "system-asking");  
+            }else if(isSlashRes(msg)){
+                var res = msg.slice(3);
+                displayEachMessage("【教師回答】" + res , "system-asking");  
             }else{  // Normal message
                 if(msgObj.character == "teacher")
                     showMsg += "[教師]"

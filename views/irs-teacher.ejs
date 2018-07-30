@@ -243,7 +243,7 @@
                 return;
             }
             document.getElementById("msg").value = "";
-            if(isSlashAnswer(msg)){  // Teachers only send questions
+            if(isSlashAnswer(msg) || isSlashAsking(msg)){  // Teachers only send questions
                 displayEachMessage("【系統】學生限定功能" , "system-alert");  
                 return;
             }else if(isSlashQuestion(msg)){
@@ -258,7 +258,7 @@
         }
     
         function displayEachMessage(content , type){
-            // msgType : 1. msg , 2. system-q , 3. system-ans 4. system-alert
+            // msgType : 1. msg , 2. system-q , 3. system-ans, 4. system-alert 5. system-asking
             var msgBlock = document.getElementById("messageBlock");
             var newMsg = document.createElement("li");
             switch(type){
@@ -303,6 +303,10 @@
             var qaPatt= /^\/\?\s.+/i;
             return qaPatt.test(msg);
         }
+        function isSlashRes(msg){
+            var qaPatt= /^\/r\s.+/i;
+            return qaPatt.test(msg);
+        }
 
         /* socket.on */
 
@@ -333,6 +337,9 @@
             if(isSlashAsking(msg) ){
                 var asking = msg.slice(3);
                 displayEachMessage("【學生發問】" + asking , "system-asking");  
+            }else if(isSlashRes(msg)){
+                var res = msg.slice(3);
+                displayEachMessage("【教師回答】" + res , "system-asking");  
             }else{
                 if(msgObj.character == "teacher") // Normal message
                     showMsg += "[教師]";
