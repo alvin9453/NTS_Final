@@ -236,13 +236,13 @@
         }
 
         function msgSendBtn(){
-            var msg = document.getElementById("msg").value;
+            var msg = document.getElementById("msgInput").value;
             var msgBlock = document.getElementById("messageBlock");
             if( msg == "" || msg == "\n" ){
-                document.getElementById("msg").value = "";   
+                document.getElementById("msgInput").value = "";   
                 return;
             }
-            document.getElementById("msg").value = "";
+            document.getElementById("msgInput").value = "";
             if(isSlashAnswer(msg) || isSlashAsking(msg)){  // Teachers only send questions
                 displayEachMessage("【系統】學生限定功能" , "system-alert");  
                 return;
@@ -258,12 +258,12 @@
         }
     
         function displayEachMessage(content , type){
-            // msgType : 1. msg , 2. system-q , 3. system-ans, 4. system-alert 5. system-asking
+            // msgType : 1. normal msg , 2. system-q , 3. system-ans, 4. system-alert 5. system-asking
             var msgBlock = document.getElementById("messageBlock");
             var newMsg = document.createElement("li");
             switch(type){
                 case "msg" :
-                    newMsg.setAttribute("class" , "msg");
+                    newMsg.setAttribute("class" , "normalMsg");
                     break;
                 case "system-q" :
                     newMsg.setAttribute("class" , "systemMsg-q");
@@ -393,11 +393,11 @@
                     <h3 align="center">互動聊天室</h3>
                     <ul id="messageBlock" class="messageBlock"></ul>
                     <div class="form-group">
-                            <textarea class="form-control" rows="2" id="msg" autocomplete="off" style="border:solid 3px black" placeholder=""></textarea>
+                            <textarea class="form-control" rows="2" id="msgInput" autocomplete="off" style="border:solid 3px black" placeholder=""></textarea>
                         <button id="msgSendBtn" class="btn btn-primary" onclick="msgSendBtn()" style="float: right;">送出</button>
                         <script>
                             /* Enter trigger onclick event */
-                            var msgInput = document.getElementById("msg");
+                            var msgInput = document.getElementById("msgInput");
                             msgInput.addEventListener("keyup", function(event) {
                                 event.preventDefault();
                                 if (event.keyCode === 13) {

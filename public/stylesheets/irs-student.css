@@ -33,29 +33,34 @@ h3 {text-align : center;}
     padding : 2px;
     margin-left : 15px;
 }
-.msg{
+.normalMsg{
     padding : 2px;
     margin-left : 0px;
+    margin : 5px;
 }
 .systemMsg-q{
     padding : 2px;
     margin-left : 0px;
     color: blue ;
+    margin : 5px;
 }
 .systemMsg-ans{
     padding : 2px;
     margin-left : 0px;
     color: green;
+    margin : 5px;
 }
 .systemMsg-alert{
     padding : 2px;
     margin-left : 0px;
     color: red;
+    margin : 5px;
 }
 .systemMsg-asking{
     padding : 2px;
     margin-left : 0px;
     color: #7700FF;
+    margin : 5px;
 }
 textarea{
     resize: none;
