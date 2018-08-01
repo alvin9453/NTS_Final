@@ -493,7 +493,17 @@ module.exports = exports = function(app, socketCallback) {
             }
 
             delete listOfUsers[socket.userid];
+
+            if(socket.character == "teacher"){  // When Teacher disconnect, reset the slash command records.
+                socket.broadcast.emit('resetInteractiveData');
+            }
+
         });
+
+        socket.on('whoAmI',function(character){
+            socket.character = character;
+        });
+
         // Teacher new a question
         socket.on('newChoiceQuestion' , function(question){
             socket.broadcast.emit('newChoiceQuestion' , question);
@@ -588,6 +598,7 @@ module.exports = exports = function(app, socketCallback) {
             socket.broadcast.emit('slashAnswer' , data);
 
         });
+
         if (socketCallback) {
             socketCallback(socket);
         }

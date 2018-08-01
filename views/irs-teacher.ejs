@@ -34,7 +34,7 @@
         connection.socketURL = '/';
         connection.socketMessageEvent = 'note-taking-system';
         var socket = connection.getSocket();
-
+        socket.emit('whoAmI','teacher');  // Let server know who you are
         // Load the Visualization API and the corechart package.
         google.charts.load('current', {'packages':['corechart']});
     
