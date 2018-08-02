@@ -26,7 +26,6 @@
         var userEmail = "<%= user.emails[0].value %>";
         var thisUserEID = userEmail.split('@')[0];
         var choiceQuestionStack = [];
-        var slashQuestionStack = [];
         // init socket.io
         var connection = new RTCMultiConnection(null, {
             useDefaultDevices: true // if we don't need to force selection of specific devices
@@ -35,6 +34,7 @@
         connection.socketMessageEvent = 'note-taking-system';
         var socket = connection.getSocket();
         socket.emit('whoAmI','teacher');  // Let server know who you are
+        socket.emit("requestTodaySlashQuestion" , {});
         // Load the Visualization API and the corechart package.
         google.charts.load('current', {'packages':['corechart']});
     
@@ -243,14 +243,12 @@
                 return;
             }
             document.getElementById("msgInput").value = "";
-            if(isSlashAnswer(msg) || isSlashAsking(msg)){  // Teachers only send questions
-                displayEachMessage("【系統】學生限定功能" , "system-alert");  
-                return;
-            }else if(isSlashQuestion(msg)){
+            if(isSlashQuestion(msg)){
                 var questionKey = firebase.database().ref("slash-command/").push().key;
-                var newSlashQuestion = {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg , qid : questionKey };
+                var newSlashQuestion = {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg , qid : questionKey , character:"teacher" };
                 socket.emit('inputSlashQuestion' , newSlashQuestion);
-                slashQuestionStack.push(newSlashQuestion);
+            }else if( isSlashHelp(msg) ){
+                displayEachMessage("【幫助】斜線指令使用說明<br><br>/Q [space] question : 發起一個問題，讓學生回答<br><br>/A [space] response : 以訊息回答學生問題<br><br>", "system-help");
             }else{
                 socket.emit('inputMessage' , {uname : "<%= user.displayName %>" ,  uid : thisUserEID , msg : msg , character:"teacher" } );
             }
@@ -258,7 +256,7 @@
         }
     
         function displayEachMessage(content , type){
-            // msgType : 1. normal msg , 2. system-q , 3. system-ans, 4. system-alert 5. system-asking
+            // msgType : 1. normal msg , 2. system-q , 3. system-ans, 4. system-alert,  5. system-asking, 6. system-help
             var msgBlock = document.getElementById("messageBlock");
             var newMsg = document.createElement("li");
             switch(type){
@@ -275,6 +273,9 @@
                     newMsg.setAttribute("class" , "systemMsg-alert");
                     break;
                 case "system-asking" : 
+                    newMsg.setAttribute("class" , "systemMsg-asking ");
+                    break;
+                case "system-help" : 
                     newMsg.setAttribute("class" , "systemMsg-asking ");
                     break;
             }
@@ -299,12 +300,12 @@
             var qaPatt= /^\/A\s[\d]+\s.+/i;
             return qaPatt.test(msg);
         }
-        function isSlashAsking(msg){
-            var qaPatt= /^\/\?\s.+/i;
+        function isSlashAnswerFromTeacher(msg){
+            var qaPatt= /^\/A\s.+/i;
             return qaPatt.test(msg);
         }
-        function isSlashRes(msg){
-            var qaPatt= /^\/r\s.+/i;
+        function isSlashHelp(msg){
+            var qaPatt= /^\/\?/i;
             return qaPatt.test(msg);
         }
 
@@ -333,11 +334,12 @@
         socket.on('msgBroadcast', function(msgObj){ 
             var msg = msgObj.msg;
             var userName = msgObj.uname;
+            var character = msgObj.character;
             var showMsg = "";
-            if(isSlashAsking(msg) ){
+            if( isSlashQuestion(msg) && character == "student" ){
                 var asking = msg.slice(3);
                 displayEachMessage("【學生發問】" + asking , "system-asking");  
-            }else if(isSlashRes(msg)){
+            }else if( isSlashAnswerFromTeacher(msg) && character == "teacher" ){
                 var res = msg.slice(3);
                 displayEachMessage("【教師回答】" + res , "system-asking");  
             }else{
@@ -374,12 +376,16 @@
             displayEachMessage("【系統】已新增一則問題" , "system-q");
         });
 
-        socket.on('requestCurrentSlashQuestionToTeacher',function(data){
-            if( slashQuestionStack.length == 0 ){
-                return;
+        socket.on("todaySlashQuestion",function(questions){
+            if( document.getElementById("slashQuestionBlock").innerHTML == "" ){
+                var showMsg = "";
+                for(var i = 0; i < questions.length; i++){
+                    showMsg = questions[i].msg.slice(3);
+                    displayEachSlashQuestion(showMsg , questions[i].qid);
+                }
             }
-            socket.emit('responseCurrentSlashQuestionToStudent' ,slashQuestionStack);
         });
+
     </script>
 </head>
 <body>

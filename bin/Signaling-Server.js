@@ -17,6 +17,11 @@ var shiftedModerationControls = {};
 var ScalableBroadcast;
 var firebase = require('firebase');
 
+// For store slash questions today.
+var teacherSlashQuestionTodayStack = [];
+var date = new Date();
+var firstSlashQuestionDay = date.getDay();  // When teacher ask
+
 module.exports = exports = function(app, socketCallback) {
     socketCallback = socketCallback || function() {};
 
@@ -494,10 +499,6 @@ module.exports = exports = function(app, socketCallback) {
 
             delete listOfUsers[socket.userid];
 
-            if(socket.character == "teacher"){  // When Teacher disconnect, reset the slash command records.
-                socket.broadcast.emit('resetInteractiveData');
-            }
-
         });
 
         socket.on('whoAmI',function(character){
@@ -550,13 +551,10 @@ module.exports = exports = function(app, socketCallback) {
             socket.broadcast.emit('responseCurrentChoiceQuestionFromTeacher',data);
         });
 
-        socket.on('requestCurrentSlashQuestionFromStudent',function(data){
-            socket.broadcast.emit('requestCurrentSlashQuestionToTeacher');
+        socket.on('requestTodaySlashQuestion',function(data){
+            socket.emit('todaySlashQuestion', teacherSlashQuestionTodayStack);
         });
-        socket.on('responseCurrentSlashQuestionToStudent',function(data){
-            socket.broadcast.emit('responseCurrentSlashQuestionFromTeacher',data);
-        });
-        
+
         socket.on('inputMessage' , function(data){ // Normal Message
             socket.emit('msgBroadcast', data); // Send to my self
             socket.broadcast.emit('msgBroadcast', data); // Send to another one
@@ -565,6 +563,16 @@ module.exports = exports = function(app, socketCallback) {
         socket.on('inputSlashQuestion', function(data){   // Slash Question
             socket.emit('slashQuestion' , data);
             socket.broadcast.emit('slashQuestion' , data);
+            var date = new Date();
+            var today = date.getDay();
+            if(teacherSlashQuestionTodayStack.length == 0){
+                firstSlashQuestionDay = date.getDay();  // When teacher ask a new question in this day => record day
+            }
+            else if( today != firstSlashQuestionDay ){  // Another day => clear stack and reset first day
+                firstSlashQuestionDay = date.getDay();
+                teacherSlashQuestionTodayStack = [];    
+            }
+            teacherSlashQuestionTodayStack.push(data);
 
             // store in database, for the analysis in future
             var slashCommandRef = firebase.database().ref("slash-command/");

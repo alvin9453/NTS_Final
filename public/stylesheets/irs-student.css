@@ -62,6 +62,13 @@ h3 {text-align : center;}
     color: #7700FF;
     margin : 5px;
 }
+.systemMsg-asking{
+    padding : 2px;
+    margin-left : 0px;
+    color: green;
+    margin : 5px;
+}
+
 textarea{
     resize: none;
 }
