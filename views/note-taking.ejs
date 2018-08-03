@@ -42,8 +42,9 @@
             function init(){ 
                 initFirebase();
                 var userEmail = "<%= user.emails[0].value %>";
-                var userEID = userEmail.split('@')[0];
-                var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
+                //var userEID = userEmail.split('@')[0];
+                var userNoteID = "note-" + userEmail.replace(/\./g, "_"); // 我用 note-userEmail 的方式來當作筆記的root ID, 方便之後查找以及共享; (ID裡面不能用"."只好取代成"_")
+                var firepadRef = firebase.database().ref('/' + userNoteID).child('<%= title %>');
 
                 var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
                 hyperlinkOverlay(codeMirror);
@@ -83,7 +84,7 @@
                 showPPT();
 
                 /* Init ACL when user acceses note first time */
-                var sharedAclRef = firebase.database().ref('/'+'shared-acl' + '/' + userEID + '/<%= title %>');
+                var sharedAclRef = firebase.database().ref('/'+'shared-acl' + '/' + userNoteID + '/<%= title %>');
                 sharedAclRef.on('value',function(data){
                     if(data.val() == null){
                         sharedAclRef.set({
@@ -131,8 +132,6 @@
             function showPPT() {
                 document.getElementById("video-preview").style.display = "none";
                 document.getElementById("slide").style.display = "";
-                $('#ppt').attr('src', url);
-
             }
             function showVideo(){
                 document.getElementById("slide").style.display = "none";
@@ -166,8 +165,8 @@
             }
             function watchNote(){
                 var dialog = bootbox.dialog({
-                    title: '<h3>請輸入同學的Email帳號</h3>',
-                    message: "<h4>例如 : <font color='red'>abc@gmail.com</font> 或 <font color='red'>abc@ncnu.edu.tw</font> 只要輸入 <big><font color='red'>abc</font></big> 即可</p></h4><input id='classmateEID' type='text' class='form-control'>",
+                    title: '<h3>請輸入同學的Email</h3>',
+                    message: "<h4>例如 : <font color='red'>abc@gmail.com</font> 或 <font color='red'>abc@mail1.ncnu.edu.tw</font></p></h4><input id='classmateEmail' name='email' type='email' class='form-control'>",
                     buttons: {
                         cancel: {
                             label: "取消",
@@ -177,20 +176,22 @@
                             label: "觀看",
                             className: 'btn-info',
                             callback: function(){            
-                                var classmateEID = document.getElementById('classmateEID').value;
+                                var classmateEmail = document.getElementById('classmateEmail').value;
                                 // Input nothing => alert and return
-                                if(classmateEID == "" || classmateEID == undefined){
-                                    bootbox.alert("<h3><font color='red'><span class='glyphicon glyphicon-remove'></span></font> 請輸入Email帳號</h3>");
+                                if(classmateEmail == "" || classmateEmail == undefined){
+                                    bootbox.alert("<h3><font color='red'><span class='glyphicon glyphicon-remove'></span></font> 請輸入正確的Email</h3>");
                                     return;
                                 }
-                                sharedNoteProcess(classmateEID.trim());
+                                classmateEmail.trim();
+                                var classmateNoteID = 'note-' + classmateEmail.replace(/\./g, "_");
+                                sharedNoteProcess(classmateNoteID);
                             }
                         }
                     }
                 });
             }      
-            function legalSharedNoteProcessResult(classmateEID){      
-                var firepadRef = firebase.database().ref('/'+'note-'+ classmateEID).child('<%= title %>');
+            function legalSharedNoteProcessResult(classmateNoteID){     
+                var firepadRef = firebase.database().ref('/'+ classmateNoteID).child('<%= title %>');
                 var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });// Actually, you will not modify the content of firepad-container... But it has to do this to use firepad.getHtml()
                 var shareFirepad = Firepad.fromCodeMirror(firepadRef, codeMirror,
                     { richTextToolbar: false, richTextShortcuts: true , userId:"<%= user.displayName %>" }
@@ -202,7 +203,7 @@
                         /* Shared-note count */
                         // 筆記第一次被觀看時，就會把它紀錄在 /shared-note 裡面，並且初始值為 1
                         var content = shareFirepad.getHtml();
-                        var sharedCountRef = firebase.database().ref('/'+'shared-count' + '/' + classmateEID + '/<%= title %>');
+                        var sharedCountRef = firebase.database().ref('/'+'shared-count' + '/' + classmateNoteID + '/<%= title %>');
                         sharedCountRef.once('value').then(function(data){
                             if( data.val() == null ){
                                 sharedCountRef.set({
@@ -222,8 +223,8 @@
                     shareFirepad.dispose();
                 });
             }
-            function sharedNoteProcess(classmateEID){
-                var sharedAclRef = firebase.database().ref('/'+'shared-acl' + '/' + classmateEID + '/<%= title %>');
+            function sharedNoteProcess(classmateNoteID){
+                var sharedAclRef = firebase.database().ref('/'+'shared-acl' + '/' + classmateNoteID + '/<%= title %>');
                 var aclDataPromise = new Promise( (resolve, reject) => {
                     sharedAclRef.once('value').then( (data) => {
                         resolve(data.val());
@@ -231,20 +232,21 @@
                 });
                 aclDataPromise.then( (aclData) => {
                     if(aclData == null){
-                        legalSharedNoteProcessResult(classmateEID);
+                        legalSharedNoteProcessResult(classmateNoteID);
                     }else{
-                        var thisUserEID =  "<%= user.emails[0].value %>".split('@')[0];
+                        var thisUserEmail = "<%= user.emails[0].value %>";
+                        //var thisUserNoteID =  "note-" + "<%= user.emails[0].value %>".replace(/\./g, "_");
                         var eList = aclData.excep;
-                        if( aclData.all == "deny" && ( eList == "" || eList.indexOf(thisUserEID) == -1 ) ){ // Deny all, but not in exception list => Forbidden
+                        if( aclData.all == "deny" && ( eList == "" || eList.indexOf(thisUserEmail) == -1 ) ){ // Deny all, but not in exception list => Forbidden
                             bootbox.alert("<h3 align='center'><font color='red'><span class='glyphicon glyphicon-remove'></span></font> 沒有觀看權限</h3>");
                         }
-                        else if ( aclData.all == "allow" &&  ( eList == "" || eList.indexOf(thisUserEID) == -1 ) ){ // Allow all , but not in exception list  => Allow
-                            legalSharedNoteProcessResult(classmateEID);
+                        else if ( aclData.all == "allow" &&  ( eList == "" || eList.indexOf(thisUserEmail) == -1 ) ){ // Allow all , but not in exception list  => Allow
+                            legalSharedNoteProcessResult(classmateNoteID);
                         }
-                        else if( aclData.all == "deny" && eList.indexOf(thisUserEID) > -1 ){ // Deny all, but in exception list => Allow
-                            legalSharedNoteProcessResult(classmateEID);
+                        else if( aclData.all == "deny" && eList.indexOf(thisUserEmail) > -1 ){ // Deny all, but in exception list => Allow
+                            legalSharedNoteProcessResult(classmateNoteID);
                         }
-                        else if ( aclData.all == "allow" && eList.indexOf(thisUserEID) > -1 ){ // Allow all, but in exception list => Forbidden
+                        else if ( aclData.all == "allow" && eList.indexOf(thisUserEmail) > -1 ){ // Allow all, but in exception list => Forbidden
                             bootbox.alert("<h3 align='center'><font color='red'><span class='glyphicon glyphicon-remove'></span></font> 沒有觀看權限</h3>");
                         }
                     }
@@ -336,8 +338,8 @@
                             className: 'btn-info',
                             callback: function(){
                                 var userEmail = "<%= user.emails[0].value %>";
-                                var thisUserEID = userEmail.split('@')[0];
-                                var sharedAclRef = firebase.database().ref('/'+'shared-acl' + '/' + thisUserEID + '/<%= title %>');
+                                var thisUserNoteID = 'note-'+userEmail.replace(/\./g,"_")
+                                var sharedAclRef = firebase.database().ref('/'+'shared-acl' + '/' + thisUserNoteID + '/<%= title %>');
                                 var excepListContent = document.getElementById("excepList").value;
                                 var newExcepList = [];
                                 var splitExcepList = excepListContent.split(',');
