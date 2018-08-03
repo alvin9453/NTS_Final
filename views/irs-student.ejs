@@ -128,7 +128,7 @@
                     socket.emit('inputSlashAnswer' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg , qid : qid} ); // Only students can send slash answer.
                 }
             }else if( isSlashHelp(msg) ){
-                displayEachMessage("【幫助】斜線指令使用說明<br><br>/Q [space] question : 問教師問題<br><br>/A [space] 題號 [space] 答案 : 回答題目<br><br>", "system-ace] 題號 [space] 答案 : 回答題目<br><br>", "system-help");
+                displayEachMessage("【幫助】斜線指令使用說明<br><br>/Q [space] question : 問教師問題<br><br>/A [space] 題號 [space] 答案 : 回答題目<br><br>/A 題號 [space] 答案 : 回答題目<br><br>", "system-help");
             }else{
                 socket.emit('inputMessage' , {uname : " <%= user.displayName %>" ,  uid : thisUserEID , msg : msg , character : "student" } );
             }
@@ -149,6 +149,7 @@
             // msgType : 1. normal msg , 2. system-q , 3. system-ans ,4. system-alert, 5. system-asking, 6. system-help
             var msgBlock = document.getElementById("messageBlock");
             var newMsg = document.createElement("li");
+            console.log(type);
             switch(type){
                 case "msg" :
                     newMsg.setAttribute("class" , "normalMsg");
@@ -163,10 +164,10 @@
                     newMsg.setAttribute("class" , "systemMsg-alert");
                     break;
                 case "system-asking" : 
-                    newMsg.setAttribute("class" , "systemMsg-asking ");
+                    newMsg.setAttribute("class" , "systemMsg-asking");
                     break;
                 case "system-help" : 
-                    newMsg.setAttribute("class" , "systemMsg-help ");
+                    newMsg.setAttribute("class" , "systemMsg-help");
                     break;
             }
             newMsg.innerHTML = content;
