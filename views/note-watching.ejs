@@ -72,29 +72,30 @@
                         if(data.val()[i].character == "student"){
                             var name = data.val()[i].name;
                             var email = data.val()[i].email;
-                            var userEID = email.split('@')[0];
+                            //var userEID = email.split('@')[0];
+                            var userNoteID = "note-" + email.replace(/\./g,"_");
                             var btn = document.createElement('input');
                             btn.setAttribute('type','button');
                             btn.setAttribute('onclick',"courseInfo(this.textContent);");
                             btn.setAttribute('class',"btn btn-default");
                             btn.setAttribute('value' , name + ' < ' + email + ' > '  );
-                            btn.setAttribute('onclick',"choosePad(\'" + userEID + "\');");
+                            btn.setAttribute('onclick',"choosePad(\'" + userNoteID + "\');");
 
                             var trElement = document.createElement('tr');
                             var tdCountElement = document.createElement('td');
                             var tdUserElement = document.createElement('td');
                             tdCountElement.innerHTML = "0";                  
-                            tdCountElement.setAttribute('id' , 'count-'+userEID);      
+                            tdCountElement.setAttribute('id' , 'count-'+ userNoteID);      
                             tdUserElement.appendChild(btn);
                             trElement.appendChild(tdCountElement);
                             trElement.appendChild(tdUserElement);
 
                             $('#studentList').append(trElement);
 
-                            if( Object.keys(sharedCountList).indexOf(userEID) > -1){
-                                if( sharedCountList[userEID]["<%= title %>"] ){
-                                    var count = sharedCountList[userEID]["<%= title %>"].count;
-                                    document.getElementById("count-" + userEID).innerHTML = count;
+                            if( Object.keys(sharedCountList).indexOf(userNoteID) > -1){
+                                if( sharedCountList[userNoteID]["<%= title %>"] ){
+                                    var count = sharedCountList[userNoteID]["<%= title %>"].count;
+                                    document.getElementById("count-" + userNoteID).innerHTML = count;
                                 }   
                             }
                         }
@@ -104,13 +105,13 @@
                 function updateSharedCount(){
                     var sharedCountListInArray = Object.keys(sharedCountList);
                     for(var index in sharedCountListInArray){
-                        var eachUserEID = sharedCountListInArray[index];
+                        var eachUserNoteID = sharedCountListInArray[index];
                         var sharedCount = 0;
-                        if( sharedCountList[eachUserEID]["<%= title %>"] ){
-                            sharedCount = sharedCountList[eachUserEID]["<%= title %>"].count;
+                        if( sharedCountList[eachUserNoteID]["<%= title %>"] ){
+                            sharedCount = sharedCountList[eachUserNoteID]["<%= title %>"].count;
                         }
-                        if( document.getElementById("count-" + eachUserEID) ){
-                            document.getElementById("count-" + eachUserEID).innerHTML = sharedCount;
+                        if( document.getElementById("count-" + eachUserNoteID) ){
+                            document.getElementById("count-" + eachUserNoteID).innerHTML = sharedCount;
                         }
                     }
                 }
@@ -120,20 +121,21 @@
                     var options = $('#studentList').find('input');
                     var randomIndex = Math.floor((Math.random() * options.length));
                     var info = options[randomIndex].value;
-                    var email = options.eq(randomIndex).val();
+                    var email = info.split('<')[1].slice(1,-3);
                     var name = info.split('<')[0];
-                    var userEID = info.split('<')[1].split('@')[0].split(' ')[1];
-                    choosePad(userEID);
+                    var userNoteID = 'note-' + email.replace(/\./g,"_");
+                    choosePad(userNoteID);
                     $('#studentName').text("隨機挑選 : " + name);
                 });
 
                 
             }; 
             // change pad depend on user
-            function choosePad(userEID){
+            function choosePad(userNoteID){
+                console.log(userNoteID);
                 if(document.getElementById("studentName").innerHTML != "")
                     document.getElementById("studentName").innerHTML = "<br>";
-                var firepadRef = firebase.database().ref('/'+'note-'+userEID).child('<%= title %>');
+                var firepadRef = firebase.database().ref('/'+ userNoteID ).child('<%= title %>');
                 var firepadContainer = document.getElementById('firepad-container');
                 firepadContainer.innerHTML = "";
                 var codeMirror = CodeMirror(document.getElementById('firepad-container'), { lineWrapping: true });
