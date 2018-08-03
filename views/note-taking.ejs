@@ -131,7 +131,7 @@
             function showPPT() {
                 document.getElementById("video-preview").style.display = "none";
                 document.getElementById("slide").style.display = "";
-                //$('#ppt').attr('src', url);
+                $('#ppt').attr('src', url);
 
             }
             function showVideo(){
@@ -139,7 +139,7 @@
                 document.getElementById("slide").style.zIndex = "0";
                 document.getElementById("video-preview").style.display = "";
                 document.getElementById("video-preview").style.zIndex = "1";
-                //$('#learningBlock').append('<video id="video-preview" controls loop></video');
+                $('#learningBlock').append('<video id="video-preview" controls loop></video');
             }
             function slidebtn(){
                 var btn = document.getElementById("slidebtn");
