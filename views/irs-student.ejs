@@ -293,7 +293,10 @@
                 }
             }
         });
-
+        socket.on("resetSlashQuestion", function(data){
+            bootbox.alert("<h3>時限已到，重置斜線指令問答紀錄...</h3>");
+            document.getElementById("slashQuestionBlock").innerHTML = "";
+        });
 
     </script>
 
