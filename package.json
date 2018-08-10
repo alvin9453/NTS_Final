@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "preinstall": "npm i -g pm2 && pm2 install pm2-logrotate",
-    "start": "nodemon ./bin/www"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.18.2",
