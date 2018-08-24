@@ -108,8 +108,3 @@ Demo
 -------
 
 https://ncnu-note.tk/
-
-LICENCE
-------------
-
-To be continued...
