@@ -102,9 +102,3 @@ Build
 
 
 Then open ``localhost:8080`` or ``https://<your_domain>`` in your browser.
-
-
-Demo
--------
-
-https://ncnu-note.tk/
