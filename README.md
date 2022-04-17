@@ -12,9 +12,32 @@ Nowadays, a lot of collaborative note-taking software tools can be found on the 
 
 This thesis proposes an interactive online note-taking system to facilitate teaching and learning in higher education. It comprises four elements in classroom teaching including teacher, student, slide, note-taking. It also supports interaction, note sharing, and live broadcasting. Students can “share” notes instead of “collaborating” on notes. With this system, teachers can monitor students’ learning status by their notes. Furthermore, in this system students and teachers can interact with each other by questions and answers. These features will help students and teachers to facilitate teaching and learning.
 
+System Architecture
+-----------------------
 
-Preparation
-----------------
+![system_archi](./demo/system_architecture.png)
+
+
+Demo
+------
+
+<img src="./demo/demo1.PNG" alt="demo1" style="width:600px;"/>
+
+<img src="./demo/demo2.PNG" alt="demo2" style="width:600px;"/>
+
+<img src="./demo/demo3.PNG" alt="demo3" style="width:600px;"/>
+
+<img src="./demo/demo4.PNG" alt="demo4" style="width:600px;"/>
+
+<img src="./demo/demo5.PNG" alt="demo5" style="width:600px;"/>
+
+<img src="./demo/demo6.PNG" alt="demo6" style="width:600px;"/>
+
+<img src="./demo/demo7.PNG" alt="demo7" style="width:600px;"/>
+
+
+Install Preparation
+----------------------
 
 1. Ubuntu 16.04
 
